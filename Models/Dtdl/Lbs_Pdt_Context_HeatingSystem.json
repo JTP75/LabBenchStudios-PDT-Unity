@@ -1,0 +1,113 @@
+{
+  "@id": "dtmi:LabBenchStudios:PDT:heatingSystem;1",
+  "@type": "Interface",
+  "@context": [
+    "dtmi:dtdl:context;3",
+    "dtmi:dtdl:extension:quantitativeTypes;1"
+  ],
+  "displayName": "Heating System",
+  "extends": "dtmi:LabBenchStudios:PDT:iotModelContext;1",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "lastMaintenanceDate",
+      "writable": true,
+      "schema": "dateTime"
+    },
+    {
+      "@type": [ "Property", "Voltage" ],
+      "name": "systemVoltage",
+      "displayName": "System Voltage",
+      "schema": "float",
+      "unit": "volt"
+    },
+    {
+      "@type": [ "Property", "Pressure" ],
+      "name": "tankPressureNominalFloor",
+      "displayName": "Nominal Floor Value for Tank Pressure Alert",
+      "writable": true,
+      "schema": "float",
+      "unit": "poundPerSquareInch"
+    },
+    {
+      "@type": [ "Property", "Pressure" ],
+      "name": "tankPressureNominalCeiling",
+      "displayName": "Nominal Ceiling Value for Tank Pressure Alert",
+      "writable": true,
+      "schema": "float",
+      "unit": "poundPerSquareInch"
+    },
+    {
+      "@type": [ "Property", "Pressure" ],
+      "name": "tankPressureMaxFloor",
+      "displayName": "Max Floor Value for Tank Pressure Alert",
+      "writable": true,
+      "schema": "float",
+      "unit": "poundPerSquareInch"
+    },
+    {
+      "@type": [ "Property", "Pressure" ],
+      "name": "tankPressureMaxCeiling",
+      "displayName": "Max Ceiling Value for Tank Pressure Alert",
+      "writable": true,
+      "schema": "float",
+      "unit": "poundPerSquareInch"
+    },
+    {
+      "@type": [ "Property", "Temperature" ],
+      "name": "tankTargetTemperature",
+      "displayName": "Target Tank Temperature in Celsius",
+      "schema": "float",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": [ "Property", "Temperature" ],
+      "name": "tankNominalMinTemperature",
+      "displayName": "Nominal Min Tank Temperature in Celsius",
+      "schema": "float",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": [ "Property", "Temperature" ],
+      "name": "tankThresholdMinTemperature",
+      "displayName": "Threshold Min Tank Temperature in Celsius",
+      "schema": "float",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": [ "Property", "Temperature" ],
+      "name": "tankNominalMaxTemperature",
+      "displayName": "Nominal Max Tank Temperature in Celsius",
+      "schema": "float",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": [ "Property", "Temperature" ],
+      "name": "tankThresholdMaxTemperature",
+      "displayName": "Threshold Max Tank Temperature in Celsius",
+      "schema": "float",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": [ "Telemetry", "EnergyRate" ],
+      "name": "powerDraw",
+      "displayName": "Power Draw in Watts",
+      "schema": "float",
+      "unit": "watt"
+    },
+    {
+      "@type": [ "Telemetry", "TimeSpan" ],
+      "name": "systemUptime",
+      "displayName": "Total System Uptime in Seconds",
+      "schema": "float",
+      "unit": "second"
+    },
+    {
+      "@type": "Relationship",
+      "name": "heatingZone",
+      "minMultiplicity": 0,
+      "maxMultiplicity": 10,
+      "target": "dtmi:LabBenchStudios:PDT:heatingZone;1"
+    }
+  ]
+}
