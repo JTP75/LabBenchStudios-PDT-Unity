@@ -1,8 +1,8 @@
 {
-  "name": "com.labbenchstudios.pdtcfwcomponents-unity",
+  "name": "com.labbenchstudios.pdt.unityplugin",
   "version": "0.1.5",
-  "displayName": "Lab Bench Studios - PDT Client Framework for Unity",
-  "description": "Plugin that provides the Unity3D client framework to use MQTT and DTDL with PDT events",
+  "displayName": "Lab Bench Studios - PDT - Unity Plugin",
+  "description": "Plugin that provides basic functionality for Unity to handle PDT events",
   "unity": "6000.0",
   "documentationUrl": "https://github.com/programming-digital-twins/LBS-PDT-UnityPlugin",
   "changelogUrl": "https://github.com/programming-digital-twins/LBS-PDT-UnityPlugin",
@@ -12,11 +12,11 @@
     "IoT",
     "IIoT"
   ],
+  "dependencies": {
+    "com.unity.textmeshpro": "4.0.0"
+  },
   "author": {
     "name": "Lab Bench Studios",
     "url": "https://labbenchstudios.com"
-  },
-  "dependencies": {
-    "com.unity.textmeshpro": "4.0.0"
   }
 }

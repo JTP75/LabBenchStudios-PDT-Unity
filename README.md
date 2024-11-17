@@ -1,3 +1,3 @@
-# PdtCfwComponents-Unity
-This repository contains the Programming Digital Twins Client Framework Components designed for use as a Unity3D plugin (Unity 6).
+# Lab Bench Studios - Programming Digital Twins - Unity Plugin
+This repository contains the Programming Digital Twins core Unity components that are designed to work with the LabBenchStudios-PDT-ClientFramework plugin.
 
