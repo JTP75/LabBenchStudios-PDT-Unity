@@ -79,7 +79,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         private int messagingHostPort = ConfigConst.DEFAULT_MQTT_PORT;
 
         [SerializeField]
-        private List<string> dtdlModelPathList = new List<string>() { "./Models/Dtdl" };
+        private List<string> dtdlModelPathList = null;
 
         [SerializeField]
         private string tsdbHostName = ConfigConst.DEFAULT_HOST;
