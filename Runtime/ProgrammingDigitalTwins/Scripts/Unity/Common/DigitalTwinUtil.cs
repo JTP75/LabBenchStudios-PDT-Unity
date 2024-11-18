@@ -41,19 +41,22 @@ namespace LabBenchStudios.Pdt.Unity.Common
         //
         //
         public static readonly string RELATIVE_PDT_PATH =
-            "/LabBenchStudios/ProgrammingDigitalTwins";
-
-        public static readonly string RELATIVE_DATA_PATH =
-            DigitalTwinUtil.RELATIVE_PDT_PATH + "/Data";
-
-        public static readonly string RELATIVE_STATE_DATA_PATH =
-            DigitalTwinUtil.RELATIVE_DATA_PATH + "/State";
+            "/../Packages/Lab Bench Studios PDT Client Framework";
 
         public static readonly string RELATIVE_MODELS_PATH =
             DigitalTwinUtil.RELATIVE_PDT_PATH + "/Models";
 
         public static readonly string RELATIVE_DTDL_MODELS_PATH =
             DigitalTwinUtil.RELATIVE_MODELS_PATH + "/Dtdl";
+
+        public static readonly string RELATIVE_DTDL_MQTT_MODELS_PATH =
+            DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH + "/Mqtt";
+
+        public static readonly string RELATIVE_DATA_PATH =
+            DigitalTwinUtil.RELATIVE_PDT_PATH + "/Data";
+
+        public static readonly string RELATIVE_STATE_DATA_PATH =
+            DigitalTwinUtil.RELATIVE_DATA_PATH + "/State";
 
         public static readonly string STATE_DATA_EXT = ".dat";
 

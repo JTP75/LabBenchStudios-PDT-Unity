@@ -79,6 +79,9 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         private int messagingHostPort = ConfigConst.DEFAULT_MQTT_PORT;
 
         [SerializeField]
+        private List<string> dtdlModelPathList = new List<string>() { "./Models/Dtdl" };
+
+        [SerializeField]
         private string tsdbHostName = ConfigConst.DEFAULT_HOST;
 
         [SerializeField]
@@ -304,7 +307,8 @@ namespace LabBenchStudios.Pdt.Unity.Manager
 
                 this.connStateData.IncreaseMessageOutCount();
 
-                EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(this.connStateData);
+                this.eventProcessor.OnMessagingSystemStatusUpdate(this.connStateData);
+                //EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(this.connStateData);
 
                 return true;
             }
