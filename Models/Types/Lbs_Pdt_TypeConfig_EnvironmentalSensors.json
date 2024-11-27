@@ -1,0 +1,39 @@
+{
+  "typeName": "environmentalSensorData",
+  "version": "2024-11-18",
+  "description": "Environmental sensor data category configuration.",
+  "displayName": "Environmental Sensor Data Category",
+  "modelName": "dtmi:LabBenchStudios:PDT:environmentalSensorData;1",
+  "id": 1000,
+  "minId": 1001,
+  "maxId": 1999,
+  "typeEntries": {
+    "relativeHumidity": {
+      "typeName": "relativeHumidity",
+      "description": "Humidity type configuration.",
+      "displayName": "Humidity",
+      "modelName": "dtmi:LabBenchStudios:PDT:relativeHumidityData;1",
+      "resourceName": "{productName}/{groupdID}/{locationID}/{deviceID}/{typeName}",
+      "dataContainerType": "LabBenchStudios.Pdt.Data.SensorData",
+      "id": 1010
+    },
+    "barometricPressure": {
+      "typeName": "barometricPressure",
+      "description": "Barometric pressure type configuration.",
+      "displayName": "Pressure",
+      "modelName": "dtmi:LabBenchStudios:PDT:barometricPressureData;1",
+      "resourceName": "{productName}/{groupdID}/{locationID}/{deviceID}/{typeName}",
+      "dataContainerType": "LabBenchStudios.Pdt.Data.SensorData",
+      "id": 1011
+    },
+    "temperature": {
+      "typeName": "temperature",
+      "description": "Temperature type configuration.",
+      "displayName": "Temperature",
+      "modelName": "dtmi:LabBenchStudios:PDT:temperatureData;1",
+      "resourceName": "{productName}/{groupdID}/{locationID}/{deviceID}/{typeName}",
+      "dataContainerType": "LabBenchStudios.Pdt.Data.SensorData",
+      "id": 1012
+    }
+  }
+}

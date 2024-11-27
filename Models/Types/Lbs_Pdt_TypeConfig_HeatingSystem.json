@@ -1,0 +1,30 @@
+{
+  "typeName": "heatingSystem",
+  "version": "2024-11-18",
+  "description": "Heating system category configuration.",
+  "displayName": "Heating System Category",
+  "modelName": "dtmi:LabBenchStudios:PDT:heatingSystem;1",
+  "id": 1000,
+  "minId": 1001,
+  "maxId": 1999,
+  "typeEntries": {
+    "targetTemperature": {
+      "typeName": "targetTemperature",
+      "description": "HVAC actuator type configuration.",
+      "displayName": "HVAC",
+      "modelName": "dtmi:LabBenchStudios:PDT:targetTemperature;1",
+      "resourceName": "{productName}/{groupdID}/{locationID}/{deviceID}/{typeName}",
+      "dataContainerType": "LabBenchStudios.Pdt.Data.ActuatorData",
+      "id": 1001
+    },
+    "targetHumidity": {
+      "typeName": "targetHumidity",
+      "description": "Humidifier actuator type configuration.",
+      "displayName": "Humidifier",
+      "modelName": "dtmi:LabBenchStudios:PDT:targetHumidity;1",
+      "resourceName": "{productName}/{groupdID}/{locationID}/{deviceID}/{typeName}",
+      "dataContainerType": "LabBenchStudios.Pdt.Data.ActuatorData",
+      "id": 1002
+    }
+  }
+}
