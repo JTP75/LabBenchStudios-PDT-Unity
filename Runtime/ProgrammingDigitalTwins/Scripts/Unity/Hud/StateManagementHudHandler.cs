@@ -60,10 +60,16 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject notificationTextObject = null;
 
         [SerializeField]
-        private GameObject liveDataEnableButtonObject = null;
+        private GameObject startDataFeedButtonObject = null;
+
+        [SerializeField]
+        private GameObject stopDataFeedButtonObject = null;
 
         [SerializeField]
         private GameObject simDataStatusDisplay = null;
+
+        [SerializeField]
+        private GameObject liveDataEnableButtonObject = null;
 
         [SerializeField]
         private GameObject simDataEnableButtonObject = null;
@@ -75,17 +81,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject filePathNameDisplay = null;
 
         [SerializeField]
-        private GameObject modelLoadButtonObject = null;
+        private GameObject configureModelsButtonObject = null;
+
+        [SerializeField]
+        private GameObject configureSimButtonObject = null;
 
         [SerializeField]
         private GameObject exitAppButtonObject = null;
-
-        /*
-        private TMP_Text messagingHostText = null;
-        private TMP_Text messagingPortText = null;
-        private TMP_Text clientIDText = null;
-        private TMP_Text resourcePrefixText = null;
-        */
 
         private Text messagingHostText = null;
         private Text messagingPortText = null;
@@ -99,13 +101,11 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private TMP_Text modelDataLoadStatusText = null;
         private TMP_Text filePathDisplayText = null;
 
-        private Button startLiveDataFeedButton = null;
-        private Button startSimDataFeedButton = null;
-        private Button loadModelDataButton = null;
+        private Button startDataFeedButton = null;
+        private Button stopDataFeedButton = null;
+        private Button configureModelsButton = null;
+        private Button configureSimButton = null;
         private Button exitAppButton = null;
-
-        private TMP_Text startLiveDataFeedButtonText = null;
-        private TMP_Text startSimDataFeedButtonText = null;
 
         private string msgHostName = ConfigConst.DEFAULT_HOST;
         private string clientID = "PDT_DTA_Client";
@@ -114,7 +114,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private string dtdlModelPath = DigitalTwinUtil.GetDtdlModelsPath();
 
-        private bool isLiveDataEngaged = false;
+        private bool isLiveDataEnabled = false;
         private bool isSimDataEngaged = false;
         private bool isLoadModelDataEngaged = false;
 
@@ -126,8 +126,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void ExitApplication()
         {
-            try
-            {
+            try {
                 string message = "Stopping connection resources...";
 
                 EventProcessor.GetInstance().LogDebugMessage(message);
@@ -135,9 +134,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
                 message = "Exiting application now...";
                 EventProcessor.GetInstance().LogDebugMessage(message);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Debug.LogException(e);
             }
 
@@ -147,64 +144,44 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="enable"></param>
-        public void StartLiveDataFeed(bool enable)
+        public void StartDataFeed()
         {
-            if (this.startLiveDataFeedButton != null)
-            {
-                if (enable && ! this.isLiveDataEngaged)
-                {
-                    this.StartSimDataFeed(false);
-
-                    this.startLiveDataFeedButtonText.text = "Stop Live";
-                    this.liveDataStatusText.text = "Live Data Started";
-                }
-                else if (! enable || this.isLiveDataEngaged)
-                {
-                    this.startLiveDataFeedButtonText.text = "Start Live";
-                    this.liveDataStatusText.text = "Live Data Stopped";
-
-                    enable = false;
-                }
+            if (this.startDataFeedButton != null) {
+                this.startDataFeedButton.enabled = false;
+                this.startDataFeedButton.gameObject.SetActive(false);
+                this.stopDataFeedButton.enabled = true;
+                this.stopDataFeedButton.gameObject.SetActive(true);
+                this.liveDataStatusText.text = "Data Feed Started";
 
                 ConnectionStateData connStateData = this.CreateLiveDataFeedConnectionStateData();
 
-                EventProcessor.GetInstance().ProcessLiveDataFeedEngageRequest(connStateData, enable);
+                EventProcessor.GetInstance().ProcessLiveDataFeedEngageRequest(connStateData, true);
 
                 // call this separately - this avoids a potential issue where event processor
                 // notifies other listeners of this internal update (although that may be useful)
                 EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(connStateData);
-
-                this.isLiveDataEngaged = enable;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="enable"></param>
-        public void StartSimDataFeed(bool enable)
+        public void StopDataFeed()
         {
-            if (this.startSimDataFeedButton != null)
-            {
-                if (enable && ! this.isSimDataEngaged)
-                {
-                    this.StartLiveDataFeed(false);
+            if (this.stopDataFeedButton != null) {
+                this.stopDataFeedButton.enabled = false;
+                this.stopDataFeedButton.gameObject.SetActive(false);
+                this.startDataFeedButton.enabled = true;
+                this.startDataFeedButton.gameObject.SetActive(true);
+                this.liveDataStatusText.text = "Data Feed Stopped";
 
-                    this.startSimDataFeedButtonText.text = "Stop Sim";
-                    this.simDataStatusText.text = "Sim Data Started";
-                }
-                else if (! enable || this.isSimDataEngaged)
-                {
-                    this.startSimDataFeedButtonText.text = "Start Sim";
-                    this.simDataStatusText.text = "Sim Data Stopped";
+                ConnectionStateData connStateData = this.CreateLiveDataFeedConnectionStateData();
 
-                    enable = false;
-                }
+                EventProcessor.GetInstance().ProcessLiveDataFeedEngageRequest(connStateData, false);
 
-                EventProcessor.GetInstance().ProcessSimulatedDataFeedEngageRequest(enable);
-
-                this.isSimDataEngaged = enable;
+                // call this separately - this avoids a potential issue where event processor
+                // notifies other listeners of this internal update (although that may be useful)
+                EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(connStateData);
             }
         }
 
@@ -213,27 +190,21 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void LoadModelData()
         {
-            try
-            {
+            try {
                 string message = $"NORMAL: Attempting to init and (re)load DTDL model data: {this.dtdlModelPath}";
 
                 EventProcessor.GetInstance().LogDebugMessage(message);
 
                 this.modelDataLoadStatusText.text = "(Re)loading model data...";
 
-                if (EventProcessor.GetInstance().LoadDigitalTwinModels(this.dtdlModelPath))
-                {
+                if (EventProcessor.GetInstance().LoadDigitalTwinModels(this.dtdlModelPath)) {
                     Debug.Log($"NORMAL: Successfully (re)loaded DTDL model data: {this.dtdlModelPath}");
                     this.modelDataLoadStatusText.text = "Loaded model data.";
-                }
-                else
-                {
+                } else {
                     Debug.LogError($"Failed to (re)load DTDL model data: {this.dtdlModelPath}");
                     this.modelDataLoadStatusText.text = "Failed to load model data!";
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 this.modelDataLoadStatusText.text = "Failed to load model data.";
                 Debug.LogError($"Failed to load DTDL files from {this.dtdlModelPath}");
             }
@@ -302,135 +273,119 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         protected override void InitMessageHandler()
         {
-            try
-            {
-                /*
-                if (this.messagingHostTextObject != null)
-                {
-                    this.messagingHostText = this.messagingHostTextObject.GetComponent<TextMeshProUGUI>();
-                }
-
-                if (this.messagingPortTextObject != null)
-                {
-                    this.messagingPortText = this.messagingPortTextObject.GetComponent<TextMeshProUGUI>();
-                }
-
-                if (this.clientIDTextObject != null)
-                {
-                    this.clientIDText = this.clientIDTextObject.GetComponent<TextMeshProUGUI>();
-                }
-
-                if (this.resourcePrefixTextObject != null)
-                {
-                    this.resourcePrefixText = this.resourcePrefixTextObject.GetComponent<TextMeshProUGUI>();
-                }
-                */
-
-                if (this.messagingHostTextObject != null)
-                {
+            try {
+                if (this.messagingHostTextObject != null) {
                     this.messagingHostText = this.messagingHostTextObject.GetComponent<Text>();
                 }
 
-                if (this.messagingPortTextObject != null)
-                {
+                if (this.messagingPortTextObject != null) {
                     this.messagingPortText = this.messagingPortTextObject.GetComponent<Text>();
                 }
 
-                if (this.clientIDTextObject != null)
-                {
+                if (this.clientIDTextObject != null) {
                     this.clientIDText = this.clientIDTextObject.GetComponent<Text>();
                 }
 
-                if (this.resourcePrefixTextObject != null)
-                {
+                if (this.resourcePrefixTextObject != null) {
                     this.resourcePrefixText = this.resourcePrefixTextObject.GetComponent<Text>();
                 }
 
-                if (this.notificationTextObject != null)
-                {
+                if (this.notificationTextObject != null) {
                     this.notificationText = this.notificationTextObject.GetComponent<TextMeshProUGUI>();
                 }
 
-                if (this.liveDataStatusDisplay != null)
-                {
+                if (this.liveDataStatusDisplay != null) {
                     this.liveDataStatusText = this.liveDataStatusDisplay.GetComponent<TextMeshProUGUI>();
                 }
 
-                if (this.liveDataEnableButtonObject != null)
-                {
-                    this.startLiveDataFeedButton = this.liveDataEnableButtonObject.GetComponent<Button>();
-                    
-                    if (this.startLiveDataFeedButton != null)
-                    {
-                        this.startLiveDataFeedButton.onClick.AddListener(() => StartLiveDataFeed(true));
-                        this.startLiveDataFeedButtonText =
-                            this.startLiveDataFeedButton.GetComponentInChildren<TextMeshProUGUI>();
-                    }    
-                }
+                if (this.startDataFeedButtonObject != null) {
+                    this.startDataFeedButton = this.startDataFeedButtonObject.GetComponent<Button>();
 
-                if (this.simDataStatusDisplay != null)
-                {
-                    this.simDataStatusText = this.simDataStatusDisplay.GetComponent<TextMeshProUGUI>();
-                }
-
-                if (this.simDataEnableButtonObject != null)
-                {
-                    this.startSimDataFeedButton = this.simDataEnableButtonObject.GetComponent<Button>();
-
-                    if (this.startSimDataFeedButton != null)
-                    {
-                        this.startSimDataFeedButton.onClick.AddListener(() => StartSimDataFeed(true));
-                        this.startSimDataFeedButtonText =
-                            this.startSimDataFeedButton.GetComponentInChildren<TextMeshProUGUI>();
+                    if (this.startDataFeedButton != null) {
+                        this.startDataFeedButton.onClick.AddListener(() => StartDataFeed());
                     }
                 }
 
-                if (this.modelDataLoadStatusDisplay != null)
-                {
+                if (this.stopDataFeedButtonObject != null) {
+                    this.stopDataFeedButton = this.stopDataFeedButtonObject.GetComponent<Button>();
+
+                    if (this.stopDataFeedButton != null) {
+                        this.stopDataFeedButton.onClick.AddListener(() => StopDataFeed());
+                    }
+                }
+
+                if (this.configureModelsButtonObject != null) {
+                    this.configureModelsButton = this.configureModelsButtonObject.GetComponent<Button>();
+
+                    if (this.configureModelsButton != null) {
+                        this.configureModelsButton.onClick.AddListener(() => LaunchConfigureModelsInterface());
+                    }
+                }
+
+                if (this.configureSimButtonObject != null) {
+                    this.configureSimButton = this.configureSimButtonObject.GetComponent<Button>();
+
+                    if (this.configureSimButton != null) {
+                        this.configureSimButton.onClick.AddListener(() => LaunchConfigureSimInterface());
+                    }
+                }
+
+                if (this.simDataStatusDisplay != null) {
+                    this.simDataStatusText = this.simDataStatusDisplay.GetComponent<TextMeshProUGUI>();
+                }
+
+                if (this.modelDataLoadStatusDisplay != null) {
                     this.modelDataLoadStatusText = this.modelDataLoadStatusDisplay.GetComponent<TextMeshProUGUI>();
                 }
 
-                if (this.filePathNameDisplay != null)
-                {
+                if (this.filePathNameDisplay != null) {
                     this.filePathDisplayText = this.filePathNameDisplay.GetComponent<TextMeshProUGUI>();
 
-                    if (this.filePathDisplayText != null)
-                    {
+                    if (this.filePathDisplayText != null) {
                         this.filePathDisplayText.text = this.dtdlModelPath;
                     }
                 }
 
-                if (this.modelLoadButtonObject != null)
-                {
-                    this.loadModelDataButton = this.modelLoadButtonObject.GetComponent<Button>();
+                if (this.configureModelsButtonObject != null) {
+                    this.configureModelsButton = this.configureModelsButtonObject.GetComponent<Button>();
 
-                    if (this.loadModelDataButton != null)
-                    {
-                        this.loadModelDataButton.onClick.AddListener(() => this.LoadModelData());
+                    if (this.configureModelsButton != null) {
+                        this.configureModelsButton.onClick.AddListener(() => this.LoadModelData());
                     }
                 }
 
-                if (this.exitAppButtonObject != null)
-                {
+                if (this.exitAppButtonObject != null) {
                     this.exitAppButton = this.exitAppButtonObject.GetComponent<Button>();
 
-                    if (this.exitAppButton != null)
-                    {
+                    if (this.exitAppButton != null) {
                         this.exitAppButton.onClick.AddListener(() => this.ExitApplication());
                     }
                 }
 
-                base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
-                
-                if (this.loadModelsAutomatically)
-                {
+                base.RegisterForSystemStatusEvents((ISystemStatusEventListener)this);
+
+                if (this.loadModelsAutomatically) {
                     this.LoadModelData();
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Debug.LogException(ex);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void LaunchConfigureModelsInterface()
+        {
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void LaunchConfigureSimInterface()
+        {
+
         }
 
         /// <summary>
@@ -439,10 +394,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="message"></param>
         protected new void ProcessDebugLogMessage(string message)
         {
-            if (message != null)
-            {
-                if (this.notificationText != null)
-                {
+            if (message != null) {
+                if (this.notificationText != null) {
                     this.notificationText.text = "DEBUG: " + message;
                 }
             }
@@ -454,10 +407,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="message"></param>
         protected new void ProcessWarningLogMessage(string message)
         {
-            if (message != null)
-            {
-                if (this.notificationText != null)
-                {
+            if (message != null) {
+                if (this.notificationText != null) {
                     this.notificationText.text = "WARNING: " + message;
                 }
             }
@@ -469,10 +420,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="message"></param>
         protected new void ProcessErrorLogMessage(string message)
         {
-            if (message != null)
-            {
-                if (this.notificationText != null)
-                {
+            if (message != null) {
+                if (this.notificationText != null) {
                     this.notificationText.text = "ERROR: " + message;
                 }
             }
@@ -484,8 +433,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="data"></param>
         protected override void ProcessActuatorData(ActuatorData data)
         {
-            if (data != null)
-            {
+            if (data != null) {
                 String jsonData = DataUtil.ActuatorDataToJson(data);
             }
         }
@@ -496,8 +444,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="data"></param>
         protected override void ProcessConnectionStateData(ConnectionStateData data)
         {
-            if (data != null)
-            {
+            if (data != null) {
                 String connStateMsg = "...";
 
                 if (data.IsClientConnected()) connStateMsg = "Connected";
@@ -515,8 +462,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="data"></param>
         protected override void ProcessMessageData(MessageData data)
         {
-            if (data != null)
-            {
+            if (data != null) {
                 // nothing to do
             }
         }
@@ -527,8 +473,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="data"></param>
         protected override void ProcessSensorData(SensorData data)
         {
-            if (data != null)
-            {
+            if (data != null) {
                 // nothing to do
             }
         }
@@ -539,8 +484,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <param name="data"></param>
         protected override void ProcessSystemPerformanceData(SystemPerformanceData data)
         {
-            if (data != null)
-            {
+            if (data != null) {
                 // nothing to do
             }
         }
@@ -553,43 +497,35 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         private ConnectionStateData CreateLiveDataFeedConnectionStateData()
         {
-            if (this.messagingHostText != null)
-            {
+            if (this.messagingHostText != null) {
                 string hostNameText = this.messagingHostText.text;
 
-                if (! string.IsNullOrEmpty(hostNameText))
-                {
+                if (!string.IsNullOrEmpty(hostNameText)) {
                     this.msgHostName = hostNameText;
                 }
             }
 
-            if (this.messagingPortText != null)
-            {
+            if (this.messagingPortText != null) {
                 string portNumText = this.messagingPortText.text;
                 int portNum = ConfigConst.DEFAULT_MQTT_PORT;
 
-                if (int.TryParse(portNumText, out portNum))
-                {
+                if (int.TryParse(portNumText, out portNum)) {
                     this.msgPort = portNum;
                 }
             }
 
-            if (this.clientIDText != null)
-            {
+            if (this.clientIDText != null) {
                 string cidText = this.clientIDText.text;
 
-                if (! string.IsNullOrEmpty(cidText))
-                {
+                if (!string.IsNullOrEmpty(cidText)) {
                     this.clientID = cidText;
                 }
             }
 
-            if (this.resourcePrefixText != null)
-            {
+            if (this.resourcePrefixText != null) {
                 string rpText = this.resourcePrefixText.text;
 
-                if (! string.IsNullOrEmpty(rpText))
-                {
+                if (!string.IsNullOrEmpty(rpText)) {
                     this.resourcePrefix = rpText;
                 }
             }
