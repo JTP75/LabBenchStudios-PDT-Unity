@@ -49,8 +49,8 @@ This repository is comprised of the following key paths:
 
 Here are some other files at the top level that are important to review:
 - [README.md](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/README.md): This README.
-- [LICENSE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE): The repository's non-code artifact LICENSE file (e.g., documentation, prefabs, etc.)
-- [LICENSE-CODE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-CODE): The repository's code artifact LICENSE file (e.g., source code [mostly C#])
+- [LICENSE-ASSETS](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-ASSETS.md): The repository's non-code artifacts LICENSE file (e.g., documentation, prefabs, etc.) These artifacts are contained within the ./Documentation, ./Models, and ./Runtime/ProgrammingDigitalTwins/Prefabs path.
+- [LICENSE-CODE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-CODE.md): The repository's code artifacts LICENSE file (e.g., source code [mostly C#]). These artifacts are contained within this repository's ./Runtime/ProgrammingDigitalTwins/Scripts path.
 
 NOTE: The directory structure and all files are subject to change based on feedback I receive from readers of my book and students in my IoT class,
 as well as improvements I find to be helpful for overall repo betterment.
@@ -78,11 +78,10 @@ This repository is intended to be used as part of a Unity 3D project (see refere
   - Reference: Unity Technologies. Unity Editor. (2024) [Online]. Available: https://unity.com/.
   - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1.
 
-- Third party libraries and references
-  - See [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md).
+- Third party libraries and references (for DLL's stored within the ./Plugins path)
+  - References: See [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md).
 
-
-NOTE: This list will be updated as others are incorporated.
+NOTE: This section and [Third Party Notices.md]() will be updated if / when other dependencies are incorporated.
 
 # FAQ
 For typical questions (and answers) to the repositories of the Programming the IoT project, please see the [FAQ](https://github.com/programming-the-iot/book-exercise-tasks/blob/default/FAQ.md).
@@ -94,5 +93,6 @@ If any code samples or other technology this work contains, describes, and / or 
 of others, it is your responsibility to ensure that your use thereof complies with such licenses and/or rights.
 
 # LICENSE
-Assets and Models: Please see [LICENSE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE) if you plan to use these assets.
-Source Code: Please see [LICENSE-CODE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-CODE) if you plan to use this code.
+Assets and Models: Please see [LICENSE-ASSETS](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-ASSETS.md) if you plan to use these assets.
+
+Source Code: Please see [LICENSE-CODE](https://github.com/programming-digital-twins/pdt-unity-components/blob/alpha/LICENSE-CODE.md) if you plan to use this code.
