@@ -33,7 +33,7 @@ This repository is comprised of the following key paths:
   - [Models](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models): Contains both DTDL and type mapping JSON models.
     - [Dtdl](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models/Dtdl): Digital Twin Definition Language (DTDL) JSON models.
     - [Types](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models/Types): JSON-based type and constraint mapping models.
-  - [Plugins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Plugins): Contains all pre-built open-source DLL dependencies (see [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/default/Third%20Party%20Notices.md)).
+  - [Plugins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Plugins): Contains all pre-built open-source DLL dependencies (see [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md)).
   - [Runtime](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime): Contains all Unity-specific prefabs and C# scripts.
     - [ProgrammingDigitalTwins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins): Containing folder.
       - [Prefabs](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Prefabs): Unity-specific prefabs.
@@ -79,7 +79,7 @@ This repository is intended to be used as part of a Unity 3D project (see refere
   - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1.
 
 - Third party libraries and references
-  - See [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/default/Third%20Party%20Notices.md).
+  - See [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md).
 
 
 NOTE: This list will be updated as others are incorporated.
