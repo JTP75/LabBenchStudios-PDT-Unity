@@ -1,39 +1,96 @@
-CodeCoverage
+# THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
 
-THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
 Do Not Translate or Localize
 
 This software incorporates components from the projects listed below. The original copyright notices
-and the licenses under which Microsoft received such components are set forth below and are provided for 
-informational purposes only. Microsoft reserves all rights not expressly granted herein, whether by 
-implication, estoppel or otherwise.
+and the licenses under which the LabBenchStudios-PDT-UnityPlugin library received are linked below
+and are provided for informational purposes only.
 
-1.	Mono.Cecil version 0.11.3 (https://github.com/jbevain/cecil)
+## Library Dependencies (required, included in this repository)
 
+- LBS.PdtCfwComponents.dll
+  - Available: https://github.com/programming-digital-twins/pdt-cfw-components
+  - Version: 0.1.6 (alpha)
+  - License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components?tab=MIT-2-ov-file). See LICENSE file in repository.
 
+- DTDLParser.dll
+  - Available: https://www.nuget.org/packages/DTDLParser/
+  - Version: 1.0.52
+  - License: [MIT](https://licenses.nuget.org/MIT).
 
-%% Mono.Cecil NOTICES AND INFORMATION BEGIN HERE
-=========================================
-Copyright (c) 2008 - 2015 Jb Evain
-Copyright (c) 2008 - 2011 Novell, Inc.
+- Microsoft.Bcl.AsyncInterfaces.dll
+  - Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+- MQTTnet.dll
+  - Available: https://www.nuget.org/packages/MQTTnet/
+  - Version: 4.3.7.1207
+  - License: [MIT](https://licenses.nuget.org/MIT).
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+- MQTTnet.Extensions.ManagedClient.dll
+  - Available: https://www.nuget.org/packages/MQTTnet.Extensions.ManagedClient
+  - Version: 4.3.7.1207
+  - License: [MIT](https://licenses.nuget.org/MIT).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-=========================================
-END OF Mono.Cecil NOTICES AND INFORMATION
+- Newtonsoft.Json.dll
+  - Available: https://www.nuget.org/packages/Newtonsoft.Json
+  - Version: 13.03
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Buffers.dll
+  - Available: https://www.nuget.org/packages/System.Buffers
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.IO.Pipelines.dll
+  - Available: https://www.nuget.org/packages/System.IO.Pipelines
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Memory.dll
+  - Available: https://www.nuget.org/packages/System.Memory
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Numerics.Vectors.dll
+  - Available: https://www.nuget.org/packages/System.Numerics.Vectors
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Runtime.CompilerServices.Unsafe.dll
+  - Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
+  - Version: 6.1.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Encodings.Web.dll
+  - Available: https://www.nuget.org/packages/System.Text.Encodings.Web
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Json.dll
+  - Available: https://www.nuget.org/packages/System.Text.Json
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Threading.Tasks.Extensions.dll
+  - Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.ValueTuple.dll
+  - Available: https://www.nuget.org/packages/System.ValueTuple
+  - Version: 4.5.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+# OTHER REFERENCES - Unity Technologies (required, NOT included in this repository)
+
+- Unity Technologies - Text Mesh Pro
+  - Available: "Unity.TextMeshPro" - https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html
+  - Version: 4.0
+  - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
+
+- Unity Technologies - Input System
+  - Available: "Unity.InputSystem" - https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html
+  - Version: 1.11
+  - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html

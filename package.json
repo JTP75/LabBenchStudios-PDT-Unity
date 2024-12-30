@@ -1,6 +1,6 @@
 {
   "name": "com.labbenchstudios.pdt.unity",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "displayName": "Lab Bench Studios - PDT - Unity Plugin",
   "description": "Plugin that provides the Unity3D client framework to use MQTT and DTDL with PDT events",
   "unity": "6000.0",
