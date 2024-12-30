@@ -1,7 +1,7 @@
 /**
  * MIT License
  * 
- * Copyright (c) 2024 Andrew D. King
+ * Copyright (c) 2024 - 2025 Andrew D. King
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,11 +32,11 @@ using TMPro;
 using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Unity.Common;
-using LabBenchStudios.Pdt.Model;
+using LabBenchStudios.Pdt.Plexus;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
-    public class StateManagementHudHandler : BaseAsyncDataMessageProcessor, ISystemStatusEventListener
+    public class StateManagementHudHandler : BaseAsyncDataMessageProcessor, ISystemStatusEventListener, IUserEventStateListener
     {
         [SerializeField]
         private bool loadModelsAutomatically = true;
@@ -72,7 +72,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject liveDataEnableButtonObject = null;
 
         [SerializeField]
-        private GameObject simDataEnableButtonObject = null;
+        private GameObject launchHistorianCachePlaybackButtonObject = null;
 
         [SerializeField]
         private GameObject modelDataLoadStatusDisplay = null;
@@ -89,6 +89,12 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         [SerializeField]
         private GameObject exitAppButtonObject = null;
 
+        [SerializeField]
+        private GameObject historianCachePlaybackPanel = null;
+
+        [SerializeField]
+        private GameObject historianCacheCapturePanel = null;
+
         private Text messagingHostText = null;
         private Text messagingPortText = null;
         private Text clientIDText = null;
@@ -104,7 +110,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private Button startDataFeedButton = null;
         private Button stopDataFeedButton = null;
         private Button configureModelsButton = null;
-        private Button configureSimButton = null;
+        private Button launchHistorianCachePlaybackButton = null;
         private Button exitAppButton = null;
 
         private string msgHostName = ConfigConst.DEFAULT_HOST;
@@ -114,6 +120,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private string dtdlModelPath = DigitalTwinUtil.GetDtdlModelsPath();
 
+        private bool isDataFeedActive = false;
+        private bool restartDataFeed = false;
         private bool isLiveDataEnabled = false;
         private bool isSimDataEngaged = false;
         private bool isLoadModelDataEngaged = false;
@@ -127,8 +135,11 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         public void ExitApplication()
         {
             try {
+                this.StopDataFeed();
+
                 string message = "Stopping connection resources...";
 
+                EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.CloseOpenDialogs);
                 EventProcessor.GetInstance().LogDebugMessage(message);
                 EventProcessor.GetInstance().StopConnectionResources();
 
@@ -146,11 +157,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void StartDataFeed()
         {
-            if (this.startDataFeedButton != null) {
-                this.startDataFeedButton.enabled = false;
-                this.startDataFeedButton.gameObject.SetActive(false);
-                this.stopDataFeedButton.enabled = true;
-                this.stopDataFeedButton.gameObject.SetActive(true);
+            if (this.startDataFeedButton != null && ! this.isDataFeedActive)
+            {
+                this.startDataFeedButton.interactable = false;
+                this.stopDataFeedButton.interactable = true;
                 this.liveDataStatusText.text = "Data Feed Started";
 
                 ConnectionStateData connStateData = this.CreateLiveDataFeedConnectionStateData();
@@ -160,6 +170,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 // call this separately - this avoids a potential issue where event processor
                 // notifies other listeners of this internal update (although that may be useful)
                 EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(connStateData);
+
+                this.isDataFeedActive = true;
             }
         }
 
@@ -168,11 +180,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void StopDataFeed()
         {
-            if (this.stopDataFeedButton != null) {
-                this.stopDataFeedButton.enabled = false;
-                this.stopDataFeedButton.gameObject.SetActive(false);
-                this.startDataFeedButton.enabled = true;
-                this.startDataFeedButton.gameObject.SetActive(true);
+            if (this.stopDataFeedButton != null && this.isDataFeedActive)
+            {
+                this.startDataFeedButton.interactable = true;
+                this.stopDataFeedButton.interactable = false;
                 this.liveDataStatusText.text = "Data Feed Stopped";
 
                 ConnectionStateData connStateData = this.CreateLiveDataFeedConnectionStateData();
@@ -182,6 +193,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 // call this separately - this avoids a potential issue where event processor
                 // notifies other listeners of this internal update (although that may be useful)
                 EventProcessor.GetInstance().OnMessagingSystemStatusUpdate(connStateData);
+
+                this.isDataFeedActive = false;
             }
         }
 
@@ -211,6 +224,47 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         }
 
         // public callback methods
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventType"></param>
+        public void HandleUserEventState(UserEventState.EventType eventType)
+        {
+            switch (eventType)
+            {
+                case UserEventState.EventType.CloseOpenDialogs:
+                    if (this.historianCacheCapturePanel != null)
+                    {
+                        this.historianCacheCapturePanel.SetActive(false);
+                    }
+
+                    if (this.historianCachePlaybackPanel != null)
+                    {
+                        this.historianCachePlaybackPanel.SetActive(false);
+                    }
+
+                    break;
+
+                case UserEventState.EventType.RestoreOpenDialogs:
+                    if (this.historianCacheCapturePanel != null)
+                    {
+                        this.historianCacheCapturePanel.SetActive(true);
+                    }
+
+                    if (this.historianCachePlaybackPanel != null)
+                    {
+                        this.historianCachePlaybackPanel.SetActive(false);
+                    }
+
+                    break;
+
+                case UserEventState.EventType.DisableLiveDataProcessing:
+                    this.StopDataFeed();
+
+                    break;
+            }
+        }
 
         public void LogDebugMessage(string message)
         {
@@ -302,7 +356,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.startDataFeedButton = this.startDataFeedButtonObject.GetComponent<Button>();
 
                     if (this.startDataFeedButton != null) {
-                        this.startDataFeedButton.onClick.AddListener(() => StartDataFeed());
+                        this.startDataFeedButton.onClick.AddListener(() => this.StartDataFeed());
                     }
                 }
 
@@ -310,7 +364,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.stopDataFeedButton = this.stopDataFeedButtonObject.GetComponent<Button>();
 
                     if (this.stopDataFeedButton != null) {
-                        this.stopDataFeedButton.onClick.AddListener(() => StopDataFeed());
+                        this.stopDataFeedButton.onClick.AddListener(() => this.StopDataFeed());
                     }
                 }
 
@@ -318,15 +372,15 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.configureModelsButton = this.configureModelsButtonObject.GetComponent<Button>();
 
                     if (this.configureModelsButton != null) {
-                        this.configureModelsButton.onClick.AddListener(() => LaunchConfigureModelsInterface());
+                        this.configureModelsButton.onClick.AddListener(() => this.LaunchConfigureModelsInterface());
                     }
                 }
 
-                if (this.configureSimButtonObject != null) {
-                    this.configureSimButton = this.configureSimButtonObject.GetComponent<Button>();
+                if (this.launchHistorianCachePlaybackButtonObject != null) {
+                    this.launchHistorianCachePlaybackButton = this.launchHistorianCachePlaybackButtonObject.GetComponent<Button>();
 
-                    if (this.configureSimButton != null) {
-                        this.configureSimButton.onClick.AddListener(() => LaunchConfigureSimInterface());
+                    if (this.launchHistorianCachePlaybackButton != null) {
+                        this.launchHistorianCachePlaybackButton.onClick.AddListener(() => this.LaunchHistorianPlaybackInterface());
                     }
                 }
 
@@ -362,7 +416,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     }
                 }
 
-                base.RegisterForSystemStatusEvents((ISystemStatusEventListener)this);
+                base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
+                base.RegisterForUserStatusEvents((IUserEventStateListener) this);
 
                 if (this.loadModelsAutomatically) {
                     this.LoadModelData();
@@ -383,9 +438,30 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        protected void LaunchConfigureSimInterface()
+        protected void LaunchHistorianPlaybackInterface()
         {
+            if (this.historianCachePlaybackPanel != null)
+            {
+                if (this.historianCachePlaybackPanel.activeInHierarchy)
+                {
+                    this.historianCachePlaybackPanel.SetActive(false);
 
+                    EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.RestoreOpenDialogs);
+                    EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.EnableLiveDataProcessing);
+
+                    this.startDataFeedButton.interactable = true;
+                    this.stopDataFeedButton.interactable = true;
+                } else
+                {
+                    EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.CloseOpenDialogs);
+                    EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.DisableLiveDataProcessing);
+
+                    this.startDataFeedButton.interactable = false;
+                    this.stopDataFeedButton.interactable = false;
+
+                    this.historianCachePlaybackPanel.SetActive(true);
+                }
+            }
         }
 
         /// <summary>
@@ -541,4 +617,5 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         }
 
     }
+
 }

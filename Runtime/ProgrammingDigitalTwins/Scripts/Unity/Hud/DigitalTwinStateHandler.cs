@@ -1,7 +1,7 @@
 /**
  * MIT License
  * 
- * Copyright (c) 2024 Andrew D. King
+ * Copyright (c) 2024 - 2025 Andrew D. King
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ using TMPro;
 using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Model;
+using LabBenchStudios.Pdt.Plexus;
 
 using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Unity.Hud;
@@ -158,6 +159,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private Button closeStatusPanelButton = null;
         private Button showPropsPanelButton = null;
 
+        private bool enableDebugLogging = true;
+
         private bool hasModelPanel = false;
         private bool hasModelPanelJsonContainer = false;
         private bool isModelPanelActive = false;
@@ -199,6 +202,25 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
 
         // public methods (button interactions)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void HandleUserEventState(UserEventState.EventType eventType)
+        {
+            switch (eventType)
+            {
+                case UserEventState.EventType.CloseOpenDialogs:
+                    this.CloseStatusPanel();
+                    this.CloseModelPanel();
+                    this.ClosePropsEditorPanel();
+                    break;
+
+                default:
+                    // ignore
+                    break;
+            }
+        }
 
         /// <summary>
         /// 
@@ -804,17 +826,20 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             if (this.IsIncomingTelemetryProcessingEnabled(data))
             {
-                StringBuilder sb = new StringBuilder(this.modelTelemetries);
+                if (this.enableDebugLogging)
+                {
+                    StringBuilder sb = new StringBuilder(this.modelTelemetries);
 
-                sb.Append("\n==========");
-                sb.Append($"\nSensor Name: {data.GetName()}");
-                sb.Append($"\nSensor Value: {data.GetValue()}");
-                sb.Append("\n==========");
-                sb.Append($"\nIncoming Key: {ModelNameUtil.GenerateDataSyncKey(data)}");
-                sb.Append($"\nData Sync Key: {this.digitalTwinModelState.GetDataSyncKey()}");
-                sb.Append($"\nModel Sync Key: {this.digitalTwinModelState.GetModelSyncKey()}");
+                    sb.Append("\n==========");
+                    sb.Append($"\nSensor Name: {data.GetName()}");
+                    sb.Append($"\nSensor Value: {data.GetValue()}");
+                    sb.Append("\n==========");
+                    sb.Append($"\nIncoming Key: {ModelNameUtil.GenerateDataSyncKey(data)}");
+                    sb.Append($"\nData Sync Key: {this.digitalTwinModelState.GetDataSyncKey()}");
+                    sb.Append($"\nModel Sync Key: {this.digitalTwinModelState.GetModelSyncKey()}");
 
-                this.statusContentText.text = sb.ToString();
+                    this.statusContentText.text = sb.ToString();
+                }
 
                 if (this.animationListenerList.Count > 0)
                 {
@@ -839,14 +864,17 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             if (this.IsIncomingTelemetryProcessingEnabled(data))
             {
-                StringBuilder sb = new StringBuilder(this.modelTelemetries);
+                if (this.enableDebugLogging)
+                {
+                    StringBuilder sb = new StringBuilder(this.modelTelemetries);
 
-                sb.Append("\n==========");
-                sb.Append($"\nCPU Util: {data.GetCpuUtilization()}");
-                sb.Append($"\nMem Util: {data.GetMemoryUtilization()}");
-                sb.Append($"\nDisk Util: {data.GetDiskUtilization()}");
+                    sb.Append("\n==========");
+                    sb.Append($"\nCPU Util: {data.GetCpuUtilization()}");
+                    sb.Append($"\nMem Util: {data.GetMemoryUtilization()}");
+                    sb.Append($"\nDisk Util: {data.GetDiskUtilization()}");
 
-                this.statusContentText.text = sb.ToString();
+                    this.statusContentText.text = sb.ToString();
+                }
 
                 if (this.animationListenerList.Count > 0)
                 {
@@ -904,7 +932,9 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 this.typeCategoryID = dataContext.GetTypeCategoryID();
                 this.typeID = dataContext.GetTypeID();
 
-                Debug.Log(
+                if (this.enableDebugLogging)
+                {
+                    Debug.Log(
                     $"NORMAL: Provisioning DT model state instance with " +
                     $"\n\tURI = {this.dtmiUri}" +
                     $"\n\tName = {this.dtmiName}" +
@@ -913,6 +943,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     $"\n\tType Category ID = {this.typeCategoryID}" +
                     $"\n\tType ID = {this.typeID}" +
                     $"\n\tController ID = {this.controllerID}");
+                }
 
                 if (this.digitalTwinModelState == null)
                 {

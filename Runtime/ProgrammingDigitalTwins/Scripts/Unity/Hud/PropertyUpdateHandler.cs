@@ -1,7 +1,7 @@
 ﻿/**
  * MIT License
  * 
- * Copyright (c) 2024 Andrew D. King
+ * Copyright (c) 2024 - 2025 Andrew D. King
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Text;
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,9 +33,6 @@ using TMPro;
 using LabBenchStudios.Pdt.Model;
 using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
-using System.Globalization;
-using System.Text;
-using Unity.VisualScripting;
 
 /**
  * Controller for managing impeller turbine rotational speed.
@@ -84,6 +82,8 @@ namespace LabBenchStudios.Pdt.Unity.Controller
         private string locationID = ConfigConst.NOT_SET;
         private int typeCategoryID = ConfigConst.DEFAULT_TYPE_CATEGORY_ID;
         private int typeID = ConfigConst.DEFAULT_TYPE_ID;
+
+        private bool enableDebugLogging = false;
 
         private DigitalTwinProperty digitalTwinProperty;
 
@@ -263,19 +263,21 @@ namespace LabBenchStudios.Pdt.Unity.Controller
             if (modelState != null)
             {
                 this.propName = this.digitalTwinProperty.GetPropertyName();
-                //this.propName = modelState.GetName();
                 this.deviceID = modelState.GetDeviceID();
                 this.locationID = modelState.GetLocationID();
                 this.typeCategoryID = modelState.GetTypeCategoryID();
                 this.typeID = modelState.GetTypeID();
 
-                Debug.LogError(
-                    "Props state:" +
-                    $"\n\tname:          {this.propName}" +
-                    $"\n\tDeviceID:      {this.deviceID}" +
-                    $"\n\tlocationID:    {this.locationID}" +
-                    $"\n\typeCategoryID: {this.typeCategoryID}" +
-                    $"\n\typeID:         {this.typeID}");
+                if (this.enableDebugLogging)
+                {
+                    Debug.Log(
+                        "Props state:" +
+                        $"\n\tname:          {this.propName}" +
+                        $"\n\tDeviceID:      {this.deviceID}" +
+                        $"\n\tlocationID:    {this.locationID}" +
+                        $"\n\typeCategoryID: {this.typeCategoryID}" +
+                        $"\n\typeID:         {this.typeID}");
+                }
 
                 this.dataContext =
                     new IotDataContext(this.deviceID, this.deviceID, this.typeCategoryID, this.typeID);

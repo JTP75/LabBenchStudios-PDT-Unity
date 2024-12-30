@@ -1,7 +1,7 @@
 ﻿/**
  * MIT License
  * 
- * Copyright (c) 2024 Andrew D. King
+ * Copyright (c) 2024 - 2025 Andrew D. King
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ using System;
 using UnityEngine;
 
 using LabBenchStudios.Pdt.Data;
-using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Common;
 
 /**

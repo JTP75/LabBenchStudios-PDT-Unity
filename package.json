@@ -1,8 +1,8 @@
 {
-  "name": "com.labbenchstudios.pdt.unityplugin",
+  "name": "com.labbenchstudios.pdt.unity",
   "version": "0.1.5",
-  "displayName": "LabBenchStudios-PDT-UnityPlugin",
-  "description": "Plugin that provides basic functionality for Unity to handle PDT events",
+  "displayName": "Lab Bench Studios - PDT - Unity Plugin",
+  "description": "Plugin that provides the Unity3D client framework to use MQTT and DTDL with PDT events",
   "unity": "6000.0",
   "documentationUrl": "https://github.com/programming-digital-twins/LBS-PDT-UnityPlugin",
   "changelogUrl": "https://github.com/programming-digital-twins/LBS-PDT-UnityPlugin",

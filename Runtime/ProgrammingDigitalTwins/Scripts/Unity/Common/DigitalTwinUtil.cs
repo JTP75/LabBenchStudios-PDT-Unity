@@ -23,13 +23,9 @@
  */
 
 using System;
+using System.IO;
 
 using UnityEngine;
-
-using LabBenchStudios.Pdt.Common;
-using LabBenchStudios.Pdt.Data;
-using LabBenchStudios.Pdt.Model;
-using System.IO;
 
 namespace LabBenchStudios.Pdt.Unity.Common
 {

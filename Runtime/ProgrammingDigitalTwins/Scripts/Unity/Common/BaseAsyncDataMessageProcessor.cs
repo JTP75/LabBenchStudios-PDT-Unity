@@ -1,7 +1,7 @@
 /**
  * MIT License
  * 
- * Copyright (c) 2024 Andrew D. King
+ * Copyright (c) 2024 - 2025 Andrew D. King
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 using UnityEngine;
 
@@ -32,8 +33,7 @@ using TMPro;
 using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Model;
-using System.Linq;
-using System.Text;
+using LabBenchStudios.Pdt.Plexus;
 
 namespace LabBenchStudios.Pdt.Unity.Common
 {
@@ -109,45 +109,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
             // final
             this.isInitialized = true;
 
+            // update time and date every second
             if (this.enableTimeAndDateUpdates)
             {
                 InvokeRepeating(nameof(UpdateTimeAndDate), 1.0f, 1.0f);
-            }
-        }
-
-        private void InitQueues()
-        {
-            this.debugLogQueue = new Queue<string>();
-            this.warningLogQueue = new Queue<string>();
-            this.errorLogQueue = new Queue<string>();
-
-            this.msgDataQueue = new Queue<MessageData>();
-            this.actuatorDataQueue = new Queue<ActuatorData>();
-            this.connStateDataQueue = new Queue<ConnectionStateData>();
-            this.sensorDataQueue = new Queue<SensorData>();
-            this.sysPerfDataQueue = new Queue<SystemPerformanceData>();
-        }
-
-        private void InitTimeDisplay()
-        {
-            if (this.timeDisplay != null)
-            {
-                this.timeLog = this.timeDisplay.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (this.dateDisplay != null)
-            {
-                this.dateLog = this.dateDisplay.GetComponent<TextMeshProUGUI>();
-            }
-        }
-
-        private void InitEventProcessing()
-        {
-            this.eventProcessor = EventProcessor.GetInstance();
-
-            if (this.registerForDataCallbacks)
-            {
-                this.eventProcessor.RegisterListener((IDataContextEventListener)this);
             }
         }
 
@@ -349,6 +314,15 @@ namespace LabBenchStudios.Pdt.Unity.Common
             }
         }
 
+        protected void RegisterForUserStatusEvents(IUserEventStateListener listener)
+        {
+            if (listener != null)
+            {
+                Debug.Log("Registering for user status events...");
+                this.eventProcessor.RegisterListener(listener);
+            }
+        }
+
         // protected template methods
 
         protected abstract void InitMessageHandler();
@@ -364,6 +338,42 @@ namespace LabBenchStudios.Pdt.Unity.Common
         protected abstract void ProcessSystemPerformanceData(SystemPerformanceData data);
 
         // private methods
+
+        private void InitQueues()
+        {
+            this.debugLogQueue = new Queue<string>();
+            this.warningLogQueue = new Queue<string>();
+            this.errorLogQueue = new Queue<string>();
+
+            this.msgDataQueue = new Queue<MessageData>();
+            this.actuatorDataQueue = new Queue<ActuatorData>();
+            this.connStateDataQueue = new Queue<ConnectionStateData>();
+            this.sensorDataQueue = new Queue<SensorData>();
+            this.sysPerfDataQueue = new Queue<SystemPerformanceData>();
+        }
+
+        private void InitTimeDisplay()
+        {
+            if (this.timeDisplay != null)
+            {
+                this.timeLog = this.timeDisplay.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.dateDisplay != null)
+            {
+                this.dateLog = this.dateDisplay.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        private void InitEventProcessing()
+        {
+            this.eventProcessor = EventProcessor.GetInstance();
+
+            if (this.registerForDataCallbacks)
+            {
+                this.eventProcessor.RegisterListener((IDataContextEventListener) this);
+            }
+        }
 
         private string GetDebugLogMessageFromQueue()
         {

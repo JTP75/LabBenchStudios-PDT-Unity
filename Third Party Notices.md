@@ -1,1 +1,96 @@
+# THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
 
+Do Not Translate or Localize
+
+This software incorporates components from the projects listed below. The original copyright notices
+and the licenses under which the LabBenchStudios-PDT-UnityPlugin library received are linked below
+and are provided for informational purposes only.
+
+## Library Dependencies (required, included in this repository)
+
+- LBS.PdtCfwComponents.dll
+  - Available: https://github.com/programming-digital-twins/pdt-cfw-components
+  - Version: 0.1.5 (alpha)
+  - License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components?tab=MIT-2-ov-file). See LICENSE file in repository.
+
+- DTDLParser.dll
+  - Available: https://www.nuget.org/packages/DTDLParser/
+  - Version: 1.0.52
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- Microsoft.Bcl.AsyncInterfaces.dll
+  - Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- MQTTnet.dll
+  - Available: https://www.nuget.org/packages/MQTTnet/
+  - Version: 4.3.7.1207
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- MQTTnet.Extensions.ManagedClient.dll
+  - Available: https://www.nuget.org/packages/MQTTnet.Extensions.ManagedClient
+  - Version: 4.3.7.1207
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- Newtonsoft.Json.dll
+  - Available: https://www.nuget.org/packages/Newtonsoft.Json
+  - Version: 13.03
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Buffers.dll
+  - Available: https://www.nuget.org/packages/System.Buffers
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.IO.Pipelines.dll
+  - Available: https://www.nuget.org/packages/System.IO.Pipelines
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Memory.dll
+  - Available: https://www.nuget.org/packages/System.Memory
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Numerics.Vectors.dll
+  - Available: https://www.nuget.org/packages/System.Numerics.Vectors
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Runtime.CompilerServices.Unsafe.dll
+  - Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
+  - Version: 6.1.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Encodings.Web.dll
+  - Available: https://www.nuget.org/packages/System.Text.Encodings.Web
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Json.dll
+  - Available: https://www.nuget.org/packages/System.Text.Json
+  - Version: 9.0.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Threading.Tasks.Extensions.dll
+  - Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
+  - Version: 4.6.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.ValueTuple.dll
+  - Available: https://www.nuget.org/packages/System.ValueTuple
+  - Version: 4.5.0
+  - License: [MIT](https://licenses.nuget.org/MIT).
+
+# OTHER REFERENCES - Unity Technologies (required, NOT included in this repository)
+
+- Unity Technologies - Text Mesh Pro
+  - Available: "Unity.TextMeshPro" - https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html
+  - Version: 4.0
+  - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
+
+- Unity Technologies - Input System
+  - Available: "Unity.InputSystem" - https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html
+  - Version: 1.11
+  - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
