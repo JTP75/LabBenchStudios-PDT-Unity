@@ -26,23 +26,23 @@ they follow a similar design philosophy as that of the Java, or Gateway Device A
 ## How to navigate the directory structure of this repository
 This repository is comprised of the following key paths:
 - [LBS-PDT-UnityPlugin](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin): All other assets are contained within this path.
-  - [Documentation](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Documentation): Contains plugin documentation.
-  - [Models](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models): Contains both DTDL and type mapping JSON models.
-    - [Dtdl](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models/Dtdl): Digital Twin Definition Language (DTDL) JSON models.
-    - [Types](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Models/Types): JSON-based type and constraint mapping models.
-  - [Plugins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Plugins): Contains all pre-built open-source DLL dependencies (see [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md)).
-  - [Runtime](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime): Contains all Unity-specific prefabs and C# scripts.
-    - [ProgrammingDigitalTwins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins): Containing folder.
-      - [Prefabs](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Prefabs): Unity-specific prefabs.
-      - [Scripts](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts): Unity-specific C# scripts.
-        - [Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity): Namespace containing folder (to help avoid naming collisions).
-          - [Common](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Common): Base game object and utility classes.
-          - [Controller](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Controller): Simple animation controller classes.
-          - [Dashboard](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Dashboard): Simple dashboard controllers (3D embeddable).
-          - [Hud](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Hud): Simple HUD controllers (2D display).
-          - [Manager](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Manager): Primary system and keyboard manager components.
-          - [Model](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Model): Simple collision controller classes.
-          - [Sample](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Sample): Sample threshold crossing animation controller classes.
+  - [Documentation](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Documentation): Contains plugin documentation.
+  - [Models](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Models): Contains both DTDL and type mapping JSON models.
+    - [Dtdl](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Models/Dtdl): Digital Twin Definition Language (DTDL) JSON models.
+    - [Types](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Models/Types): JSON-based type and constraint mapping models.
+  - [Plugins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Plugins): Contains all pre-built open-source DLL dependencies (see [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Third%20Party%20Notices.md)).
+  - [Runtime](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime): Contains all Unity-specific prefabs and C# scripts.
+    - [ProgrammingDigitalTwins](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins): Containing folder.
+      - [Prefabs](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Prefabs): Unity-specific prefabs.
+      - [Scripts](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts): Unity-specific C# scripts.
+        - [Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity): Namespace containing folder (to help avoid naming collisions).
+          - [Common](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Common): Base game object and utility classes.
+          - [Controller](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Controller): Simple animation controller classes.
+          - [Dashboard](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Dashboard): Simple dashboard controllers (3D embeddable).
+          - [Hud](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Hud): Simple HUD controllers (2D display).
+          - [Manager](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Manager): Primary system and keyboard manager components.
+          - [Model](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Model): Simple collision controller classes.
+          - [Sample](https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/blob/alpha/Runtime/ProgrammingDigitalTwins/Scripts/Unity/Sample): Sample threshold crossing animation controller classes.
 
 NOTE: The directory structure and all files are subject to change based on feedback I receive from readers of my book and students in my IoT class,
 as well as improvements I find to be helpful for overall repo betterment.
