@@ -10,7 +10,7 @@ and are provided for informational purposes only.
 
 - LBS.PdtCfwComponents.dll
   - Available: https://github.com/programming-digital-twins/pdt-cfw-components
-  - Version: 0.1.5 (alpha)
+  - Version: 0.1.6 (alpha)
   - License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components?tab=MIT-2-ov-file). See LICENSE file in repository.
 
 - DTDLParser.dll
