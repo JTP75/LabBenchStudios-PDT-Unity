@@ -36,8 +36,12 @@ namespace LabBenchStudios.Pdt.Unity.Common
         // Consts and utility (static) methods for values / paths / etc.
         //
         //
+        /*
         public static readonly string RELATIVE_PDT_PLUGIN_PATH =
             "/../Packages/LabBenchStudios PDT Plugin for Unity";
+        */
+        public static readonly string RELATIVE_PDT_PLUGIN_PATH =
+            "/../Library/PackageCache/com.labbenchstudios.pdt.unity";
 
         public static readonly string RELATIVE_MODELS_PATH = "/Models";
 
@@ -65,7 +69,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static string GetProjectDtdlModelsPath(string projectName)
         {
             string path =
-                Application.dataPath + projectName + DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
+                Path.Combine(
+                    Application.dataPath,
+                    projectName,
+                    DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH);
 
             return InitModelsPath(path, "DTDL Model");
         }
@@ -81,7 +88,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static string GetProjectTypeConfigModelsPath(string projectName)
         {
             string path =
-                Application.dataPath + projectName + DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
+                Path.Combine(
+                    Application.dataPath,
+                    projectName,
+                    DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH);
 
             return InitModelsPath(path, "DTDL Model");
         }
@@ -96,8 +106,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static string GetDtdlModelsPath()
         {
             string path =
-                Application.dataPath +
-                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
 
             return InitModelsPath(path, "DTDL Model");
         }
@@ -112,8 +124,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static string GetTypeConfigModelsPath()
         {
             string path =
-                Application.dataPath +
-                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
 
             return InitModelsPath(path, "Type Config Mapping Model");
         }
@@ -128,8 +142,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static string GetStateDataPath()
         {
             string path =
-                Application.dataPath +
-                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_STATE_DATA_PATH;
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_STATE_DATA_PATH;
 
             return InitModelsPath(path, "State Info");
         }
