@@ -36,25 +36,55 @@ namespace LabBenchStudios.Pdt.Unity.Common
         // Consts and utility (static) methods for values / paths / etc.
         //
         //
-        public static readonly string RELATIVE_PDT_PATH =
-            "/../Packages/Lab Bench Studios PDT Client Framework";
+        public static readonly string RELATIVE_PDT_PLUGIN_PATH =
+            "/../Packages/LabBenchStudios PDT Plugin for Unity";
 
-        public static readonly string RELATIVE_MODELS_PATH =
-            DigitalTwinUtil.RELATIVE_PDT_PATH + "/Models";
+        public static readonly string RELATIVE_MODELS_PATH = "/Models";
 
-        public static readonly string RELATIVE_DTDL_MODELS_PATH =
-            DigitalTwinUtil.RELATIVE_MODELS_PATH + "/Dtdl";
+        public static readonly string RELATIVE_DTDL_MODELS_PATH = RELATIVE_MODELS_PATH + "/Dtdl";
 
         public static readonly string RELATIVE_DTDL_MQTT_MODELS_PATH =
             DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH + "/Mqtt";
 
-        public static readonly string RELATIVE_DATA_PATH =
-            DigitalTwinUtil.RELATIVE_PDT_PATH + "/Data";
+        public static readonly string RELATIVE_TYPE_CONFIG_MODELS_PATH = RELATIVE_MODELS_PATH + "/Types";
 
-        public static readonly string RELATIVE_STATE_DATA_PATH =
-            DigitalTwinUtil.RELATIVE_DATA_PATH + "/State";
+        public static readonly string RELATIVE_DATA_PATH = "/Data";
+
+        public static readonly string RELATIVE_STATE_DATA_PATH = "/State";
 
         public static readonly string STATE_DATA_EXT = ".dat";
+
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns>The absolute path as a string</returns>
+        public static string GetProjectDtdlModelsPath(string projectName)
+        {
+            string path =
+                Application.dataPath + projectName + DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
+
+            return InitModelsPath(path, "DTDL Model");
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns>The absolute path as a string</returns>
+        public static string GetProjectTypeConfigModelsPath(string projectName)
+        {
+            string path =
+                Application.dataPath + projectName + DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
+
+            return InitModelsPath(path, "DTDL Model");
+        }
 
         /// <summary>
         /// Always returns a non-null path for the requisite directory.
@@ -65,23 +95,27 @@ namespace LabBenchStudios.Pdt.Unity.Common
         /// <returns>The absolute path as a string</returns>
         public static string GetDtdlModelsPath()
         {
-            string path = Application.dataPath + DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
+            string path =
+                Application.dataPath +
+                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
 
-            if (! Directory.Exists(path))
-            {
-                DirectoryInfo di = Directory.CreateDirectory(path);
+            return InitModelsPath(path, "DTDL Model");
+        }
 
-                if (di != null)
-                {
-                    Debug.Log($"Created DTDL model path directory {di.FullName} at {di.CreationTime}");
-                }
-                else
-                {
-                    Debug.LogError($"Failed to create DTDL model path directory {path}. DTDL JSON will not load properly.");
-                }
-            }
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <returns>The absolute path as a string</returns>
+        public static string GetTypeConfigModelsPath()
+        {
+            string path =
+                Application.dataPath +
+                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
 
-            return path;
+            return InitModelsPath(path, "Type Config Mapping Model")
         }
 
         /// <summary>
@@ -93,24 +127,43 @@ namespace LabBenchStudios.Pdt.Unity.Common
         /// <returns>The absolute path as a string</returns>
         public static string GetStateDataPath()
         {
-            string path = Application.dataPath + DigitalTwinUtil.RELATIVE_STATE_DATA_PATH;
+            string path =
+                Application.dataPath +
+                DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_STATE_DATA_PATH;
 
-            if (! Directory.Exists(path))
+            return InitModelsPath(path, "State Info");
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the specified 'path' directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="loggingName"></param>
+        /// <returns></returns>
+        public static string InitModelsPath(string path, string loggingName)
+        {
+            if (!Directory.Exists(path))
             {
                 DirectoryInfo di = Directory.CreateDirectory(path);
 
                 if (di != null)
                 {
-                    Debug.Log($"Created state data path directory {di.FullName} at {di.CreationTime}");
-                }
-                else
+                    Debug.Log($"Created {loggingName} path {di.FullName} at {di.CreationTime}");
+                } else
                 {
-                    Debug.LogError($"Failed to create state data path directory {path}. System updates will not be saved!");
+                    Debug.LogError($"Failed to create {loggingName} path {path}. {loggingName} data will not be accessible.");
                 }
+            } else
+            {
+                Debug.Log($"{loggingName} path exists as expected: {path}. {loggingName} data should be accessible.");
             }
 
             return path;
         }
 
     }
+
 }

@@ -40,6 +40,9 @@ namespace LabBenchStudios.Pdt.Unity.Manager
     public class DigitalTwinSystemManager : MonoBehaviour, IRemoteStateProcessor
     {
         [SerializeField]
+        private string projectName = "BuildingDigitalTwins";
+
+        [SerializeField]
         private bool enableLogging = false;
 
         [SerializeField]
@@ -171,8 +174,11 @@ namespace LabBenchStudios.Pdt.Unity.Manager
 
                 Debug.Log("Is Actuator Command? " + isCmd);
 
-                // STEP 2: Enqueue the request
-                if (isCmd) this.remoteCmdDataQueue.Enqueue(resource);
+                // STEP 2: Enqueue the command request
+                if (isCmd)
+                {
+                    this.remoteCmdDataQueue.Enqueue(resource);
+                }
 
                 // STEP 3: Process the request (send to the IPubSubConnector)
                 //         this is automatically handled in the ProcessRemoteCommands
@@ -337,7 +343,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
 
             data.SetCommand(ConfigConst.COMMAND_ON);
             data.SetValue(this.GenerateRandomTestFloat(35.0f, 65.0f));
-            data.SetStateData("Unity DT Remote Command");
+            data.SetStateData("Unity DT Sample Remote Command");
 
             ResourceNameContainer resource =
                 new ResourceNameContainer(deviceName, resourceName, data);
@@ -499,6 +505,38 @@ namespace LabBenchStudios.Pdt.Unity.Manager
             this.isInitialized = true;
 
             this.remoteCmdDataQueue = new Queue<ResourceNameContainer>();
+
+            // load all DTDL and type mapping models
+            this.LoadAllModels();
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void LoadAllModels()
+        {
+            // add DTDL path(s)
+
+
+            // add type config mapping path(s)
+
+
+            // build all models
+            SystemModelManager smm = this.eventProcessor.GetSystemModelManager();
+
+            smm.AddDigitalTwinModelSearchPath(DigitalTwinUtil.GetDtdlModelsPath());
+            smm.AddConfigTypeModelSearchPath(DigitalTwinUtil.GetTypeConfigModelsPath());
+
+            if (!string.IsNullOrWhiteSpace(this.projectName))
+            {
+                smm.AddDigitalTwinModelSearchPath(DigitalTwinUtil.GetProjectDtdlModelsPath(this.projectName));
+                smm.AddConfigTypeModelSearchPath(DigitalTwinUtil.GetProjectTypeConfigModelsPath(this.projectName));
+            }
+
+            bool success = smm.BuildAllModels();
+
+            Debug.Log($"Model build process: {success}");
         }
 
         /// <summary>
