@@ -109,7 +109,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Path.Combine(
                     Application.dataPath,
                     DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
-                    DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH;
+                    DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH);
 
             return InitModelsPath(path, "DTDL Model");
         }
@@ -127,7 +127,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Path.Combine(
                     Application.dataPath,
                     DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
-                    DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
+                    DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH);
 
             return InitModelsPath(path, "Type Config Mapping Model");
         }
@@ -145,7 +145,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Path.Combine(
                     Application.dataPath,
                     DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
-                    DigitalTwinUtil.RELATIVE_STATE_DATA_PATH;
+                    DigitalTwinUtil.RELATIVE_STATE_DATA_PATH);
 
             return InitModelsPath(path, "State Info");
         }
