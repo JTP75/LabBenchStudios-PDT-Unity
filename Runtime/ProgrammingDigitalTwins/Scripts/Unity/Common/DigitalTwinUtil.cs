@@ -115,7 +115,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Application.dataPath +
                 DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH + DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH;
 
-            return InitModelsPath(path, "Type Config Mapping Model")
+            return InitModelsPath(path, "Type Config Mapping Model");
         }
 
         /// <summary>
