@@ -527,13 +527,25 @@ namespace LabBenchStudios.Pdt.Unity.Manager
             // build all models
             SystemModelManager smm = this.eventProcessor.GetSystemModelManager();
 
-            smm.AddDigitalTwinModelSearchPath(DigitalTwinUtil.GetDtdlModelsPath());
-            smm.AddConfigTypeModelSearchPath(DigitalTwinUtil.GetTypeConfigModelsPath());
+            string dtdlPath = DigitalTwinUtil.GetDtdlModelsPath();
+            Debug.Log($"Adding default DTDL path: {dtdlPath}");
+
+            smm.AddDigitalTwinModelSearchPath(dtdlPath);
+
+            string typeConfigPath = DigitalTwinUtil.GetTypeConfigModelsPath();
+            Debug.Log($"Adding default type config path: {typeConfigPath}");
+
+            smm.AddConfigTypeModelSearchPath(typeConfigPath);
 
             if (!string.IsNullOrWhiteSpace(this.projectName))
             {
-                smm.AddDigitalTwinModelSearchPath(DigitalTwinUtil.GetProjectDtdlModelsPath(this.projectName));
-                smm.AddConfigTypeModelSearchPath(DigitalTwinUtil.GetProjectTypeConfigModelsPath(this.projectName));
+                dtdlPath = DigitalTwinUtil.GetProjectDtdlModelsPath(this.projectName);
+                Debug.Log($"Adding app-specific DTDL path: {dtdlPath}");
+                smm.AddDigitalTwinModelSearchPath(dtdlPath);
+
+                typeConfigPath = DigitalTwinUtil.GetProjectTypeConfigModelsPath(this.projectName);
+                Debug.Log($"Adding app-specific type config path: {typeConfigPath}");
+                smm.AddConfigTypeModelSearchPath(typeConfigPath);
             }
 
             bool success = smm.BuildAllModels();

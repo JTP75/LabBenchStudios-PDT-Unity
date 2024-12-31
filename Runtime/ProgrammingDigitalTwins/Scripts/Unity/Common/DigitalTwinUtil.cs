@@ -41,9 +41,9 @@ namespace LabBenchStudios.Pdt.Unity.Common
             "/../Packages/LabBenchStudios PDT Plugin for Unity";
         */
         public static readonly string RELATIVE_PDT_PLUGIN_PATH =
-            "/../Library/PackageCache/com.labbenchstudios.pdt.unity";
+            "../Library/PackageCache/com.labbenchstudios.pdt.unity";
 
-        public static readonly string RELATIVE_MODELS_PATH = "/Models";
+        public static readonly string RELATIVE_MODELS_PATH = "Models";
 
         public static readonly string RELATIVE_DTDL_MODELS_PATH = RELATIVE_MODELS_PATH + "/Dtdl";
 
@@ -52,9 +52,9 @@ namespace LabBenchStudios.Pdt.Unity.Common
 
         public static readonly string RELATIVE_TYPE_CONFIG_MODELS_PATH = RELATIVE_MODELS_PATH + "/Types";
 
-        public static readonly string RELATIVE_DATA_PATH = "/Data";
+        public static readonly string RELATIVE_DATA_PATH = "Data";
 
-        public static readonly string RELATIVE_STATE_DATA_PATH = "/State";
+        public static readonly string RELATIVE_STATE_DATA_PATH = "State";
 
         public static readonly string STATE_DATA_EXT = ".dat";
 
