@@ -20,7 +20,16 @@ which is aligned with my book, [Programming the Internet of Things Book](https:/
  - [Programming the Internet of Things Book](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/)
 
 ## How to use this repository
-If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
+
+Installing this package within Unity 6
+- Open Unity 6
+  - Select: Window -> Package Manager -> Install package from git URL
+  - Enter: This repository's git URL
+  - Click: Install
+
+Note: Check back regularly for version updates, as this package is under active development and is in 'alpha' mode (e.g., UNRELEASED).
+
+About the package and its design: If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
 you'll see some design similarities to the exercises described in each chapter and the source code contained within this repository. While the software components contained herein are written in C# and follow,
 they follow a similar design philosophy as that of the Java, or Gateway Device App, components written for the book and are part of my other course, Connected Devices.
 
