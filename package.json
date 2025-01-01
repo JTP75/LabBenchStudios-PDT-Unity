@@ -1,12 +1,12 @@
 {
   "name": "com.labbenchstudios.pdt.unity",
   "version": "0.1.6",
-  "displayName": "LabBenchStudios PDT Plugin for Unity",
-  "description": "Plugin that provides the Unity3D client framework to use MQTT and DTDL with PDT events",
+  "displayName": "LabBenchStudios PDT Package for Unity",
+  "description": "Unity Package that provides necessary components and samples to use the PDT client framework.",
   "unity": "6000.0",
-  "documentationUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/",
-  "changelogUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/",
-  "licensesUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-UnityPlugin/",
+  "documentationUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/",
+  "changelogUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/",
+  "licensesUrl": "https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/",
   "keywords": [
     "DigitalTwins",
     "IoT",

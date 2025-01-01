@@ -1,5 +1,5 @@
 {
-    "name": "LabBenchStudios.Pdt.UnityPlugin.Runtime",
+    "name": "LabBenchStudios.Pdt.Unity.Runtime",
     "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro",
