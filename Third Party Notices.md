@@ -56,7 +56,7 @@ and are provided for informational purposes only.
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE
 
-### Microsoft.Bcl.AsyncInterfaces.dll ((Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces)
+### Microsoft.Bcl.AsyncInterfaces.dll (Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces)
 
     The MIT License (MIT)
     
@@ -82,7 +82,7 @@ and are provided for informational purposes only.
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
-### MQTTnet.dll (Available: https://www.nuget.org/packages/MQTTnet/)
+### MQTTnet.dll (Available: https://www.nuget.org/packages/MQTTnet)
 
     The MIT License (MIT)
     
