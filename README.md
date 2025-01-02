@@ -1,5 +1,6 @@
 # Programming Digital Twins - Unity Package
 # [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity)
+
 This is the plugin repository for [Unity](https://unity.com/)-based software and other application-specific components (written in C#)
 related to my Building Digital Twins course at Northeastern University. The intent of this repository is to provide students with a
 simple [Unity](https://unity.com/) plugin that can provide the basis for a simple digital twin implementation for personal testing
@@ -22,22 +23,26 @@ which is aligned with my book, [Programming the Internet of Things Book](https:/
 ## How to use this repository
 
 ### Installation (within Unity 6)
+
 - Open Unity 6
   - Select: Window -> Package Manager -> Install package from git URL
   - Enter: This repository's git URL
   - Click: Install
 
 ### Usage
+
 - Follow exercise instructions for the Digital Twin App (DTA) in the [Programming Digital Twins Kanban Board](https://github.com/orgs/programming-digital-twins/projects/1)
 
 Note: Check back regularly for version updates, as this package is under active development and is in 'alpha' mode (e.g., UNRELEASED).
 
 ### About the package and its design
+
 If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
 you'll see some design similarities to the exercises described in each chapter and the source code contained within this repository. While the software components contained herein
 are written in C# and follow, they follow a similar design philosophy as that of the Java, or Gateway Device App, components written for the book and are part of my other course, Connected Devices.
 
 ## How to navigate the directory structure of this repository
+
 This repository is comprised of the following key paths:
 - [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity): All other assets are contained within this path.
   - [Documentation](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Documentation): Contains package documentation.
@@ -64,13 +69,16 @@ as well as improvements I find to be helpful for overall repo betterment.
 # Other things to know
 
 ## Pull requests
+
 PR's are disabled while the codebase is being developed.
 
 ## Updates
+
 Much of this repository, and in particular unit and integration tests, will continue to evolve, so please check back regularly for potential updates.
 Please note that API changes can - and likely will - occur at any time.
 
 # REFERENCES
+
 This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries. More details can be found in [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). References to each current dependency are as follows (as of 01 Jan 2025):
 
 ## Application Dependencies
@@ -170,13 +178,15 @@ This repository has external dependencies on other open source projects. I'm gra
 
 NOTE: This section and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md) will be updated if / when other dependencies are incorporated.
 
-# IMPORTANT NOTES
+# OTHER IMPORTANT NOTES
+
 This code base is under active development.
 
 If any code samples or other technology this work contains, describes, and / or is subject to open source licenses or the intellectual property rights
 of others, it is your responsibility to ensure that your use thereof complies with such licenses and/or rights.
 
 # LICENSE
+
 Assets and Models: [LICENSE-ASSETS](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/LICENSE-ASSETS.md). The repository's non-code artifacts LICENSE file (e.g., documentation, prefabs, etc.) These artifacts are contained within the ./Documentation, ./Models, and ./Runtime/ProgrammingDigitalTwins/Prefabs path.
 
 Source Code: [LICENSE-CODE](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/LICENSE-CODE.md). The repository's code artifacts LICENSE file (e.g., source code [mostly C#]). These artifacts are contained within this repository's ./Runtime/ProgrammingDigitalTwins/Scripts path.
