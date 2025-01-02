@@ -67,19 +67,103 @@ Much of this repository, and in particular unit and integration tests, will cont
 Please note that API changes can - and likely will - occur at any time.
 
 # REFERENCES
-This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries:
+This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries. More details can be found in [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). References to each current dependency are as follows (as of 01 Jan 2025):
 
-- [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components)
-  - Reference: Andrew D. King. Programming Digital Twins Client Framework Components. (2024) [Online]. Available: https://github.com/programming-digital-twins/pdt-cfw-components.
-  - NOTE: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components) has its own dependencies, which can be found in its README.md documentation.
+## Applications
 
 - [Unity 6](https://unity.com/)
   - Reference: Unity Technologies. Unity Editor. (2024) [Online]. Available: https://unity.com/.
-  - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1.
+    - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1. This package is not intended to be used outside of a compatible Unity Editor environment.
 
-- [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md)
-  - Reference: See [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md) for details.
-  - NOTE: Third party libraries and references (for DLL's stored within the ./Plugins path).
+## Library Dependencies (included as DLL references within the ./Plugins folder)
+
+- LBS.PdtCfwComponents.dll: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components)
+  - Reference: Andrew D. King. Programming Digital Twins Client Framework Components. (2024) [Online]. Available: https://github.com/programming-digital-twins/pdt-cfw-components.
+    - NOTE: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components) has its own dependencies, which can be found in its README.md documentation. These dependencies, along with its own DLL (LBS.PdtCfwComponents.dll) are contained in this repository as DLL's.
+  - DLL Version: 0.1.6 (alpha)
+  - DLL License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components).
+
+- DTDLParser.dll: [DTDLParser](https://github.com/digitaltwinconsortium/DTDLParser)
+  - Reference: Digital Twin Consortium and contributors. (2024) [Online]. Available: https://github.com/digitaltwinconsortium/DTDLParser.
+  - DLL Version: 1.0.52
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- MQTTnet.dll [MQTTnet](https://github.com/dotnet/MQTTnet)
+  - Reference: .NET Foundation and contributors. MQTTnet .NET library for MQTT communications. (2024) [Online]. Available: https://github.com/dotnet/MQTTnet.
+  - DLL Version: 4.3.7.1207
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- MQTTnet.Extensions.ManagedClient.dll [MQTTnet.Extensions.ManagedClient](https://www.nuget.org/packages/MQTTnet.Extensions.ManagedClient)
+  - Reference: .NET Foundation and contributors. MQTTnet .NET library for MQTT communications. (2024) [Online]. Available: https://github.com/dotnet/MQTTnet.
+  - DLL Version: 4.3.7.1207
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- Newtonsoft.Json.dll: [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
+  - Reference: James Newton-King. Json.NET JSON framework for .NET. (2024) [Online]. Available: https://github.com/JamesNK/Newtonsoft.Json.
+  - DLL Version: 13.03
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- Microsoft.Bcl.AsyncInterfaces.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
+  - DLL Version: 9.0.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Buffers.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Buffers
+  - DLL Version: 4.6.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.IO.Pipelines.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.IO.Pipelines
+  - DLL Version: 9.0.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Memory.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Memory
+  - DLL Version: 4.6.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Numerics.Vectors.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Numerics.Vectors
+  - DLL Version: 4.6.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Runtime.CompilerServices.Unsafe.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
+  - DLL Version: 6.1.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Encodings.Web.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Text.Encodings.Web
+  - DLL Version: 9.0.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Text.Json.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Text.Json
+  - DLL Version: 9.0.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.Threading.Tasks.Extensions.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
+  - DLL Version: 4.6.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- System.ValueTuple.dll
+  - Reference: TBA. Available: https://www.nuget.org/packages/System.ValueTuple
+  - DLL Version: 4.5.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+# OTHER REFERENCES - Unity Technologies (required, NOT included in this repository)
+
+- Unity Technologies - Text Mesh Pro
+  - Available: "Unity.TextMeshPro" - https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html
+  - Version: 4.0
+  - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
+
+- Unity Technologies - Input System
+  - Available: "Unity.InputSystem" - https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html
+  - Version: 1.11
+  - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
 
 NOTE: This section and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md) will be updated if / when other dependencies are incorporated.
 
