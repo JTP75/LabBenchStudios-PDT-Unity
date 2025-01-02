@@ -21,17 +21,21 @@ which is aligned with my book, [Programming the Internet of Things Book](https:/
 
 ## How to use this repository
 
-Installing this package within Unity 6
+### Installation (within Unity 6)
 - Open Unity 6
   - Select: Window -> Package Manager -> Install package from git URL
   - Enter: This repository's git URL
   - Click: Install
 
+### Usage
+- Follow exercise instructions for the Digital Twin App (DTA) in the [Programming Digital Twins Kanban Board](https://github.com/orgs/programming-digital-twins/projects/1)
+
 Note: Check back regularly for version updates, as this package is under active development and is in 'alpha' mode (e.g., UNRELEASED).
 
-About the package and its design: If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
-you'll see some design similarities to the exercises described in each chapter and the source code contained within this repository. While the software components contained herein are written in C# and follow,
-they follow a similar design philosophy as that of the Java, or Gateway Device App, components written for the book and are part of my other course, Connected Devices.
+### About the package and its design
+If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
+you'll see some design similarities to the exercises described in each chapter and the source code contained within this repository. While the software components contained herein
+are written in C# and follow, they follow a similar design philosophy as that of the Java, or Gateway Device App, components written for the book and are part of my other course, Connected Devices.
 
 ## How to navigate the directory structure of this repository
 This repository is comprised of the following key paths:
@@ -69,11 +73,22 @@ Please note that API changes can - and likely will - occur at any time.
 # REFERENCES
 This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries. More details can be found in [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). References to each current dependency are as follows (as of 01 Jan 2025):
 
-## Applications
+## Application Dependencies
 
-- [Unity 6](https://unity.com/)
+- Unity Technologies: [Unity 6](https://unity.com/)
   - Reference: Unity Technologies. Unity Editor. (2024) [Online]. Available: https://unity.com/.
+  - Version: 6000.0.32f1
     - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1. This package is not intended to be used outside of a compatible Unity Editor environment.
+
+- Unity Technologies: [Text Mesh Pro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html)
+  - Reference: Unity Technologies. Text Mesh Pro - "Unity.TextMeshPro". Available: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html.
+  - Version: 4.0
+  - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
+
+- Unity Technologies: [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)
+  - Reference: Unity Technologies. Input System - "Unity.InputSystem". Available: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html.
+  - Version: 1.11
+  - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
 
 ## Library Dependencies (included as DLL references within the ./Plugins folder)
 
@@ -81,7 +96,7 @@ This repository has external dependencies on other open source projects. I'm gra
   - Reference: Andrew D. King. Programming Digital Twins Client Framework Components. (2024) [Online]. Available: https://github.com/programming-digital-twins/pdt-cfw-components.
     - NOTE: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components) has its own dependencies, which can be found in its README.md documentation. These dependencies, along with its own DLL (LBS.PdtCfwComponents.dll) are contained in this repository as DLL's.
   - DLL Version: 0.1.6 (alpha)
-  - DLL License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components).
+  - DLL License: [MIT](https://github.com/programming-digital-twins/pdt-cfw-components/blob/alpha/LICENSE-CODE).
 
 - DTDLParser.dll: [DTDLParser](https://github.com/digitaltwinconsortium/DTDLParser)
   - Reference: Digital Twin Consortium and contributors. (2024) [Online]. Available: https://github.com/digitaltwinconsortium/DTDLParser.
@@ -104,66 +119,54 @@ This repository has external dependencies on other open source projects. I'm gra
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - Microsoft.Bcl.AsyncInterfaces.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
+  - Reference: .NET Foundation and contributors. Microsoft.Bcl.AsyncInterfaces. (2025) [Online]. Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Buffers.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Buffers
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Buffers
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.IO.Pipelines.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.IO.Pipelines
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.IO.Pipelines
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Memory.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Memory
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Memory
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Numerics.Vectors.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Numerics.Vectors
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Numerics.Vectors
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Runtime.CompilerServices.Unsafe.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
   - DLL Version: 6.1.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Text.Encodings.Web.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Text.Encodings.Web
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Encodings.Web
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Text.Json.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Text.Json
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Json
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Threading.Tasks.Extensions.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.ValueTuple.dll
-  - Reference: TBA. Available: https://www.nuget.org/packages/System.ValueTuple
+  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.ValueTuple
   - DLL Version: 4.5.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
-
-# OTHER REFERENCES - Unity Technologies (required, NOT included in this repository)
-
-- Unity Technologies - Text Mesh Pro
-  - Available: "Unity.TextMeshPro" - https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html
-  - Version: 4.0
-  - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
-
-- Unity Technologies - Input System
-  - Available: "Unity.InputSystem" - https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html
-  - Version: 1.11
-  - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
 
 NOTE: This section and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md) will be updated if / when other dependencies are incorporated.
 
@@ -178,4 +181,4 @@ Assets and Models: [LICENSE-ASSETS](https://github.com/programming-digital-twins
 
 Source Code: [LICENSE-CODE](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/LICENSE-CODE.md). The repository's code artifacts LICENSE file (e.g., source code [mostly C#]). These artifacts are contained within this repository's ./Runtime/ProgrammingDigitalTwins/Scripts path.
 
-Third Party Libraries: [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). The repository's DLL dependencies notices file. These artifacts are contained within this repository's ./Plugins path.
+Third Party Libraries: See REFERENCES above and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). The repository's DLL dependencies notices file. These artifacts are contained within this repository's ./Plugins path.
