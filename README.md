@@ -77,28 +77,85 @@ PR's are disabled while the codebase is being developed.
 Much of this repository, and in particular unit and integration tests, will continue to evolve, so please check back regularly for potential updates.
 Please note that API changes can - and likely will - occur at any time.
 
-# REFERENCES
+# DEPENDENCIES and REFERENCES
 
-This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries. More details can be found in [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). References to each current dependency are as follows (as of 01 Jan 2025):
+This repository requires various [Unity Technologies Inc.](https://unity.com/) features and packages, and is intended to be installed within a Unity 6 environment.
 
-## Application Dependencies
+This repository has external dependencies on other open source projects. I'm grateful to the open source community and authors / maintainers of the following libraries. More details can be found in [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). References to this package's dependencies are as follows (as of 01 Jan 2025):
 
-- Unity Technologies: [Unity 6](https://unity.com/)
-  - Reference: Unity Technologies. Unity Editor. (2024) [Online]. Available: https://unity.com/.
+## Unity Application Requirement Reference (not included - must be installed separately)
+
+This package is dependent upon the Unity 6 Editor and Game Engine.
+
+- Unity Technologies Inc.: [Unity 6](https://unity.com/)
+  - Reference: Unity Technologies Inc. Unity Editor. (2024) [Online]. Available: https://unity.com/.
   - Version: 6000.0.32f1
     - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1. This package is not intended to be used outside of a compatible Unity Editor environment.
 
-- Unity Technologies: [Text Mesh Pro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html)
-  - Reference: Unity Technologies. Text Mesh Pro - "Unity.TextMeshPro". Available: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html.
+## Unity Feature Dependency References (not included - must be installed separately)
+
+This package requires the following Unity Features to be installed prior to this package's installation. NOTE: Other Unity-specific features may be required in the future.
+
+- Unity Technologies Inc.: [2D - com.unity.feature.2d](https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html)
+  - Reference: Unity Technologies Inc. 2D - com.unity.feature.2d. See: https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [3D Characters and Animation]()
+  - Reference: Unity Technologies Inc. 3D Characters and Animation - com.unity.feature.characters-animation. See: https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [3D World Building](https://docs.unity3d.com/6000.0/Documentation/Manual/WorldBuildingFeature.html)
+  - Reference: Unity Technologies Inc. 3D World Building - com.unity.feature.worldbuilding. See: https://docs.unity3d.com/6000.0/Documentation/Manual/WorldBuildingFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Cinematic Studio](https://docs.unity3d.com/6000.0/Documentation/Manual/CinematicStudioFeature.html)
+  - Reference: Unity Technologies Inc. Cinematic Studio - com.unity.feature.cinematic. See: https://docs.unity3d.com/6000.0/Documentation/Manual/CinematicStudioFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Engineering](https://docs.unity3d.com/6000.0/Documentation/Manual/DeveloperToolsFeature.html)
+  - Reference: Unity Technologies Inc. Engineering - com.unity.feature.development. See: https://docs.unity3d.com/6000.0/Documentation/Manual/DeveloperToolsFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Gameplay and Storytelling](https://docs.unity3d.com/6000.0/Documentation/Manual/GameplayStorytellingFeature.html)
+  - Reference: Unity Technologies Inc. Gameplay and Storytelling - com.unity.feature.gameplay-storytelling. See: https://docs.unity3d.com/6000.0/Documentation/Manual/GameplayStorytellingFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+## Unity Package Dependency References (not included - must be installed separately)
+
+This package requires the following Unity packages to be installed prior to this package's installation. NOTE: Other Unity-specific packages may be required in the future.
+
+- Unity Technologies Inc.: [Text Mesh Pro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html)
+  - Reference: Unity Technologies Inc. Text Mesh Pro - "Unity.TextMeshPro". See: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html.
   - Version: 4.0
   - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
 
-- Unity Technologies: [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)
-  - Reference: Unity Technologies. Input System - "Unity.InputSystem". Available: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html.
+- Unity Technologies Inc.: [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)
+  - Reference: Unity Technologies Inc. Input System - "Unity.InputSystem". See: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html.
   - Version: 1.11
   - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
+ 
+- Unity Technologies Inc.: [Interior House Assets | URP](https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122)
+  - Reference: Unity Technologies Inc. Interior House Assets | URP. Available: https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122.
+  - Version: 1.0
+  - License: https://unity.com/legal/as-terms
 
-## Library Dependencies (included as DLL references within the ./Plugins folder)
+- Unity Technologies Inc.: [Starter Assets: Character Controllers | URP](https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961)
+  - Reference: Unity Technologies Inc. Starter Assets: Character Controllers | URP. Available: https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961.
+  - Version: 2.0.2
+  - License: https://unity.com/legal/as-terms
+
+- Unity Technologies Inc.: [Splines](https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html)
+  - Reference: Unity Technologies Inc. Splines. See: https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html.
+  - Version 2.7.2
+  - License: https://docs.unity3d.com/Packages/com.unity.splines@2.7/license/LICENSE.html
+
+## Library Dependency References (included as DLL references within the ./Plugins folder)
 
 - LBS.PdtCfwComponents.dll: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components)
   - Reference: Andrew D. King. Programming Digital Twins Client Framework Components. (2024) [Online]. Available: https://github.com/programming-digital-twins/pdt-cfw-components.
