@@ -143,12 +143,12 @@ This package requires the following Unity packages to be installed prior to this
 - Unity Technologies Inc.: [Interior House Assets | URP](https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122)
   - Reference: Unity Technologies Inc. Interior House Assets | URP. Available: https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122.
   - Version: 1.0
-  - License: https://unity.com/legal/as-terms
+  - License: [https://unity.com/legal/as-terms](https://unity3d.com/legal/licenses/Unity_Companion_License)
 
 - Unity Technologies Inc.: [Starter Assets: Character Controllers | URP](https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961)
   - Reference: Unity Technologies Inc. Starter Assets: Character Controllers | URP. Available: https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961.
   - Version: 2.0.2
-  - License: https://unity.com/legal/as-terms
+  - License: [https://unity.com/legal/as-terms](https://unity3d.com/legal/licenses/Unity_Companion_License)
 
 - Unity Technologies Inc.: [Splines](https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html)
   - Reference: Unity Technologies Inc. Splines. See: https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html.
