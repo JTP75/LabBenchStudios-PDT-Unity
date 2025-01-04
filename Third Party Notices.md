@@ -380,12 +380,74 @@ and are provided for informational purposes only.
 
 # OTHER REFERENCES - Unity Technologies (required, NOT included in this repository)
 
-- Unity Technologies - Text Mesh Pro
-  - Available: "Unity.TextMeshPro" - https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html
+## Unity Application Requirement Reference (not included - must be installed separately)
+
+This package is dependent upon the Unity 6 Editor and Game Engine.
+
+- Unity Technologies Inc.: [Unity 6](https://unity.com/)
+  - Reference: Unity Technologies Inc. Unity Editor. (2024) [Online]. Available: https://unity.com/.
+  - Version: 6000.0.32f1
+    - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1. This package is not intended to be used outside of a compatible Unity Editor environment.
+
+## Unity Feature Dependency References (not included - must be installed separately)
+
+This package requires the following Unity Features to be installed prior to this package's installation. NOTE: Other Unity-specific features may be required in the future.
+
+- Unity Technologies Inc.: [2D - com.unity.feature.2d](https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html)
+  - Reference: Unity Technologies Inc. 2D - com.unity.feature.2d. See: https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [3D Characters and Animation]()
+  - Reference: Unity Technologies Inc. 3D Characters and Animation - com.unity.feature.characters-animation. See: https://docs.unity3d.com/6000.0/Documentation/Manual/2DFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [3D World Building](https://docs.unity3d.com/6000.0/Documentation/Manual/WorldBuildingFeature.html)
+  - Reference: Unity Technologies Inc. 3D World Building - com.unity.feature.worldbuilding. See: https://docs.unity3d.com/6000.0/Documentation/Manual/WorldBuildingFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Cinematic Studio](https://docs.unity3d.com/6000.0/Documentation/Manual/CinematicStudioFeature.html)
+  - Reference: Unity Technologies Inc. Cinematic Studio - com.unity.feature.cinematic. See: https://docs.unity3d.com/6000.0/Documentation/Manual/CinematicStudioFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Engineering](https://docs.unity3d.com/6000.0/Documentation/Manual/DeveloperToolsFeature.html)
+  - Reference: Unity Technologies Inc. Engineering - com.unity.feature.development. See: https://docs.unity3d.com/6000.0/Documentation/Manual/DeveloperToolsFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+- Unity Technologies Inc.: [Gameplay and Storytelling](https://docs.unity3d.com/6000.0/Documentation/Manual/GameplayStorytellingFeature.html)
+  - Reference: Unity Technologies Inc. Gameplay and Storytelling - com.unity.feature.gameplay-storytelling. See: https://docs.unity3d.com/6000.0/Documentation/Manual/GameplayStorytellingFeature.html.
+  - Note: See feature 'Description' and 'Packages Included' for more detail.
+  - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
+
+## Unity Package Dependency References (not included - must be installed separately)
+
+This package requires the following Unity packages to be installed prior to this package's installation. NOTE: Other Unity-specific packages may be required in the future.
+
+- Unity Technologies Inc.: [Text Mesh Pro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html)
+  - Reference: Unity Technologies Inc. Text Mesh Pro - "Unity.TextMeshPro". See: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html.
   - Version: 4.0
   - License: https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/license/LICENSE.html
 
-- Unity Technologies - Input System
-  - Available: "Unity.InputSystem" - https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html
+- Unity Technologies Inc.: [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)
+  - Reference: Unity Technologies Inc. Input System - "Unity.InputSystem". See: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html.
   - Version: 1.11
   - License: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/license/LICENSE.html
+ 
+- Unity Technologies Inc.: [Interior House Assets | URP](https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122)
+  - Reference: Unity Technologies Inc. Interior House Assets | URP. Available: https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122.
+  - Version: 1.0
+  - License: [https://unity.com/legal/as-terms](https://unity3d.com/legal/licenses/Unity_Companion_License)
+
+- Unity Technologies Inc.: [Starter Assets: Character Controllers | URP](https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961)
+  - Reference: Unity Technologies Inc. Starter Assets: Character Controllers | URP. Available: https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961.
+  - Version: 2.0.2
+  - License: [https://unity.com/legal/as-terms](https://unity3d.com/legal/licenses/Unity_Companion_License)
+
+- Unity Technologies Inc.: [Splines](https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html)
+  - Reference: Unity Technologies Inc. Splines. See: https://docs.unity3d.com/Packages/com.unity.splines@2.7/manual/index.html.
+  - Version 2.7.2
+  - License: https://docs.unity3d.com/Packages/com.unity.splines@2.7/license/LICENSE.html
