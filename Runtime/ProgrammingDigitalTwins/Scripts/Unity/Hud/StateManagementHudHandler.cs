@@ -203,6 +203,16 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void LoadModelData()
         {
+            string message = $"NOTE: All DTDL model and type config mapping model data will be auto-loaded via DT System Manager at start.";
+
+            EventProcessor.GetInstance().LogDebugMessage(message);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void LoadModelDataPrev()
+        {
             try {
                 string message = $"NORMAL: Attempting to init and (re)load DTDL model data: {this.dtdlModelPath}";
 

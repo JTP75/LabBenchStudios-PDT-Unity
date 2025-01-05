@@ -45,7 +45,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         private string projectName = "BuildingDigitalTwins";
 
         [SerializeField]
-        private bool enableLogging = false;
+        private bool enableLogging = true;
 
         [SerializeField]
         private bool allowRemoteCommandTriggers = true;
@@ -518,13 +518,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         /// </summary>
         private void LoadAllModels()
         {
-            // add DTDL path(s)
-
-
-            // add type config mapping path(s)
-
-
-            // build all models
+            // add package-specific paths
             SystemModelManager smm = this.eventProcessor.GetSystemModelManager();
 
             string dtdlPath = DigitalTwinUtil.GetDtdlModelsPath();
@@ -537,6 +531,20 @@ namespace LabBenchStudios.Pdt.Unity.Manager
 
             smm.AddConfigTypeModelSearchPath(typeConfigPath);
 
+            // add dev-specific paths (if they exist - if not, ignore)
+            dtdlPath = DigitalTwinUtil.GetDevDtdlModelsPath();
+
+            if (dtdlPath != null) {
+                smm.AddDigitalTwinModelSearchPath(dtdlPath);
+            }
+
+            typeConfigPath = DigitalTwinUtil.GetDevTypeConfigModelsPath();
+
+            if (typeConfigPath != null) {
+                smm.AddConfigTypeModelSearchPath(typeConfigPath);
+            }
+
+            // add project-specific paths
             if (!string.IsNullOrWhiteSpace(this.projectName))
             {
                 dtdlPath = DigitalTwinUtil.GetProjectDtdlModelsPath(this.projectName);
@@ -548,6 +556,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
                 smm.AddConfigTypeModelSearchPath(typeConfigPath);
             }
 
+            // build all models
             bool success = smm.BuildAllModels();
 
             Debug.Log($"Model build process: {success}");

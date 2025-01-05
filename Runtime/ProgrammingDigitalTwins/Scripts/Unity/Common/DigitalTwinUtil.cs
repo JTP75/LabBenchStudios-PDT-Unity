@@ -36,11 +36,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         // Consts and utility (static) methods for values / paths / etc.
         //
         //
-        /*
-        public static readonly string RELATIVE_PDT_PLUGIN_PATH =
-            "/../Packages/LabBenchStudios PDT Plugin for Unity";
-        */
-        public static readonly string RELATIVE_PDT_PLUGIN_PATH =
+        public static readonly string RELATIVE_PDT_ASSET_DEV_PATH =
+            "../Assets/LabBenchStudios-PDT-Unity";
+
+        public static readonly string RELATIVE_PDT_PACKAGE_PATH =
             "../Library/PackageCache/com.labbenchstudios.pdt.unity";
 
         public static readonly string RELATIVE_MODELS_PATH = "Models";
@@ -103,12 +102,66 @@ namespace LabBenchStudios.Pdt.Unity.Common
         /// error to the Unity console on success or failure.
         /// </summary>
         /// <returns>The absolute path as a string</returns>
+        public static string GetDevDtdlModelsPath()
+        {
+            string path =
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_ASSET_DEV_PATH,
+                    DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH);
+
+            return CheckModelsPath(path, "Dev Only - DTDL Model");
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <returns>The absolute path as a string</returns>
+        public static string GetDevTypeConfigModelsPath()
+        {
+            string path =
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_ASSET_DEV_PATH,
+                    DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH);
+
+            return CheckModelsPath(path, "Dev Only - Type Config Mapping Model");
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <returns>The absolute path as a string</returns>
+        public static string GetDevStateDataPath()
+        {
+            string path =
+                Path.Combine(
+                    Application.dataPath,
+                    DigitalTwinUtil.RELATIVE_PDT_ASSET_DEV_PATH,
+                    DigitalTwinUtil.RELATIVE_STATE_DATA_PATH);
+
+            return CheckModelsPath(path, "Dev Only - State Info");
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the requisite directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <returns>The absolute path as a string</returns>
         public static string GetDtdlModelsPath()
         {
             string path =
                 Path.Combine(
                     Application.dataPath,
-                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_PDT_PACKAGE_PATH,
                     DigitalTwinUtil.RELATIVE_DTDL_MODELS_PATH);
 
             return InitModelsPath(path, "DTDL Model");
@@ -126,7 +179,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
             string path =
                 Path.Combine(
                     Application.dataPath,
-                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_PDT_PACKAGE_PATH,
                     DigitalTwinUtil.RELATIVE_TYPE_CONFIG_MODELS_PATH);
 
             return InitModelsPath(path, "Type Config Mapping Model");
@@ -144,7 +197,7 @@ namespace LabBenchStudios.Pdt.Unity.Common
             string path =
                 Path.Combine(
                     Application.dataPath,
-                    DigitalTwinUtil.RELATIVE_PDT_PLUGIN_PATH,
+                    DigitalTwinUtil.RELATIVE_PDT_PACKAGE_PATH,
                     DigitalTwinUtil.RELATIVE_STATE_DATA_PATH);
 
             return InitModelsPath(path, "State Info");
@@ -159,22 +212,62 @@ namespace LabBenchStudios.Pdt.Unity.Common
         /// <param name="path"></param>
         /// <param name="loggingName"></param>
         /// <returns></returns>
+        public static string CheckModelsPath(string path, string loggingName)
+        {
+            if (!string.IsNullOrWhiteSpace(path)) {
+                path = Path.GetFullPath(path);
+
+                if (Directory.Exists(path))
+                {
+                    Debug.Log($"{loggingName} path {path} exists. Check model path successful.");
+
+                    return path;
+                }
+                else
+                {
+                    Debug.Log($"{loggingName} path {path} not initialized [OK]. Ignoring.");
+                }
+            }
+            else {
+                Debug.Log($"Specified path is null or empty. Ignoring check for model path.");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Always returns a non-null path for the specified 'path' directory.
+        /// If the path has not yet been created, this method - on initial
+        /// invocation - will attempt to create it, and log the appropriate
+        /// error to the Unity console on success or failure.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="loggingName"></param>
+        /// <returns></returns>
         public static string InitModelsPath(string path, string loggingName)
         {
-            if (!Directory.Exists(path))
-            {
-                DirectoryInfo di = Directory.CreateDirectory(path);
+            if (!string.IsNullOrWhiteSpace(path)) {
+                path = Path.GetFullPath(path);
+                    
+                if (!Directory.Exists(path))
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(path);
 
-                if (di != null)
-                {
-                    Debug.Log($"Created {loggingName} path {di.FullName} at {di.CreationTime}");
-                } else
-                {
-                    Debug.LogError($"Failed to create {loggingName} path {path}. {loggingName} data will not be accessible.");
+                    if (di != null)
+                    {
+                        Debug.Log($"Created {loggingName} path {di.FullName} at {di.CreationTime}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Failed to create {loggingName} path {path}. {loggingName} data will not be accessible.");
+                    }
                 }
-            } else
-            {
-                Debug.Log($"{loggingName} path exists as expected: {path}. {loggingName} data should be accessible.");
+                else
+                {
+                    Debug.Log($"{loggingName} path exists as expected: {path}. {loggingName} data should be accessible.");
+                }
+            } else {
+                Debug.Log($"Specified path is null or empty. Ignoring model init for path.");
             }
 
             return path;
