@@ -41,11 +41,19 @@ namespace LabBenchStudios.Pdt.Unity.Manager
     /// </summary>
     public class DigitalTwinSystemManager : MonoBehaviour, IRemoteStateProcessor
     {
+        // editor settable vars
+
         [SerializeField]
         private string projectName = "BuildingDigitalTwins";
 
         [SerializeField]
-        private bool enableLogging = true;
+        private bool enableUnityLogging = true;
+
+        [SerializeField]
+        private bool enablePluginLogging = true;
+
+        [SerializeField]
+        private bool enablePluginDiagnosticsLogging = true;
 
         [SerializeField]
         private bool allowRemoteCommandTriggers = true;
@@ -138,8 +146,16 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         /// </summary>
         void Start()
         {
-            this.InitManager();
+            // set Unity console logging output - enabled or disabled
+            Debug.unityLogger.logEnabled = this.enableUnityLogging;
 
+            // set plugin stdout and stderr output to Unity console - enabled or disabled
+            if (this.enablePluginLogging) {
+                UnityConsoleOutputManager.EnablePluginConsoleLogging(this.enablePluginDiagnosticsLogging);
+            }
+
+            // init and start the manager
+            this.InitManager();
             this.StartManager();
         }
 
@@ -491,11 +507,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         /// </summary>
         private void InitManager()
         {
-            Debug.unityLogger.logEnabled = this.enableLogging;
-
-            string msg = "System manager initializing...";
-
-            Debug.Log(msg);
+            Debug.Log("Digital twin system manager initializing...");
 
             this.connStateData = new ConnectionStateData(this.messagingHostName, this.messagingHostPort);
 
@@ -511,6 +523,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
             // load all DTDL and type mapping models
             this.LoadAllModels();
 
+            Debug.Log("Digital twin system manager initialized.");
         }
 
         /// <summary>
@@ -518,6 +531,9 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         /// </summary>
         private void LoadAllModels()
         {
+            bool success = DigitalTwinUtil.LoadAllModels(this.projectName);
+
+            /*
             // add package-specific paths
             SystemModelManager smm = this.eventProcessor.GetSystemModelManager();
 
@@ -558,6 +574,7 @@ namespace LabBenchStudios.Pdt.Unity.Manager
 
             // build all models
             bool success = smm.BuildAllModels();
+            */
 
             Debug.Log($"Model build process: {success}");
         }

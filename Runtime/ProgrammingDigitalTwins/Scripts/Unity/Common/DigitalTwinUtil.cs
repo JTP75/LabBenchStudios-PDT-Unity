@@ -27,6 +27,8 @@ using System.IO;
 
 using UnityEngine;
 
+using LabBenchStudios.Pdt.Plexus;
+
 namespace LabBenchStudios.Pdt.Unity.Common
 {
     public static class DigitalTwinUtil
@@ -56,6 +58,8 @@ namespace LabBenchStudios.Pdt.Unity.Common
         public static readonly string RELATIVE_STATE_DATA_PATH = "State";
 
         public static readonly string STATE_DATA_EXT = ".dat";
+
+        private static bool ARE_MODELS_LOADED = false;
 
         /// <summary>
         /// Always returns a non-null path for the requisite directory.
@@ -271,6 +275,65 @@ namespace LabBenchStudios.Pdt.Unity.Common
             }
 
             return path;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
+        public static bool LoadAllModels(string projectName)
+        {
+            if (ARE_MODELS_LOADED) {
+                Debug.Log($"All models loaded for {projectName}. Igoring request.");
+
+                return true;
+            } else {
+                Debug.Log($"Models not yet successfully loaded for {projectName}. Loading now...");
+            }
+
+            // add package-specific paths
+            SystemModelManager smm = EventProcessor.GetInstance().GetSystemModelManager();
+
+            string dtdlPath = DigitalTwinUtil.GetDtdlModelsPath();
+            Debug.Log($"Adding default DTDL path: {dtdlPath}");
+
+            smm.AddDigitalTwinModelSearchPath(dtdlPath);
+
+            string typeConfigPath = DigitalTwinUtil.GetTypeConfigModelsPath();
+            Debug.Log($"Adding default type config path: {typeConfigPath}");
+
+            smm.AddConfigTypeModelSearchPath(typeConfigPath);
+
+            // add dev-specific paths (if they exist - if not, ignore)
+            dtdlPath = DigitalTwinUtil.GetDevDtdlModelsPath();
+
+            if (dtdlPath != null) {
+                smm.AddDigitalTwinModelSearchPath(dtdlPath);
+            }
+
+            typeConfigPath = DigitalTwinUtil.GetDevTypeConfigModelsPath();
+
+            if (typeConfigPath != null) {
+                smm.AddConfigTypeModelSearchPath(typeConfigPath);
+            }
+
+            // add project-specific paths
+            if (!string.IsNullOrWhiteSpace(projectName))
+            {
+                dtdlPath = DigitalTwinUtil.GetProjectDtdlModelsPath(projectName);
+                Debug.Log($"Adding app-specific DTDL path: {dtdlPath}");
+                smm.AddDigitalTwinModelSearchPath(dtdlPath);
+
+                typeConfigPath = DigitalTwinUtil.GetProjectTypeConfigModelsPath(projectName);
+                Debug.Log($"Adding app-specific type config path: {typeConfigPath}");
+                smm.AddConfigTypeModelSearchPath(typeConfigPath);
+            }
+
+            // build all models
+            ARE_MODELS_LOADED = smm.BuildAllModels();
+
+            return ARE_MODELS_LOADED;
         }
 
     }
