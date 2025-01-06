@@ -50,10 +50,10 @@ namespace LabBenchStudios.Pdt.Unity.Manager
         private bool enableUnityLogging = true;
 
         [SerializeField]
-        private bool enablePluginLogging = true;
+        private bool enablePluginLogging = false;
 
         [SerializeField]
-        private bool enablePluginDiagnosticsLogging = true;
+        private bool enablePluginDiagnosticsLogging = false;
 
         [SerializeField]
         private bool allowRemoteCommandTriggers = true;
