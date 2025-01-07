@@ -3205,7 +3205,7 @@ GameObject:
   - component: {fileID: 8119879796259623769}
   - component: {fileID: 1852123047079231974}
   m_Layer: 5
-  m_Name: EnableSimulatedDataFeed (1)
+  m_Name: EnableSimulatedDataFeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

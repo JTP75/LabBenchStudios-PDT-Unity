@@ -333,6 +333,9 @@ namespace LabBenchStudios.Pdt.Unity.Common
             // build all models
             ARE_MODELS_LOADED = smm.BuildAllModels();
 
+            // notify any listeners
+            EventProcessor.GetInstance().OnModelUpdateEvent();
+
             return ARE_MODELS_LOADED;
         }
 

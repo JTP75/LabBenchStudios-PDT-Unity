@@ -38,6 +38,7 @@ using LabBenchStudios.Pdt.Plexus;
 
 using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Unity.Hud;
+using UnityEngine.AI;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
@@ -48,6 +49,15 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         [SerializeField]
         private ModelNameUtil.DtmiControllerEnum controllerID = ModelNameUtil.DtmiControllerEnum.Custom;
+
+        [SerializeField]
+        private GameObject isCustomTypeToggleObject;
+
+        [SerializeField]
+        private GameObject typeNameSelectorObject;
+
+        [SerializeField]
+        private GameObject typeNameTextObject;
 
         [SerializeField]
         private bool listenToAllDevices = false;
@@ -130,6 +140,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         [SerializeField]
         private List<GameObject> animationListenerContainerList = null;
 
+        private Toggle isCustomTypeToggle = null;
+        private InputField customNameInputField = null;
+        private Text customNameText = null;
+        private TMP_Text typeNameText = null;
         private TMP_Text connStateLabelText = null;
         private TMP_Text deviceIDText = null;
         private TMP_Text deviceCmdResourceText = null;
@@ -145,6 +159,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private TMP_Text modelPanelName = null;
         private TMP_Text modelContentText = null;
 
+        private TMP_Dropdown typeNameSelector = null;
         private TMP_Dropdown deviceIDSelector = null;
 
         private Image statusPanelStateImage = null;
@@ -173,6 +188,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private bool isPropsEditorPanelActive = false;
 
         private bool enableIncomingTelemetry = true;
+
+        private string customName = "";
 
         private string dtmiUri = ModelNameUtil.IOT_MODEL_CONTEXT_MODEL_ID;
         private string dtmiName = ModelNameUtil.IOT_MODEL_CONTEXT_NAME;
@@ -285,6 +302,55 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             // has one we can process
             this.UpdateConnectionState();
             this.UpdateCommandResourceName();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnTypeNameSelected()
+        {
+            if (this.typeNameSelector != null)
+            {
+                this.customName = this.deviceIDSelector.captionText.text;
+                this.typeNameText.text = customName;
+            }
+
+            /*
+            // should already be created by now - if not, the deviceID
+            // will be applied as soon as the model manager creates the
+            // referential state object
+            if (this.digitalTwinModelState != null)
+            {
+                this.digitalTwinModelState.SetConnectedDeviceID(this.deviceID);
+            }
+
+            // allow the twin to be provisioned
+            if (this.provisionDeviceTwinButton != null) this.provisionDeviceTwinButton.interactable = true;
+
+            // update connection state - by the time we process the deviceName ID in this
+            // UI component, the target remote deviceName may have already sent it's
+            // connection state update, so we need to check if the local cache
+            // has one we can process
+            this.UpdateConnectionState();
+            this.UpdateCommandResourceName();
+            */
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UpdateTypeNamesList()
+        {
+            if (this.typeNameSelector != null)
+            {
+                List<string> typeNameList = EventProcessor.GetInstance().GetConfigTypeModelManager().GetLoadedConfigTypeNames();
+
+                if (typeNameList != null && typeNameList.Count > 0)
+                {
+                    this.typeNameSelector.ClearOptions();
+                    this.typeNameSelector.AddOptions(typeNameList);
+                }
+            }
         }
 
         /// <summary>
@@ -458,9 +524,28 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 this.hasStatusPanel = true;
             }
 
+            if (this.typeNameTextObject != null)
+            {
+                this.typeNameText = this.typeNameTextObject.GetComponent<TextMeshProUGUI>();
+            }
+
             if (this.deviceIDObject != null)
             {
                 this.deviceIDText = this.deviceIDObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.isCustomTypeToggleObject != null)
+            {
+                this.isCustomTypeToggle = this.isCustomTypeToggleObject.GetComponent<Toggle>();
+            }
+
+            if (this.typeNameTextObject != null) {
+                this.typeNameText = this.typeNameTextObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.typeNameSelectorObject != null)
+            {
+                this.typeNameSelector = this.typeNameSelectorObject.GetComponent<TMP_Dropdown>();
             }
 
             if (this.deviceIDSelectorObject != null)
@@ -671,25 +756,54 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             try
             {
-                // first: set DTMI labels and ID's
-                this.dtmiUri = ModelNameUtil.CreateModelID(this.controllerID, this.modelVersion);
+                // Step 1: Check if the controller ID is custom or static
+                //         and update type names from loaded type config
+                this.UpdateTypeNamesList();
+
+                switch (this.controllerID) {
+                    // Step 1a: Configure custom controller model
+                    //          Set DTMI labels and ID's
+                    case ModelNameUtil.DtmiControllerEnum.Custom:
+                        this.EnableCustomTypeName(true);
+
+                        this.dtmiUri =
+                            ModelNameUtil.CreateModelID(ModelNameUtil.DTMI_PREFIX, this.customName, this.modelVersion);
+
+                        break;
+
+                    // Step 1b: Configure static controller model
+                    //          Set DTMI labels and ID's
+                    default:
+                        this.EnableCustomTypeName(false);
+
+                        this.dtmiUri =
+                            ModelNameUtil.CreateModelID(this.controllerID, this.modelVersion);
+
+                        break;
+                }
+
+                // Step 2: Create the DTMI name for this asset
                 this.dtmiName = ModelNameUtil.GetNameFromDtmiURI(this.dtmiUri);
 
-                // second: init individual panels and their control
+                if (this.typeNameText != null) {
+                    this.typeNameText.text = dtmiName;
+                }
+                        
+                // Step 3: Init individual panels and their control
                 this.InitStatusPanelControls();
                 this.InitModelPanelControls();
                 this.InitPropsEditorPanelControls();
 
-                // third: update deviceName ID list
+                // Step 4: Update deviceName ID list
                 this.UpdateDeviceIDList();
 
-                // fourth: update the curCommand resource name
+                // Step 5: Update the curCommand resource name
                 this.UpdateCommandResourceName();
 
-                // fifth: register for events
+                // Step 6: Register for events
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener)this);
 
-                // finally: start in 'resume incoming telemetry processing' state
+                // Step 7: Start in 'resume incoming telemetry processing' state
                 this.ResumeIncomingTelemetry();
             }
             catch (Exception ex)
@@ -896,6 +1010,41 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="enable"></param>
+        private void EnableCustomTypeName(bool enable)
+        {
+            if (this.typeNameSelector != null) {
+            }
+
+            if (enable) {
+                if (this.isCustomTypeToggle != null) {
+                    this.isCustomTypeToggle.isOn = true;
+                }
+
+                if (this.typeNameText != null) {
+                    this.typeNameText.text = customName;
+                }
+
+                if (this.typeNameSelector != null) {
+                    this.typeNameSelector.interactable = true;
+                    this.typeNameSelector.onValueChanged.AddListener(
+                        delegate { this.OnTypeNameSelected(); }
+                    );
+                }
+            } else {
+                if (this.isCustomTypeToggle != null) {
+                    this.isCustomTypeToggle.isOn = true;
+                }
+
+                if (this.typeNameSelector != null) {
+                    this.typeNameSelector.interactable = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         private bool IsIncomingTelemetryProcessingEnabled(IotDataContext data)
@@ -926,8 +1075,20 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
             if (dtModelManager != null)
             {
-                IotDataContext dataContext =
-                    ModelNameUtil.GenerateDataContext(this.controllerID, this.deviceID, this.locationID);
+                IotDataContext dataContext = null;
+
+                switch (this.controllerID)
+                {
+                    case ModelNameUtil.DtmiControllerEnum.Custom:
+                        dataContext =
+                            ModelNameUtil.GenerateDataContext(this.controllerID, this.deviceID, this.locationID, this.customName);
+                        break;
+
+                    default:
+                        dataContext =
+                            ModelNameUtil.GenerateDataContext(this.controllerID, this.deviceID, this.locationID);
+                        break;
+                }
 
                 this.typeCategoryID = dataContext.GetTypeCategoryID();
                 this.typeID = dataContext.GetTypeID();
@@ -935,14 +1096,15 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 if (this.enableDebugLogging)
                 {
                     Debug.Log(
-                    $"NORMAL: Provisioning DT model state instance with " +
-                    $"\n\tURI = {this.dtmiUri}" +
-                    $"\n\tName = {this.dtmiName}" +
-                    $"\n\tDevice ID = {this.deviceID}" +
-                    $"\n\tLocation ID = {this.locationID}" +
-                    $"\n\tType Category ID = {this.typeCategoryID}" +
-                    $"\n\tType ID = {this.typeID}" +
-                    $"\n\tController ID = {this.controllerID}");
+                        $"NORMAL: Provisioning DT model state instance with " +
+                        $"\n\tURI = {this.dtmiUri}" +
+                        $"\n\tName = {this.dtmiName}" +
+                        $"\n\tModel Name = {this.customName}" +
+                        $"\n\tDevice ID = {this.deviceID}" +
+                        $"\n\tLocation ID = {this.locationID}" +
+                        $"\n\tType Category ID = {this.typeCategoryID}" +
+                        $"\n\tType ID = {this.typeID}" +
+                        $"\n\tController ID = {this.controllerID}");
                 }
 
                 if (this.digitalTwinModelState == null)
@@ -1024,6 +1186,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     Debug.Log($"Updating model JSON via DT Model Manager (state not yet created): {this.controllerID}");
                     this.modelContentText.text =
                         modelMgr.GetDigitalTwinModelJson(this.controllerID);
+
+                    // TODO: handle custom controller ID - retrieve model JSON via name
                 }
             }
         }
