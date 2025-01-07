@@ -38,7 +38,6 @@ using LabBenchStudios.Pdt.Plexus;
 
 using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Unity.Hud;
-using UnityEngine.AI;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
@@ -339,17 +338,20 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        public void UpdateTypeNamesList()
+        public void UpdateConfigTypeNamesList()
         {
             if (this.typeNameSelector != null)
             {
-                List<string> typeNameList = EventProcessor.GetInstance().GetConfigTypeModelManager().GetLoadedConfigTypeNames();
+                List<string> typeNameList =
+                    EventProcessor.GetInstance().GetSystemModelManager().GetConfigTypeModelManager().GetLoadedConfigTypeNames();
 
                 if (typeNameList != null && typeNameList.Count > 0)
                 {
                     this.typeNameSelector.ClearOptions();
                     this.typeNameSelector.AddOptions(typeNameList);
                 }
+
+                Debug.Log($"Config types loaded: {typeNameList}");
             }
         }
 
@@ -517,7 +519,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        private void InitStatusPanelControls()
+        private void InitMainStatusPanelControls()
         {
             if (this.statusPanel != null)
             {
@@ -756,9 +758,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             try
             {
+                // Prelimin Step: Init main UI panel - these are needed
+                //                for the remaining steps
+                this.InitMainStatusPanelControls();
+
                 // Step 1: Check if the controller ID is custom or static
                 //         and update type names from loaded type config
-                this.UpdateTypeNamesList();
+                this.UpdateConfigTypeNamesList();
 
                 switch (this.controllerID) {
                     // Step 1a: Configure custom controller model
@@ -789,12 +795,12 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.typeNameText.text = dtmiName;
                 }
                         
-                // Step 3: Init individual panels and their control
-                this.InitStatusPanelControls();
+                // Step 3: Init remaining panels and their event controllers
                 this.InitModelPanelControls();
                 this.InitPropsEditorPanelControls();
 
-                // Step 4: Update deviceName ID list
+                // Step 4: Update deviceName ID list - this populates the
+                //         telemetry source device ID's (names)
                 this.UpdateDeviceIDList();
 
                 // Step 5: Update the curCommand resource name
@@ -1033,7 +1039,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 }
             } else {
                 if (this.isCustomTypeToggle != null) {
-                    this.isCustomTypeToggle.isOn = true;
+                    this.isCustomTypeToggle.isOn = false;
                 }
 
                 if (this.typeNameSelector != null) {
@@ -1279,13 +1285,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void UpdateTwinProperties()
-        {
-            // TODO: this will be involved - move to a separate class
-        }
-
     }
+
 }
