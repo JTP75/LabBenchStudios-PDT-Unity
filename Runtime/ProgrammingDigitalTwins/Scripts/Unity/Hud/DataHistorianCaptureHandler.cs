@@ -513,7 +513,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 }
 
                 Debug.Log($"{actionMsg} historian player. Cache name: {this.dataHistorianPlayer.GetCacheName()}");
-                Debug.Log($"{actionMsg} historian playere. Storage Path: {this.dataHistorianPlayer.GetCacheStorageUri()}");
+                Debug.Log($"{actionMsg} historian player. Storage Path: {this.dataHistorianPlayer.GetCacheStorageUri()}");
                 Debug.Log($"{actionMsg} historian storage. Cache File: {this.dataHistorianPlayer.GetCacheFileName()}");
 
                 this.InitHistorianEventCapturePanel();

@@ -125,13 +125,19 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject resumeTelemetryButtonObject = null;
 
         [SerializeField]
-        private GameObject updateDeviceButtonObject = null;
+        private GameObject displayMaintenanceButtonObject = null;
 
         [SerializeField]
         private GameObject statusPanelCloseButtonObject = null;
 
         [SerializeField]
         private GameObject propsEditorPanel = null;
+
+        [SerializeField]
+        private GameObject displayMaintenancePanel = null;
+
+        [SerializeField]
+        private GameObject maintenancePanelContentObject = null;
 
         [SerializeField]
         private GameObject eventListenerContainer = null;
@@ -151,6 +157,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private TMP_Text statusPanelName = null;
         private TMP_Text statusContentText = null;
         private TMP_Text propsContentText = null;
+        private TMP_Text maintenancePanelContentText = null;
         private TMP_Text modelDataLoadStatusText = null;
         private TMP_Text filePathEntryText = null;
 
@@ -167,7 +174,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private Button resumeTelemetryButton = null;
         private Button pauseTelemetryButton = null;
-        private Button updateDeviceButton = null;
+        private Button displayMaintenanceButton = null;
         private Button showModelPanelButton = null;
         private Button closeModelPanelButton = null;
         private Button closeStatusPanelButton = null;
@@ -185,6 +192,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private bool hasPropsEditorPanel = false;
         private bool isPropsEditorPanelActive = false;
+
+        private bool hasDisplayMaintenancePanel = false;
+        private bool isDisplayMaintenancePanelActive = false;
+        private bool hasMaintenancePanelContentContainer = false;
 
         private bool enableIncomingTelemetry = true;
 
@@ -209,6 +220,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private DigitalTwinModelState digitalTwinModelState = null;
         private DigitalTwinPropertiesHandler digitalTwinPropsHandler = null;
+        private DigitalTwinDisplayMaintenanceHandler digitalTwinDisplayMaintenanceHandler = null;
 
         private ResourceNameContainer telemetryResource = null;
         private ResourceNameContainer cmdResource = null;
@@ -230,6 +242,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.CloseStatusPanel();
                     this.CloseModelPanel();
                     this.ClosePropsEditorPanel();
+                    this.CloseDisplayMaintenancePanel();
                     break;
 
                 default:
@@ -268,6 +281,17 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             if (this.hasPropsEditorPanel)
             {
                 this.propsEditorPanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void CloseDisplayMaintenancePanel()
+        {
+            if (this.hasDisplayMaintenancePanel)
+            {
+                this.displayMaintenancePanel.SetActive(false);
             }
         }
 
@@ -340,6 +364,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// </summary>
         public void UpdateConfigTypeNamesList()
         {
+            Debug.LogError("TEST: Updating config type names...");
+
             if (this.typeNameSelector != null)
             {
                 List<string> typeNameList =
@@ -349,6 +375,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 {
                     this.typeNameSelector.ClearOptions();
                     this.typeNameSelector.AddOptions(typeNameList);
+
+                    Debug.LogError($"TEST: Added {typeNameList.Count} config type names.");
+                } else {
+                    Debug.LogError("TEST: No config type names available.");
                 }
 
                 Debug.Log($"Config types loaded: {typeNameList}");
@@ -393,6 +423,30 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             {
                 this.isPropsEditorPanelActive = !this.isPropsEditorPanelActive;
                 this.propsEditorPanel.SetActive(this.isPropsEditorPanelActive);
+
+                if (this.propsEditorPanel.activeInHierarchy) {
+                    if (this.hasDisplayMaintenancePanel) {
+                        this.displayMaintenancePanel.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UpdateDisplayMaintenancePanelVisibility()
+        {
+            if (this.hasDisplayMaintenancePanel)
+            {
+                this.isDisplayMaintenancePanelActive = !this.isDisplayMaintenancePanelActive;
+                this.displayMaintenancePanel.SetActive(this.isDisplayMaintenancePanelActive);
+
+                if (this.displayMaintenancePanel.activeInHierarchy) {
+                    if (this.hasPropsEditorPanel) {
+                        this.propsEditorPanel.SetActive(false);
+                    }
+                }
             }
         }
 
@@ -431,7 +485,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        public void UpdatePhysicalDevice()
+        public void DisplayDeviceMaintenance()
         {
             this.digitalTwinPropsHandler?.SendDeviceCommands();
         }
@@ -519,6 +573,20 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
+        private void InitDisplayMaintenancePanelControls()
+        {
+            if (this.displayMaintenancePanel != null)
+            {
+                this.digitalTwinDisplayMaintenanceHandler = this.displayMaintenancePanel.GetComponent<DigitalTwinDisplayMaintenanceHandler>();
+
+                this.hasDisplayMaintenancePanel = true;
+                this.displayMaintenancePanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitMainStatusPanelControls()
         {
             if (this.statusPanel != null)
@@ -577,13 +645,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             if (this.statusPanelNameObject != null)
             {
                 this.statusPanelName = this.statusPanelNameObject.GetComponent<TextMeshProUGUI>();
-                this.statusPanelName.text = this.dtmiName;
+                //this.statusPanelName.text = this.dtmiName;
             }
 
             if (this.statusPanelIDObject != null)
             {
                 this.statusPanelID = this.statusPanelIDObject.GetComponent<TextMeshProUGUI>();
-                this.statusPanelID.text = this.dtmiUri;
+                //this.statusPanelID.text = this.dtmiUri;
             }
 
             if (this.statusPanelPropsContentObject != null)
@@ -598,6 +666,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 this.hasStatusPanelTelemetryContainer = true;
 
                 this.statusContentText = this.statusPanelStateContentObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.maintenancePanelContentObject != null)
+            {
+                this.hasMaintenancePanelContentContainer = true;
+
+                this.maintenancePanelContentText = this.maintenancePanelContentObject.GetComponent<TextMeshProUGUI>();
             }
 
             if (this.animationListenerContainerList != null && this.animationListenerContainerList.Count > 0)
@@ -664,6 +739,16 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 }
             }
 
+            if (this.displayMaintenanceButtonObject != null)
+            {
+                this.displayMaintenanceButton = this.displayMaintenanceButtonObject.GetComponent<Button>();
+
+                if (this.displayMaintenanceButton != null)
+                {
+                    this.displayMaintenanceButton.onClick.AddListener(() => this.UpdateDisplayMaintenancePanelVisibility());
+                }
+            }
+
             if (this.resumeTelemetryButtonObject != null)
             {
                 this.resumeTelemetryButton = this.resumeTelemetryButtonObject.GetComponent<Button>();
@@ -683,16 +768,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.pauseTelemetryButton.onClick.AddListener(() => this.PauseIncomingTelemetry());
                 }
             }
-
-            if (this.updateDeviceButtonObject != null)
-            {
-                this.updateDeviceButton = this.updateDeviceButtonObject.GetComponent<Button>();
-
-                if (this.updateDeviceButton != null)
-                {
-                    this.updateDeviceButton.onClick.AddListener(() => this.UpdatePhysicalDevice());
-                }
-            }
         }
 
         /// <summary>
@@ -709,13 +784,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             if (this.modelPanelNameObject != null)
             {
                 this.modelPanelName = this.modelPanelNameObject.GetComponent<TextMeshProUGUI>();
-                this.modelPanelName.text = this.dtmiName;
+                //this.modelPanelName.text = this.dtmiName;
             }
 
             if (this.modelPanelIDObject != null)
             {
                 this.modelPanelID = this.modelPanelIDObject.GetComponent<TextMeshProUGUI>();
-                this.modelPanelID.text = this.dtmiUri;
+                //this.modelPanelID.text = this.dtmiUri;
             }
 
             if (this.modelPanelContentObject != null)
@@ -758,9 +833,17 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             try
             {
-                // Prelimin Step: Init main UI panel - these are needed
+                // =====
+                // Basic init
+                //
+
+                // Preliminary Step: Init main UI panel - these are needed
                 //                for the remaining steps
                 this.InitMainStatusPanelControls();
+
+                // =====
+                // Configure Types and State
+                //
 
                 // Step 1: Check if the controller ID is custom or static
                 //         and update type names from loaded type config
@@ -791,13 +874,18 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 // Step 2: Create the DTMI name for this asset
                 this.dtmiName = ModelNameUtil.GetNameFromDtmiURI(this.dtmiUri);
 
-                if (this.typeNameText != null) {
-                    this.typeNameText.text = dtmiName;
-                }
-                        
+                // =====
+                // Init Internal Panels
+                //
+
                 // Step 3: Init remaining panels and their event controllers
                 this.InitModelPanelControls();
                 this.InitPropsEditorPanelControls();
+                this.InitDisplayMaintenancePanelControls();
+
+                // =====
+                // Update ID's and Names
+                //
 
                 // Step 4: Update deviceName ID list - this populates the
                 //         telemetry source device ID's (names)
@@ -806,10 +894,17 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 // Step 5: Update the curCommand resource name
                 this.UpdateCommandResourceName();
 
-                // Step 6: Register for events
+                // Step 6: Update all the panel's label names
+                this.UpdateAllPanelLabelNames();
+                
+                // =====
+                // Handle event registrations and state 'start'
+                //
+
+                // Step 7: Register for events
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener)this);
 
-                // Step 7: Start in 'resume incoming telemetry processing' state
+                // Step 8: Start in 'resume incoming telemetry processing' state
                 this.ResumeIncomingTelemetry();
             }
             catch (Exception ex)
@@ -1028,7 +1123,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 }
 
                 if (this.typeNameText != null) {
-                    this.typeNameText.text = customName;
+                    //this.typeNameText.text = this.customName;
                 }
 
                 if (this.typeNameSelector != null) {
@@ -1139,6 +1234,11 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.digitalTwinPropsHandler.SetDigitalTwinModelState(this.digitalTwinModelState);
                 }
 
+                if (this.digitalTwinDisplayMaintenanceHandler != null)
+                {
+                    this.digitalTwinDisplayMaintenanceHandler.SetDigitalTwinModelState(this.digitalTwinModelState);
+                }
+
                 if (this.eventListener != null)
                 {
                     this.eventListener.SetDigitalTwinStateProcessor(this.digitalTwinModelState);
@@ -1169,6 +1269,41 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             else
             {
                 Debug.LogWarning($"No cached connection state for {this.deviceID}");
+            }
+        }
+
+        /// <summary>
+        /// Updates all DTMI, model, type and device names in the various ref'd panels.
+        /// </summary>
+        private void UpdateAllPanelLabelNames()
+        {
+            if (this.typeNameText != null) {
+                if (string.IsNullOrWhiteSpace(this.customName)) {
+                    this.customName = this.dtmiName;
+                }
+
+                this.typeNameText.text = customName;
+            }
+
+            if (this.modelPanelName != null) {
+                this.modelPanelName.text = this.dtmiName;
+            }
+
+            if (this.modelPanelID != null) {
+                this.modelPanelID.text = this.dtmiUri;
+            }
+
+            if (this.statusPanelName != null) {
+                this.statusPanelName.text = this.dtmiName;
+            }
+
+            if (this.statusPanelID != null) {
+                this.statusPanelID.text = this.dtmiUri;
+            }
+
+            if (this.deviceCmdResourceText != null)
+            {
+                this.deviceCmdResourceText.text = this.cmdResourceName;
             }
         }
 
@@ -1276,7 +1411,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
             if (this.deviceCmdResourceText != null)
             {
-                this.deviceCmdResourceText.text = this.cmdResourceName;
+                //this.deviceCmdResourceText.text = this.cmdResourceName;
             }
 
             if (this.digitalTwinPropsHandler != null)
