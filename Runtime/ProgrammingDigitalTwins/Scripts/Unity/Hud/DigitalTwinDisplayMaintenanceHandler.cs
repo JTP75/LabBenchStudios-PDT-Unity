@@ -173,6 +173,26 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dtmiName"></param>
+        /// <param name="dtmiUri"></param>
+        public void UpdateDigitalTwinLabels(string dtmiName, string dtmiUri)
+        {
+            if (!string.IsNullOrEmpty(dtmiName))
+            {
+                this.dtmiName = dtmiName;
+            }
+
+            if (!string.IsNullOrEmpty(dtmiUri))
+            {
+                this.dtmiUri = dtmiUri;
+            }
+
+            this.UpdateLabelsAndNames();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnModelUpdateEvent()
         {
             this.UpdateModelDataAndProperties();
@@ -351,6 +371,16 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <summary>
         /// 
         /// </summary>
+        private void UpdateLabelsAndNames()
+        {
+            if (this.deviceIDText != null) this.deviceIDText.text = this.deviceID;
+            if (this.deviceModelIDText != null) this.deviceModelIDText.text = this.dtmiUri;
+            if (this.deviceModelNameText != null) this.deviceModelNameText.text = this.dtmiName;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void UpdateModelDataAndProperties()
         {
             // it's possible the model state object hasn't been provisioned yet;
@@ -367,11 +397,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.deviceID = this.digitalTwinModelState.GetDeviceID();
                 this.dtmiUri = this.digitalTwinModelState.GetModelID();
                 this.dtmiName = this.digitalTwinModelState.GetModelControllerID().ToString();
-
-                if (this.deviceIDText != null) this.deviceIDText.text = this.deviceID;
-                if (this.deviceModelIDText != null) this.deviceModelIDText.text = this.dtmiUri;
-                if (this.deviceModelNameText != null) this.deviceModelNameText.text = this.dtmiName;
             }
+
+            this.UpdateLabelsAndNames();
         }
 
     }
