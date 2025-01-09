@@ -83,6 +83,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject recommendationsContentObject = null;
 
         [SerializeField]
+        private GameObject responseContentObject = null;
+
+        [SerializeField]
         private GameObject eventListenerContainer = null;
 
         [SerializeField]
@@ -109,6 +112,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private Text sessionIDTextInput = null;
         private Text aiUriTextInput = null;
         private Text queryContentText = null;
+        private Text aiResponseText = null;
 
         private Button clearCacheButton = null;
         private Button resetQueryButton = null;
@@ -125,6 +129,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         private string selectedAiModel = "";
 
+        private bool updateAiModelList = false;
+        private bool updateAiResponseMsg = false;
+
         private DigitalTwinModelState digitalTwinModelState = null;
 
         private ResourceNameContainer cmdResource = null;
@@ -133,6 +140,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         private PredictionSystemManager predictionManager = null;
 
+        private Queue<string> aiQueryRequestQueue = null;
+        private Queue<string> aiQueryResponseQueue = null;
 
         // public methods (button interactions)
 
@@ -274,6 +283,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             this.UpdateUserSettings();
 
+            if (this.queryContentText != null)
+            {
+                this.queryContentText.text = "";
+            }
+
             if (this.recommendationsContentText != null)
             {
                 this.recommendationsContentText.text = "";
@@ -310,28 +324,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             Debug.Log($"Attempting to reload prediction models: {this.sessionID} - {this.serverUri}");
 
-            StartCoroutine(ReloadPredictionEngineModelsCoroutine());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private IEnumerator ReloadPredictionEngineModelsCoroutine()
-        {
-            bool isComplete = false;
-
-            new Thread(() => {
-               this.predictionManager.GetAllRegisteredModels(this.sessionID, this.serverUri);
-
-                isComplete = true;
-            }).Start();
-
-            while (! isComplete)
-            {
-                yield return null;
-            }
-
-            yield return true;
+            StartCoroutine(this.ReloadPredictionEngineModelsCoroutine());
         }
 
         /// <summary>
@@ -353,36 +346,14 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 builder.Append(this.queryContentText.text);
 
                 this.submittedQueryContentText.text = builder.ToString();
+                this.queryContentText.text = "";
             }
 
             Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Mode: {this.selectedAiModel}");
 
-            StartCoroutine(SendPredictionEngineQueryCoroutine());
+            StartCoroutine(this.SendPredictionEngineQueryCoroutine());
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private IEnumerator SendPredictionEngineQueryCoroutine()
-        {
-            bool isComplete = false;
-
-            new Thread(() => {
-                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryContentText.text))
-                {
-                    Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
-                }
-
-                isComplete = true;
-            }).Start();
-
-            while (! isComplete)
-            {
-                yield return null;
-            }
-
-            yield return true;
-        }
 
         // protected
 
@@ -457,6 +428,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
             }
 
+            if (this.responseContentObject != null)
+            {
+                this.aiResponseText = this.responseContentObject.GetComponent<Text>();
+            }
+
             // init buttons
             if (this.clearCacheButtonObject != null)
             {
@@ -522,26 +498,69 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             try
             {
-                // first: retrieve the prediction manager
+                // first: retrieve the prediction manager and init queues
                 this.predictionManager =
                     EventProcessor.GetInstance().GetSystemModelManager().GetPredictionSystemManager();
 
+                this.aiQueryRequestQueue = new Queue<string>();
+                this.aiQueryResponseQueue = new Queue<string>();
+                
                 // second: init the maintenance panel controls
                 this.InitMaintenancePanel();
 
                 // third: update the state properties
                 this.UpdateModelDataAndProperties();
 
-                // finally: handle any remaining updates and register for events
+                // fourth: handle any remaining updates and register for events
                 this.predictionManager.SetPredictionModelListener(this);
                 this.predictionManager.SetSystemStatusEventListener(this);
                 this.predictionManager.SetQueryResponseListener(this);
 
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
+
+                // fifth: start the prediction engine poller
+                if (base.IsPredictionProcessingEnabled())
+                {
+                    InvokeRepeating(nameof(CheckPredictionEngineForUpdates), 1.0f, 1.0f);
+                }
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to initialize digital twin props editor HUD. Continuing without display data: {ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// This is necessary as async updates via the prediction modeling lib are
+        /// blocked from updating any UI components (log messages are processed properly).
+        /// 
+        /// The request to the prediction engine is issued asynchronously, and updates
+        /// are handled via callback to notify the DT logging infrastructure. This routine
+        /// handles the UI updates via a polling function, as all query / response data
+        /// along with loaded model names are available via the prediction engine's cache.
+        /// </summary>
+        private void CheckPredictionEngineForUpdates()
+        {
+            List<string> modelList = this.predictionManager.GetCachedModelList(this.serverUri);
+
+            if (modelList != null && this.updateAiModelList)
+            {
+                Debug.Log($"Updating model list: {modelList.Count}");
+                this.ProcessModelListUpdate(modelList);
+
+                this.updateAiModelList = false;
+            }
+
+            PredictionSystemQueryCache queryCache = this.predictionManager.GetQueryCache(this.sessionID);
+
+            if (queryCache != null && this.updateAiResponseMsg) {
+                string queryMsg = queryCache.GetLatestQueryMessage();
+                string responseMsg = queryCache.GetLatestResponseMessage();
+
+                Debug.Log($"Updating response text: {responseMsg.Length}");
+                this.ProcessQueryResponseUpdate(responseMsg);
+
+                this.updateAiResponseMsg = false;
             }
         }
 
@@ -645,15 +664,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             string uri = modelListContainer.GetUri();
             List<string> modelList = modelListContainer.GetModelList();
 
-            if (modelList != null && modelList.Count > 0)
-            {
-                Debug.Log($"AI models retrieved from {uri}. Count {modelList.Count}");
-
-                this.aiModelSelector.ClearOptions();
-                this.aiModelSelector.AddOptions(modelList);
-            } else {
-                Debug.Log($"No AI models retrieved from {uri}.");
-            }
+            this.ProcessModelListUpdate(modelList);
         }
 
         /// <summary>
@@ -666,25 +677,116 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             string uri = queryResponseContainer.GetUri();
             string response = queryResponseContainer.GetResponse();
 
-            Debug.Log($"AI query response received: {sessionID} - {uri}");
-
-            if (!string.IsNullOrEmpty(response)) {
-                StringBuilder builder = new StringBuilder(this.recommendationsContentText.text);
-
-                if (builder.Length > 0)
-                {
-                    builder.Append("\n\n");
-                }
-                
-                builder.Append(response);
-
-                this.recommendationsContentText.text = builder.ToString();
-            } else {
-                Debug.Log($"AI response was empty for {sessionID}.");
-            }
+            this.ProcessQueryResponseUpdate(response);
         }
 
         // private methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelList"></param>
+        private void ProcessModelListUpdate(List<string> modelList)
+        {
+            if (modelList != null && modelList.Count > 0)
+            {
+                Debug.Log($"Cached AI models retrieved from {this.serverUri}. Count {modelList.Count}");
+
+                this.aiModelSelector.ClearOptions();
+                this.aiModelSelector.AddOptions(modelList);
+            } else {
+                Debug.Log($"No Cached AI models retrieved from {this.serverUri}.");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="responseMsg"></param>
+        private void ProcessQueryResponseUpdate(string responseMsg)
+        {
+            Debug.Log($"Cached AI query response received: {this.sessionID} - {this.serverUri}");
+
+            if (!string.IsNullOrEmpty(responseMsg)) {
+                if (this.recommendationsContentText != null)
+                {
+                    StringBuilder builder = new StringBuilder(this.recommendationsContentText.text);
+
+                    if (builder.Length > 0)
+                    {
+                        builder.Append("\n\n");
+                    }
+
+                    builder.Append(responseMsg);
+
+                    this.recommendationsContentText.text = builder.ToString();
+                }
+                else if (this.aiResponseText != null)
+                {
+                    StringBuilder builder = new StringBuilder(this.aiResponseText.text);
+
+                    if (builder.Length > 0)
+                    {
+                        builder.Append("\n\n");
+                    }
+
+                    builder.Append(responseMsg);
+
+                    this.aiResponseText.text = builder.ToString();
+                }
+            } else {
+                Debug.Log($"Cached AI response was empty for {sessionID}.");
+            }
+        }
+
+        /// <summary>
+        /// Prediction engine may or may not block on the request, so handle
+        /// this within an async co-routine.
+        /// </summary>
+        private IEnumerator ReloadPredictionEngineModelsCoroutine()
+        {
+            bool isComplete = false;
+
+            new Thread(() => {
+               this.predictionManager.GetAllRegisteredModels(this.sessionID, this.serverUri);
+
+                isComplete = true;
+                this.updateAiModelList = true;
+            }).Start();
+
+            while (! isComplete)
+            {
+                yield return null;
+            }
+
+            yield return true;
+        }
+
+        /// <summary>
+        /// Prediction engine may or may not block on the request, so handle
+        /// this within an async co-routine.
+        /// </summary>
+        private IEnumerator SendPredictionEngineQueryCoroutine()
+        {
+            bool isComplete = false;
+
+            new Thread(() => {
+                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryContentText.text))
+                {
+                    Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
+                }
+
+                isComplete = true;
+                this.updateAiResponseMsg = true;
+            }).Start();
+
+            while (! isComplete)
+            {
+                yield return null;
+            }
+
+            yield return true;
+        }
 
         /// <summary>
         /// 

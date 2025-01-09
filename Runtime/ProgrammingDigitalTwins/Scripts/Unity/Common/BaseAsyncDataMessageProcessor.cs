@@ -183,11 +183,15 @@ namespace LabBenchStudios.Pdt.Unity.Common
             {
                 QueryResponseContainer queryData = this.GetQueryResponseDataFromQueue();
 
-                if (queryData != null) { this.ProcessQueryResponseUpdate(queryData); }
+                if (queryData != null) {
+                    this.ProcessQueryResponseUpdate(queryData);
+                }
 
                 ModelListContainer modelData = this.GetModelListDataFromQueue();
 
-                if (modelData != null) { this.ProcessModelListUpdate(modelData); }
+                if (modelData != null) {
+                    this.ProcessModelListUpdate(modelData);
+                }
             }
 
         }
@@ -270,6 +274,15 @@ namespace LabBenchStudios.Pdt.Unity.Common
             {
                 this.sysPerfDataQueue.Enqueue(data);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPredictionProcessingEnabled()
+        {
+            return this.enablePredictionProcessing;
         }
 
         /// <summary>
