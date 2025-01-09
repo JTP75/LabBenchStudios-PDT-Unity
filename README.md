@@ -168,6 +168,16 @@ This package requires the following Unity packages to be installed prior to this
   - DLL Version: 1.0.52
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
+- Microsoft.Bcl.AsyncInterfaces.dll
+  - Reference: .NET Foundation and contributors. Microsoft.Bcl.AsyncInterfaces. (2025) [Online]. Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
+  - DLL Version: 9.0.0
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
+- Microsoft.Extensions.AI.Abstractions.dll
+  - Reference: .NET Foundation. Microsoft.Extensions.AI.Abstractions. (2025) [Online]. Available: https://www.nuget.org/packages/Microsoft.Extensions.AI.Abstractions/9.0.1-preview.1.24570.5
+  - DLL Version: 9.0.1-preview.1.24570.5
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
 - MQTTnet.dll [MQTTnet](https://github.com/dotnet/MQTTnet)
   - Reference: .NET Foundation and contributors. MQTTnet .NET library for MQTT communications. (2024) [Online]. Available: https://github.com/dotnet/MQTTnet.
   - DLL Version: 4.3.7.1207
@@ -183,53 +193,53 @@ This package requires the following Unity packages to be installed prior to this
   - DLL Version: 13.03
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
-- Microsoft.Bcl.AsyncInterfaces.dll
-  - Reference: .NET Foundation and contributors. Microsoft.Bcl.AsyncInterfaces. (2025) [Online]. Available: https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces
-  - DLL Version: 9.0.0
-  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+- OllamaSharp.dll
+  - Reference: Andreas Wäscher. Provides .NET bindings for the Ollama API. OllamaSharp. (2025) [Online]. Available: https://github.com/awaescher/OllamaSharp.
+  - DLL Version: 4.0.20
+  - DLL License [MIT](https://github.com/awaescher/OllamaSharp#MIT-1-ov-file)
 
 - System.Buffers.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Buffers
+  - Reference: .NET Foundation and contributors. System.Buffers. (2025) [Online]. Available: https://www.nuget.org/packages/System.Buffers
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.IO.Pipelines.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.IO.Pipelines
+  - Reference: .NET Foundation and contributors. System.IO.Pipelines. (2025) [Online]. Available: https://www.nuget.org/packages/System.IO.Pipelines
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Memory.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Memory
+  - Reference: .NET Foundation and contributors. System.Memory. (2025) [Online]. Available: https://www.nuget.org/packages/System.Memory
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Numerics.Vectors.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Numerics.Vectors
+  - Reference: .NET Foundation and contributors. System.Numerics.Vectors. (2025) [Online]. Available: https://www.nuget.org/packages/System.Numerics.Vectors
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Runtime.CompilerServices.Unsafe.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
+  - Reference: .NET Foundation and contributors. System.Runtime.CompilerServices.Unsafe. (2025) [Online]. Available: https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe
   - DLL Version: 6.1.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Text.Encodings.Web.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Encodings.Web
+  - Reference: .NET Foundation and contributors. System.Text.Encodings.Web. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Encodings.Web
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Text.Json.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Json
+  - Reference: .NET Foundation and contributors. System.Text.Json. (2025) [Online]. Available: https://www.nuget.org/packages/System.Text.Json
   - DLL Version: 9.0.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.Threading.Tasks.Extensions.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
+  - Reference: .NET Foundation and contributors. System.Threading.Tasks.Extensions. (2025) [Online]. Available: https://www.nuget.org/packages/System.Threading.Tasks.Extensions
   - DLL Version: 4.6.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 
 - System.ValueTuple.dll
-  - Reference: TBA. (2025) [Online]. Available: https://www.nuget.org/packages/System.ValueTuple
+  - Reference: .NET Foundation and contributors. System.ValueTuple. (2025) [Online]. Available: https://www.nuget.org/packages/System.ValueTuple
   - DLL Version: 4.5.0
   - DLL License: [MIT](https://licenses.nuget.org/MIT).
 

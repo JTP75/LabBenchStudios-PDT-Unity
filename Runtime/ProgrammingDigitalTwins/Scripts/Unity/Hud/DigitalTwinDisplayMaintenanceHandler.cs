@@ -35,15 +35,23 @@ using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Model;
 using LabBenchStudios.Pdt.Plexus;
+using LabBenchStudios.Pdt.Prediction;
 
 using LabBenchStudios.Pdt.Unity.Common;
+using System.Threading.Tasks;
 
 namespace LabBenchStudios.Pdt.Unity.Hud
 {
-    public class DigitalTwinDisplayMaintenanceHandler : BaseAsyncDataMessageProcessor, ISystemStatusEventListener
+    public class DigitalTwinDisplayMaintenanceHandler : BaseAsyncDataMessageProcessor, ISystemStatusEventListener, IPredictionModelListener
     {
         [SerializeField]
         private GameObject connStateObject = null;
+
+        [SerializeField]
+        private GameObject sessionIDInputObject = null;
+
+        [SerializeField]
+        private GameObject clearCacheButtonObject = null;
 
         [SerializeField]
         private GameObject deviceIDObject = null;
@@ -55,27 +63,67 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject deviceModelIDObject = null;
 
         [SerializeField]
-        private GameObject contentObject = null;
+        private GameObject aiUriTextInputObject = null;
+
+        [SerializeField]
+        private GameObject aiModelSelectorObject = null;
+
+        [SerializeField]
+        private GameObject selectedAiModelObject = null;
+
+        [SerializeField]
+        private GameObject queryContentObject = null;
+
+        [SerializeField]
+        private GameObject submittedQueryContentObject = null;
+
+        [SerializeField]
+        private GameObject recommendationsContentObject = null;
 
         [SerializeField]
         private GameObject eventListenerContainer = null;
 
-        private GameObject propsPanel = null;
+        [SerializeField]
+        private GameObject resetQueryButtonObject = null;
+
+        [SerializeField]
+        private GameObject reloadModelsButtonObject = null;
+
+        [SerializeField]
+        private GameObject sendQueryButtonObject = null;
+
+        private GameObject maintenancePanel = null;
+
+        private TMP_Dropdown aiModelSelector = null;
 
         private TMP_Text connStateLabelText = null;
         private TMP_Text deviceIDText = null;
         private TMP_Text deviceModelNameText = null;
         private TMP_Text deviceModelIDText = null;
+        private TMP_Text selectedAiModelText = null;
+        private TMP_Text submittedQueryContentText = null;
         private TMP_Text recommendationsContentText = null;
+
+        private Text sessionIDTextInput = null;
+        private Text aiUriTextInput = null;
+        private Text queryContentText = null;
+
+        private Button clearCacheButton = null;
+        private Button resetQueryButton = null;
+        private Button reloadModelsButton = null;
+        private Button sendQueryButton = null;
 
         private bool hasRecommendationsPanel = false;
 
+        private string sessionID = ConfigConst.NOT_SET;
         private string deviceID = ConfigConst.NOT_SET;
         private string locationID = ConfigConst.NOT_SET;
         private string dtmiUri  = ModelNameUtil.IOT_MODEL_CONTEXT_MODEL_ID;
         private string dtmiName = ModelNameUtil.IOT_MODEL_CONTEXT_NAME;
+        private string serverUri = "";
 
         private string modelProps = "";
+        private string selectedAiModel = "";
 
         private DigitalTwinModelState digitalTwinModelState = null;
 
@@ -83,6 +131,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         private IDataContextExtendedListener eventListener = null;
 
+        private PredictionSystemManager predictionManager = null;
 
         // public methods (button interactions)
 
@@ -93,7 +142,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             if (this.hasRecommendationsPanel)
             {
-                this.propsPanel.SetActive(false);
+                this.maintenancePanel.SetActive(false);
             }
         }
 
@@ -198,6 +247,114 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             this.UpdateModelDataAndProperties();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnPredictionModelSelected()
+        {
+            this.UpdateUserSettings();
+
+            if (this.aiModelSelector != null)
+            {
+                this.selectedAiModel = this.aiModelSelector.captionText.text;
+
+                if (this.selectedAiModelText != null) {
+                    this.selectedAiModelText.text = this.selectedAiModel;
+                }
+
+                Debug.Log($"AI model selected: {this.sessionID} - {this.selectedAiModel}");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="modelList"></param>
+        public void OnModelListRetrieved(string uri, List<string> modelList)
+        {
+            if (modelList != null)
+            {
+                Debug.Log($"AI models retrieved from {uri}. Count {modelList.Count}");
+
+                if (this.aiModelSelector != null) {
+                    this.aiModelSelector.ClearOptions();
+                    this.aiModelSelector.AddOptions(modelList);
+                }
+            } else {
+                Debug.Log($"No AI models retrieved from {uri}.");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sessionID"></param>
+        /// <param name="uri"></param>
+        /// <param name="response"></param>
+        public void OnQueryResponseReceived(string sessionID, string uri, string response)
+        {
+            Debug.Log($"AI query response received: {sessionID} - {uri}");
+
+            if (this.recommendationsContentText != null) {
+                this.recommendationsContentText.text = response;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ClearPredictionEngineCache()
+        {
+            this.UpdateUserSettings();
+
+            Debug.Log($"Clearing cached queries for all sessions.");
+
+            this.predictionManager.ClearAllCachedQueries();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ResetPredictionEngineQueries()
+        {
+            this.UpdateUserSettings();
+
+            Debug.Log($"Clearing cached queries for session: {this.sessionID}");
+
+            this.predictionManager.ClearCachedQueries(this.sessionID);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ReloadPredictionEngineModels()
+        {
+            this.UpdateUserSettings();
+
+            Debug.Log($"Attempting to reload prediction models: {this.sessionID} - {this.serverUri}");
+
+            Task.Run(() => {
+                this.predictionManager.GetAllRegisteredModels(this.sessionID, this.serverUri);
+            });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SendPredictionEngineQuery()
+        {
+            this.UpdateUserSettings();
+
+            Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Mode: {this.selectedAiModel}");
+
+            Task.Run(() => {
+                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryContentText.text))
+                {
+                    Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
+                }
+            });
+        }
 
         // protected
 
@@ -206,7 +363,12 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         private void InitMaintenancePanel()
         {
-            this.propsPanel = gameObject;
+            this.maintenancePanel = gameObject;
+
+            if (this.sessionIDInputObject != null)
+            {
+                this.sessionIDTextInput = this.sessionIDInputObject.GetComponent<Text>();
+            }
 
             if (this.deviceIDObject != null)
             {
@@ -216,6 +378,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             if (this.connStateObject != null)
             {
                 this.connStateLabelText = this.connStateObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.aiUriTextInputObject != null)
+            {
+                this.aiUriTextInput = this.aiUriTextInputObject.GetComponent<Text>();
             }
 
             if (this.deviceModelNameObject != null)
@@ -230,13 +397,80 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.deviceModelIDText.text = this.dtmiUri;
             }
 
-            if (this.contentObject != null)
+            if (this.aiModelSelectorObject != null)
+            {
+                this.aiModelSelector = this.aiModelSelectorObject.GetComponent<TMP_Dropdown>();
+
+                this.aiModelSelector.onValueChanged.AddListener(
+                    delegate { this.OnPredictionModelSelected(); }
+                );
+            }
+
+            if (this.selectedAiModelObject != null)
+            {
+                this.selectedAiModelText = this.selectedAiModelObject.GetComponent<TextMeshProUGUI>();
+                this.selectedAiModelText.text = ConfigConst.NOT_SET;
+            }
+
+            if (this.queryContentObject != null)
+            {
+                this.queryContentText = this.queryContentObject.GetComponent<Text>();
+            }
+
+            if (this.submittedQueryContentObject != null)
+            {
+                this.submittedQueryContentText = this.submittedQueryContentObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.recommendationsContentObject != null)
             {
                 this.hasRecommendationsPanel = true;
 
-                this.recommendationsContentText = this.contentObject.GetComponent<TextMeshProUGUI>();
+                this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
             }
 
+            // init buttons
+            if (this.clearCacheButtonObject != null)
+            {
+                this.clearCacheButton = this.clearCacheButtonObject.GetComponent<Button>();
+
+                if (this.clearCacheButton != null)
+                {
+                    this.clearCacheButton.onClick.AddListener(() => this.ClearPredictionEngineCache());
+                }
+            }
+
+            if (this.resetQueryButtonObject != null)
+            {
+                this.resetQueryButton = this.resetQueryButtonObject.GetComponent<Button>();
+
+                if (this.resetQueryButton != null)
+                {
+                    this.resetQueryButton.onClick.AddListener(() => this.ResetPredictionEngineQueries());
+                }
+            }
+
+            if (this.reloadModelsButtonObject != null)
+            {
+                this.reloadModelsButton = this.reloadModelsButtonObject.GetComponent<Button>();
+
+                if (this.reloadModelsButton != null)
+                {
+                    this.reloadModelsButton.onClick.AddListener(() => this.ReloadPredictionEngineModels());
+                }
+            }
+
+            if (this.sendQueryButtonObject != null)
+            {
+                this.sendQueryButton = this.sendQueryButtonObject.GetComponent<Button>();
+
+                if (this.sendQueryButton != null)
+                {
+                    this.sendQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery());
+                }
+            }
+
+            // init event listener
             if (this.eventListenerContainer != null)
             {
                 try
@@ -260,13 +494,22 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             try
             {
-                // first: init the maintenance panel controls
+                // first: retrieve the prediction manager
+                this.predictionManager =
+                    EventProcessor.GetInstance().GetSystemModelManager().GetPredictionSystemManager();
+
+                this.predictionManager.SetPredictionModelListener(this);
+
+                // second: init the maintenance panel controls
                 this.InitMaintenancePanel();
 
-                // second: update the state properties
+                // third: update the state properties
                 this.UpdateModelDataAndProperties();
 
-                // finally: register for events
+                // finally: handle any remaining updates and register for events
+                this.predictionManager.SetSystemStatusEventListener((ISystemStatusEventListener) this);
+                this.predictionManager.SetQueryResponseListener((IDataContextEventListener) this);
+
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
             }
             catch (Exception ex)
@@ -367,6 +610,22 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         }
 
         // private methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void UpdateUserSettings()
+        {
+            if (this.sessionIDTextInput != null)
+            {
+                this.sessionID = this.sessionIDTextInput.text;
+            }
+
+            if (this.aiUriTextInput != null)
+            {
+                this.serverUri = this.aiUriTextInput.text;
+            }
+        }
 
         /// <summary>
         /// 

@@ -354,26 +354,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 this.UpdateModelDataAndProperties(false);
                 this.UpdatePanelLabelNames();
             }
-
-            /*
-            // should already be created by now - if not, the deviceID
-            // will be applied as soon as the model manager creates the
-            // referential state object
-            if (this.digitalTwinModelState != null)
-            {
-                this.digitalTwinModelState.SetConnectedDeviceID(this.deviceID);
-            }
-
-            // allow the twin to be provisioned
-            if (this.provisionDeviceTwinButton != null) this.provisionDeviceTwinButton.interactable = true;
-
-            // update connection state - by the time we process the deviceName ID in this
-            // UI component, the target remote deviceName may have already sent it's
-            // connection state update, so we need to check if the local cache
-            // has one we can process
-            this.UpdateConnectionState();
-            this.UpdateCommandResourceName();
-            */
         }
 
         /// <summary>
