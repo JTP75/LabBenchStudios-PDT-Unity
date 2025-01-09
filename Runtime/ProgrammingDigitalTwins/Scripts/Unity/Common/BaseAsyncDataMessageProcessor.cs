@@ -34,10 +34,11 @@ using LabBenchStudios.Pdt.Common;
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Model;
 using LabBenchStudios.Pdt.Plexus;
+using UnityEditor.Search;
 
 namespace LabBenchStudios.Pdt.Unity.Common
 {
-    public abstract class BaseAsyncDataMessageProcessor : MonoBehaviour, IDataContextEventListener
+    public abstract class BaseAsyncDataMessageProcessor : MonoBehaviour, IDataContextEventListener, IPredictionModelListener
     {
         [SerializeField]
         private Boolean registerForDataCallbacks = true;
@@ -67,6 +68,9 @@ namespace LabBenchStudios.Pdt.Unity.Common
         private Boolean enableSystemPerformanceDataProcessing = false;
 
         [SerializeField]
+        private Boolean enablePredictionProcessing = true;
+
+        [SerializeField]
         private Boolean enableTimeAndDateUpdates = true;
 
         [SerializeField]
@@ -82,10 +86,16 @@ namespace LabBenchStudios.Pdt.Unity.Common
         private TMP_Text timeLog = null;
         private TMP_Text dateLog = null;
 
+        // queues for handling logging from framework
         private Queue<string> debugLogQueue = null;
         private Queue<string> warningLogQueue = null;
         private Queue<string> errorLogQueue = null;
 
+        // queues for handling prediction engine results
+        private Queue<ModelListContainer> predictionEngineModelListQueue = null;
+        private Queue<QueryResponseContainer> predictionEngineResponseQueue = null;
+
+        // queues for handling incoming IotDataContext messages
         private Queue<MessageData> msgDataQueue = null;
         private Queue<ActuatorData> actuatorDataQueue = null;
         private Queue<ConnectionStateData> connStateDataQueue = null;
@@ -168,6 +178,18 @@ namespace LabBenchStudios.Pdt.Unity.Common
 
                 if (data != null) { this.ProcessSystemPerformanceData(data); }
             }
+
+            if (this.enablePredictionProcessing)
+            {
+                QueryResponseContainer queryData = this.GetQueryResponseDataFromQueue();
+
+                if (queryData != null) { this.ProcessQueryResponseUpdate(queryData); }
+
+                ModelListContainer modelData = this.GetModelListDataFromQueue();
+
+                if (modelData != null) { this.ProcessModelListUpdate(modelData); }
+            }
+
         }
 
         // public callback methods
@@ -249,6 +271,35 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 this.sysPerfDataQueue.Enqueue(data);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelListContainer"></param>
+        public void OnModelListRetrieved(ModelListContainer modelListContainer)
+        {
+            if (modelListContainer != null)
+            {
+                Debug.Log($"AI models received: {modelListContainer.GetUri()} - {modelListContainer.GetModelList().Count}");
+
+                this.predictionEngineModelListQueue.Enqueue(modelListContainer);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queryResponseContainer"></param>
+        public void OnQueryResponseReceived(QueryResponseContainer queryResponseContainer)
+        {
+            if (queryResponseContainer != null)
+            {
+                Debug.Log($"AI response received: {queryResponseContainer.GetSessionID()} - {queryResponseContainer.GetUri()}:\n{queryResponseContainer.GetResponse()}");
+
+                this.predictionEngineResponseQueue.Enqueue(queryResponseContainer);
+            }
+        }
+
 
         // protected methods
 
@@ -337,13 +388,32 @@ namespace LabBenchStudios.Pdt.Unity.Common
 
         protected abstract void ProcessSystemPerformanceData(SystemPerformanceData data);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelListContainer"></param>
+        protected abstract void ProcessModelListUpdate(ModelListContainer modelListContainer);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queryResponseContainer"></param>
+        protected abstract void ProcessQueryResponseUpdate(QueryResponseContainer queryResponseContainer);
+
+
         // private methods
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitQueues()
         {
             this.debugLogQueue = new Queue<string>();
             this.warningLogQueue = new Queue<string>();
             this.errorLogQueue = new Queue<string>();
+
+            this.predictionEngineModelListQueue = new Queue<ModelListContainer>();
+            this.predictionEngineResponseQueue = new Queue<QueryResponseContainer>();
 
             this.msgDataQueue = new Queue<MessageData>();
             this.actuatorDataQueue = new Queue<ActuatorData>();
@@ -469,6 +539,30 @@ namespace LabBenchStudios.Pdt.Unity.Common
             }
 
             return data;
+        }
+
+        private QueryResponseContainer GetQueryResponseDataFromQueue()
+        {
+            QueryResponseContainer queryResponseData = null;
+
+            if (this.predictionEngineResponseQueue.Count > 0)
+            {
+                queryResponseData = this.predictionEngineResponseQueue.Dequeue();
+            }
+
+            return queryResponseData;
+        }
+
+        private ModelListContainer GetModelListDataFromQueue()
+        {
+            ModelListContainer modelListContainer= null;
+
+            if (this.predictionEngineModelListQueue.Count > 0)
+            {
+                modelListContainer = this.predictionEngineModelListQueue.Dequeue();
+            }
+
+            return modelListContainer;
         }
 
         private void UpdateTimeAndDate()

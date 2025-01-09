@@ -30,6 +30,7 @@ using TMPro;
 
 using LabBenchStudios.Pdt.Data;
 using LabBenchStudios.Pdt.Unity.Common;
+using LabBenchStudios.Pdt.Common;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
@@ -123,5 +124,24 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             // nothing to do
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelListContainer"></param>
+        protected override void ProcessModelListUpdate(ModelListContainer modelListContainer)
+        {
+            // nothing to do
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queryResponseContainer"></param>
+        protected override void ProcessQueryResponseUpdate(QueryResponseContainer queryResponseContainer)
+        {
+            // nothing to do
+        }
+
     }
+
 }
