@@ -2,7 +2,7 @@
   "typeName": "thermostat",
   "version": "2024-11-18",
   "description": "Thermostat category configuration.",
-  "displayName": "Heating System Category",
+  "displayName": "Thermostat System",
   "modelName": "dtmi:LabBenchStudios:PDT:thermostat;1",
   "id": 1000,
   "minId": 1001,

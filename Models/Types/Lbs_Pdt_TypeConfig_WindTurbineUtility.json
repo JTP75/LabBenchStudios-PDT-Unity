@@ -2,7 +2,7 @@
   "typeName": "windTurbine",
   "version": "2024-11-18",
   "description": "Wind Turbine utility category configuration.",
-  "displayName": "Wind Turbine Utility Category",
+  "displayName": "Wind Turbine",
   "modelName": "dtmi:LabBenchStudios:PDT:windTurbine;1",
   "id": 4300,
   "minId": 4301,

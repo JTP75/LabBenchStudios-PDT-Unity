@@ -41,6 +41,7 @@ using LabBenchStudios.Pdt.Unity.Common;
 
 using System.Collections;
 using System.Threading;
+using System.Dynamic;
 
 namespace LabBenchStudios.Pdt.Unity.Hud
 {
@@ -101,7 +102,10 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject reloadModelsButtonObject = null;
 
         [SerializeField]
-        private GameObject sendQueryButtonObject = null;
+        private GameObject sendGeneralQueryButtonObject = null;
+
+        [SerializeField]
+        private GameObject sendPdmQueryButtonObject = null;
 
         [SerializeField]
         private GameObject uploadDocsButtonObject = null;
@@ -136,7 +140,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private Button clearCacheButton = null;
         private Button resetQueryButton = null;
         private Button reloadModelsButton = null;
-        private Button sendQueryButton = null;
+        private Button sendGeneralQueryButton = null;
+        private Button sendPdmQueryButton = null;
         private Button uploadDocsButton = null;
 
         private bool hasRecommendationsPanel = false;
@@ -374,34 +379,55 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         public void SendPredictionEngineQuery()
         {
+            this.SendPredictionEngineQuery(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SendPredictionEngineQuery(bool isPdmQuery)
+        {
             this.UpdateUserSettings();
 
-            if (this.submittedQueryContentText != null)
+            StringBuilder builder = new StringBuilder();
+
+            if (isPdmQuery)
             {
-                StringBuilder builder = new StringBuilder(this.submittedQueryContentText.text);
+                builder.Append(this.GenerateBasicPdmQuery());
 
-                if (builder.Length > 0)
-                {
-                    builder.Append("\n\n");
-                }
-
-                builder.Append(this.queryContentText.text);
+                bool sysSpecsIncluded = false;
+                bool sysDataIncluded = false;
 
                 if (this.includeSystemSpecsToggle != null && this.includeSystemSpecsToggle.isOn)
                 {
-                    builder.Append(this.GenerateIncludeSystemSpecsQuery());
+                    builder.Append(this.GenerateSystemSpecsQuery());
+                    sysSpecsIncluded = true;
                 }
 
                 if (this.includeSystemDataToggle != null && this.includeSystemDataToggle.isOn)
                 {
-                    builder.Append(this.GenerateIncludeSystemDataQuery());
+                    if (!sysSpecsIncluded)
+                    {
+                        builder.Append(this.GenerateSystemSpecsQuery());
+                        builder.Append('\n');
+                    }
+
+                    builder.Append(this.GenerateSystemDataQuery());
+                    sysDataIncluded = true;
                 }
 
-                this.submittedQueryContentText.text = builder.ToString();
-                this.queryContentText.text = "";
+                this.queryContentText.text = builder.ToString();
+            } else {
+                if (builder.Length > 0)
+                {
+                    builder.Append('\n');
+                }
+
+                builder.Append(this.queryContentText.text);
             }
 
-            this.queryRequestMsg += this.queryContentText.text;
+            this.queryRequestMsg += builder.ToString();
+            this.submittedQueryContentText.text = this.queryRequestMsg;
             this.queryContentText.text = "";
             
             Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Model: {this.selectedAiModel}");
@@ -422,11 +448,16 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         // protected
 
+        // TODO
+        //
+        // These calls to 'Generate...Pdm...Query()' are well suited
+        // to a Builder pattern - re-work these
+        
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        protected string GenerateIncludeSystemSpecsQuery()
+        protected string GenerateBasicPdmQuery()
         {
             StringBuilder builder = new StringBuilder();
 
@@ -439,12 +470,36 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 configType = ctmm.GetConfigCategoryByModelName(this.dtmiUri);
             }
 
-            builder.Append('\n');
-            builder.Append("Generate a predictive maintenance plan.");
-            builder.Append('\n');
-            builder.Append("Include the following constraints and details of the system in your response:");
-            builder.Append('\n');
-            builder.Append("The system type is ").Append(this.dtmiName);
+            builder.Append("Generate a predictive maintenance plan for a ");
+
+            if (configType != null)
+            {
+                builder.Append(configType.GetConfigTypeDisplayName());
+            } else {
+                builder.Append(this.dtmiName);
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected string GenerateSystemSpecsQuery()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            SystemModelManager smm = EventProcessor.GetInstance().GetSystemModelManager();
+            ConfigTypeModelManager ctmm = smm.GetConfigTypeModelManager();
+            ConfigTypeModelContext configType = ctmm.GetConfigEntryByModelName(this.dtmiUri);
+
+            if (configType == null)
+            {
+                configType = ctmm.GetConfigCategoryByModelName(this.dtmiUri);
+            }
+
+            builder.Append("\nThe system's specifications include the following properties:\n");
 
             if (configType != null)
             {
@@ -452,28 +507,27 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                 // initial query details - further updates required
 
-                builder.Append('\n');
-                builder.Append("The system name is ").Append(configType.GetConfigTypeDisplayName());
-                builder.Append('\n');
-                builder.Append("Its minimum value is ").Append(constraints.GetMinReading());
-                builder.Append('\n');
-                builder.Append("Its maximum value is ").Append(constraints.GetMaxReading());
-                builder.Append('\n');
-                builder.Append("Its duty cycle in seconds is ").Append(constraints.GetDutyCycleSeconds());
+                builder.Append(configType.GetConfigTypeDisplayName());
+
+                builder.Append("\nIts minimum data value is ").Append(constraints.GetMinReading());
+                builder.Append("\nIts maximum data value is ").Append(constraints.GetMaxReading());
+                builder.Append("\nIts duty cycle in seconds is ").Append(constraints.GetDutyCycleSeconds());
+            } else {
+                builder.Append("\nNone are available at this time.");
             }
 
             return builder.ToString();
         }
 
         /// <summary>
-        /// NOT YET IMPLEMENTED
+        /// 
         /// </summary>
         /// <returns></returns>
-        protected string GenerateIncludeSystemDataQuery()
+        protected string GenerateSystemDataQuery()
         {
             StringBuilder builder = new StringBuilder();
 
-            SystemModelManager smm = EventProcessor.GetInstance().GetSystemModelManager();
+            builder.Append("\nThe system's performance includes the following measurements:\n");
 
             float cacheHours = 1;
 
@@ -493,6 +547,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                     Debug.Log($"Cache hours for system <= 0. Using default: {cacheHours}");
                 }
             }
+
+            builder.Append($"It's been running for {cacheHours} hours.");
 
             return builder.ToString();
         }
@@ -681,7 +737,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 string queryMsg = queryCache.GetLatestQueryMessage();
                 string responseMsg = queryCache.GetLatestResponseMessage();
 
-                Debug.Log($"Updating response text: {responseMsg.Length}");
+                Debug.Log($"Updating response text: {responseMsg?.Length}");
                 this.ProcessQueryResponseUpdate(responseMsg);
 
                 this.updateAiResponseMsg = false;
@@ -822,13 +878,23 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 }
             }
 
-            if (this.sendQueryButtonObject != null)
+            if (this.sendGeneralQueryButtonObject != null)
             {
-                this.sendQueryButton = this.sendQueryButtonObject.GetComponent<Button>();
+                this.sendGeneralQueryButton = this.sendGeneralQueryButtonObject.GetComponent<Button>();
 
-                if (this.sendQueryButton != null)
+                if (this.sendGeneralQueryButton != null)
                 {
-                    this.sendQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery());
+                    this.sendGeneralQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(false));
+                }
+            }
+
+            if (this.sendPdmQueryButtonObject != null)
+            {
+                this.sendPdmQueryButton = this.sendPdmQueryButtonObject.GetComponent<Button>();
+
+                if (this.sendPdmQueryButton != null)
+                {
+                    this.sendPdmQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(true));
                 }
             }
 

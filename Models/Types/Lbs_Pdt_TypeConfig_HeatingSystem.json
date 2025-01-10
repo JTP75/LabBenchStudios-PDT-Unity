@@ -2,7 +2,7 @@
   "typeName": "heatingSystem",
   "version": "2024-11-18",
   "description": "Heating system category configuration.",
-  "displayName": "Heating System Category",
+  "displayName": "Heating System",
   "modelName": "dtmi:LabBenchStudios:PDT:heatingSystem;1",
   "id": 1000,
   "minId": 1001,

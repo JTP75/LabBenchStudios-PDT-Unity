@@ -2,7 +2,7 @@
   "typeName": "environmentalSensorData",
   "version": "2024-11-18",
   "description": "Environmental sensor data category configuration.",
-  "displayName": "Environmental Sensor Data Category",
+  "displayName": "Environmental Sensor Data",
   "modelName": "dtmi:LabBenchStudios:PDT:environmentalSensorData;1",
   "id": 1000,
   "minId": 1001,

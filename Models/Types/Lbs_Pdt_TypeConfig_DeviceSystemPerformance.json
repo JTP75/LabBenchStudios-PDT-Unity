@@ -1,8 +1,8 @@
 {
   "typeName": "systemPerformanceData",
   "version": "2024-11-18",
-  "description": "System performance data type category configuration.",
-  "displayName": "System Performance Data Category",
+  "description": "Computer system performance data type category configuration.",
+  "displayName": "Computer System Performance Data",
   "modelName": "dtmi:LabBenchStudios:PDT:systemPerformanceData;1",
   "id": 9000,
   "minId": 9001,
