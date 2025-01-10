@@ -77,16 +77,22 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject queryContentObject = null;
 
         [SerializeField]
+        private GameObject rememberQueryHistoryToggleObject;
+
+        [SerializeField]
+        private GameObject includeSystemSpecsToggleObject;
+
+        [SerializeField]
+        private GameObject includeSystemDataToggleObject;
+
+        [SerializeField]
+        private GameObject systemDataCacheHoursContentObject = null;
+
+        [SerializeField]
         private GameObject submittedQueryContentObject = null;
 
         [SerializeField]
         private GameObject recommendationsContentObject = null;
-
-        [SerializeField]
-        private GameObject responseContentObject = null;
-
-        [SerializeField]
-        private GameObject eventListenerContainer = null;
 
         [SerializeField]
         private GameObject resetQueryButtonObject = null;
@@ -97,9 +103,22 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         [SerializeField]
         private GameObject sendQueryButtonObject = null;
 
+        [SerializeField]
+        private GameObject uploadDocsButtonObject = null;
+
+        [SerializeField]
+        private GameObject eventListenerContainer = null;
+
+
+        // local vars
+
         private GameObject maintenancePanel = null;
 
         private TMP_Dropdown aiModelSelector = null;
+
+        private Toggle rememberQueryHistoryToggle = null;
+        private Toggle includeSystemSpecsToggle = null;
+        private Toggle includeSystemDataToggle = null;
 
         private TMP_Text connStateLabelText = null;
         private TMP_Text deviceIDText = null;
@@ -112,12 +131,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private Text sessionIDTextInput = null;
         private Text aiUriTextInput = null;
         private Text queryContentText = null;
-        private Text aiResponseText = null;
+        private Text systemDataCacheHoursText = null;
 
         private Button clearCacheButton = null;
         private Button resetQueryButton = null;
         private Button reloadModelsButton = null;
         private Button sendQueryButton = null;
+        private Button uploadDocsButton = null;
 
         private bool hasRecommendationsPanel = false;
 
@@ -128,6 +148,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private string serverUri = "";
 
         private string selectedAiModel = "";
+        
+        private string queryRequestMsg = "";
 
         private bool updateAiModelList = false;
         private bool updateAiResponseMsg = false;
@@ -260,6 +282,25 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <summary>
         /// 
         /// </summary>
+        public void OnRememberQueryHistoryToggleClicked()
+        {
+            if (! this.rememberQueryHistoryToggle.isOn)
+            {
+                this.ResetQueryRequestMsg();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ResetQueryRequestMsg()
+        {
+            this.queryRequestMsg = "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnPredictionModelSelected()
         {
             this.UpdateUserSettings();
@@ -282,6 +323,19 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         public void ClearPredictionEngineCache()
         {
             this.UpdateUserSettings();
+            this.ResetPredictionEngineQueries();
+
+            Debug.Log($"Clearing cached queries for all sessions.");
+
+            this.predictionManager.ClearAllCachedQueries();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ResetPredictionEngineQueries()
+        {
+            this.UpdateUserSettings();
 
             if (this.queryContentText != null)
             {
@@ -297,18 +351,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             {
                 this.submittedQueryContentText.text = "";
             }
-
-            Debug.Log($"Clearing cached queries for all sessions.");
-
-            this.predictionManager.ClearAllCachedQueries();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void ResetPredictionEngineQueries()
-        {
-            this.UpdateUserSettings();
 
             Debug.Log($"Clearing cached queries for session: {this.sessionID}");
 
@@ -345,150 +387,114 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                 builder.Append(this.queryContentText.text);
 
+                if (this.includeSystemSpecsToggle != null && this.includeSystemSpecsToggle.isOn)
+                {
+                    builder.Append(this.GenerateIncludeSystemSpecsQuery());
+                }
+
+                if (this.includeSystemDataToggle != null && this.includeSystemDataToggle.isOn)
+                {
+                    builder.Append(this.GenerateIncludeSystemDataQuery());
+                }
+
                 this.submittedQueryContentText.text = builder.ToString();
                 this.queryContentText.text = "";
             }
 
-            Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Mode: {this.selectedAiModel}");
+            this.queryRequestMsg += this.queryContentText.text;
+            this.queryContentText.text = "";
+            
+            Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Model: {this.selectedAiModel}");
+            Debug.Log($"Prediction engine query: {this.queryRequestMsg}");
 
             StartCoroutine(this.SendPredictionEngineQueryCoroutine());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UploadDocsClicked()
+        {
+            // TODO: implement this
+
+            Debug.Log("Upload docs button clicked. Feature not yet implemented.");
+        }
 
         // protected
 
         /// <summary>
         /// 
         /// </summary>
-        private void InitMaintenancePanel()
+        /// <returns></returns>
+        protected string GenerateIncludeSystemSpecsQuery()
         {
-            this.maintenancePanel = gameObject;
+            StringBuilder builder = new StringBuilder();
 
-            if (this.sessionIDInputObject != null)
+            SystemModelManager smm = EventProcessor.GetInstance().GetSystemModelManager();
+            ConfigTypeModelManager ctmm = smm.GetConfigTypeModelManager();
+            ConfigTypeModelContext configType = ctmm.GetConfigEntryByModelName(this.dtmiUri);
+
+            if (configType == null)
             {
-                this.sessionIDTextInput = this.sessionIDInputObject.GetComponent<Text>();
+                configType = ctmm.GetConfigCategoryByModelName(this.dtmiUri);
             }
 
-            if (this.deviceIDObject != null)
+            builder.Append('\n');
+            builder.Append("Generate a predictive maintenance plan.");
+            builder.Append('\n');
+            builder.Append("Include the following constraints and details of the system in your response:");
+            builder.Append('\n');
+            builder.Append("The system type is ").Append(this.dtmiName);
+
+            if (configType != null)
             {
-                this.deviceIDText = this.deviceIDObject.GetComponent<TextMeshProUGUI>();
+                ConfigTypeModelConstraints constraints = configType.GetModelConstraints();
+
+                // initial query details - further updates required
+
+                builder.Append('\n');
+                builder.Append("The system name is ").Append(configType.GetConfigTypeDisplayName());
+                builder.Append('\n');
+                builder.Append("Its minimum value is ").Append(constraints.GetMinReading());
+                builder.Append('\n');
+                builder.Append("Its maximum value is ").Append(constraints.GetMaxReading());
+                builder.Append('\n');
+                builder.Append("Its duty cycle in seconds is ").Append(constraints.GetDutyCycleSeconds());
             }
 
-            if (this.connStateObject != null)
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// NOT YET IMPLEMENTED
+        /// </summary>
+        /// <returns></returns>
+        protected string GenerateIncludeSystemDataQuery()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            SystemModelManager smm = EventProcessor.GetInstance().GetSystemModelManager();
+
+            float cacheHours = 1;
+
+            if (this.systemDataCacheHoursText != null)
             {
-                this.connStateLabelText = this.connStateObject.GetComponent<TextMeshProUGUI>();
-            }
+                string cacheHoursStr = this.systemDataCacheHoursText.text;
 
-            if (this.aiUriTextInputObject != null)
-            {
-                this.aiUriTextInput = this.aiUriTextInputObject.GetComponent<Text>();
-            }
+                try {
+                    cacheHours = float.Parse(cacheHoursStr);
+                } catch (Exception e) {
+                    Debug.Log($"Cache hours for system data cannot be derived from text: {cacheHoursStr}. Using default: {cacheHours}");
+                }
 
-            if (this.deviceModelNameObject != null)
-            {
-                this.deviceModelNameText = this.deviceModelNameObject.GetComponent<TextMeshProUGUI>();
-                this.deviceModelNameText.text = this.dtmiName;
-            }
-
-            if (this.deviceModelIDObject != null)
-            {
-                this.deviceModelIDText = this.deviceModelIDObject.GetComponent<TextMeshProUGUI>();
-                this.deviceModelIDText.text = this.dtmiUri;
-            }
-
-            if (this.aiModelSelectorObject != null)
-            {
-                this.aiModelSelector = this.aiModelSelectorObject.GetComponent<TMP_Dropdown>();
-
-                this.aiModelSelector.onValueChanged.AddListener(
-                    delegate { this.OnPredictionModelSelected(); }
-                );
-            }
-
-            if (this.selectedAiModelObject != null)
-            {
-                this.selectedAiModelText = this.selectedAiModelObject.GetComponent<TextMeshProUGUI>();
-                this.selectedAiModelText.text = ConfigConst.NOT_SET;
-            }
-
-            if (this.queryContentObject != null)
-            {
-                this.queryContentText = this.queryContentObject.GetComponent<Text>();
-            }
-
-            if (this.submittedQueryContentObject != null)
-            {
-                this.submittedQueryContentText = this.submittedQueryContentObject.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (this.recommendationsContentObject != null)
-            {
-                this.hasRecommendationsPanel = true;
-
-                this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (this.responseContentObject != null)
-            {
-                this.aiResponseText = this.responseContentObject.GetComponent<Text>();
-            }
-
-            // init buttons
-            if (this.clearCacheButtonObject != null)
-            {
-                this.clearCacheButton = this.clearCacheButtonObject.GetComponent<Button>();
-
-                if (this.clearCacheButton != null)
+                if (cacheHours <= 0)
                 {
-                    this.clearCacheButton.onClick.AddListener(() => this.ClearPredictionEngineCache());
+                    cacheHours = 1;
+                    Debug.Log($"Cache hours for system <= 0. Using default: {cacheHours}");
                 }
             }
 
-            if (this.resetQueryButtonObject != null)
-            {
-                this.resetQueryButton = this.resetQueryButtonObject.GetComponent<Button>();
-
-                if (this.resetQueryButton != null)
-                {
-                    this.resetQueryButton.onClick.AddListener(() => this.ResetPredictionEngineQueries());
-                }
-            }
-
-            if (this.reloadModelsButtonObject != null)
-            {
-                this.reloadModelsButton = this.reloadModelsButtonObject.GetComponent<Button>();
-
-                if (this.reloadModelsButton != null)
-                {
-                    this.reloadModelsButton.onClick.AddListener(() => this.ReloadPredictionEngineModels());
-                }
-            }
-
-            if (this.sendQueryButtonObject != null)
-            {
-                this.sendQueryButton = this.sendQueryButtonObject.GetComponent<Button>();
-
-                if (this.sendQueryButton != null)
-                {
-                    this.sendQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery());
-                }
-            }
-
-            // init event listener
-            if (this.eventListenerContainer != null)
-            {
-                try
-                {
-                    this.eventListener = this.eventListenerContainer.GetComponent<IDataContextExtendedListener>();
-                }
-                catch (Exception e)
-                {
-                    this.eventListener = null;
-
-                    Debug.LogError(
-                        "Can't find IDataContextExtendedListener reference in event listener container GameObject. Ignoring.");
-                }
-            }
+            return builder.ToString();
         }
 
         /// <summary>
@@ -527,40 +533,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to initialize digital twin props editor HUD. Continuing without display data: {ex.StackTrace}");
-            }
-        }
-
-        /// <summary>
-        /// This is necessary as async updates via the prediction modeling lib are
-        /// blocked from updating any UI components (log messages are processed properly).
-        /// 
-        /// The request to the prediction engine is issued asynchronously, and updates
-        /// are handled via callback to notify the DT logging infrastructure. This routine
-        /// handles the UI updates via a polling function, as all query / response data
-        /// along with loaded model names are available via the prediction engine's cache.
-        /// </summary>
-        private void CheckPredictionEngineForUpdates()
-        {
-            List<string> modelList = this.predictionManager.GetCachedModelList(this.serverUri);
-
-            if (modelList != null && this.updateAiModelList)
-            {
-                Debug.Log($"Updating model list: {modelList.Count}");
-                this.ProcessModelListUpdate(modelList);
-
-                this.updateAiModelList = false;
-            }
-
-            PredictionSystemQueryCache queryCache = this.predictionManager.GetQueryCache(this.sessionID);
-
-            if (queryCache != null && this.updateAiResponseMsg) {
-                string queryMsg = queryCache.GetLatestQueryMessage();
-                string responseMsg = queryCache.GetLatestResponseMessage();
-
-                Debug.Log($"Updating response text: {responseMsg.Length}");
-                this.ProcessQueryResponseUpdate(responseMsg);
-
-                this.updateAiResponseMsg = false;
             }
         }
 
@@ -683,6 +655,211 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         // private methods
 
         /// <summary>
+        /// This is necessary as async updates via the prediction modeling lib are
+        /// blocked from updating any UI components (log messages are processed properly).
+        /// 
+        /// The request to the prediction engine is issued asynchronously, and updates
+        /// are handled via callback to notify the DT logging infrastructure. This routine
+        /// handles the UI updates via a polling function, as all query / response data
+        /// along with loaded model names are available via the prediction engine's cache.
+        /// </summary>
+        private void CheckPredictionEngineForUpdates()
+        {
+            List<string> modelList = this.predictionManager.GetCachedModelList(this.serverUri);
+
+            if (modelList != null && this.updateAiModelList)
+            {
+                Debug.Log($"Updating model list: {modelList.Count}");
+                this.ProcessModelListUpdate(modelList);
+
+                this.updateAiModelList = false;
+            }
+
+            PredictionSystemQueryCache queryCache = this.predictionManager.GetQueryCache(this.sessionID);
+
+            if (queryCache != null && this.updateAiResponseMsg) {
+                string queryMsg = queryCache.GetLatestQueryMessage();
+                string responseMsg = queryCache.GetLatestResponseMessage();
+
+                Debug.Log($"Updating response text: {responseMsg.Length}");
+                this.ProcessQueryResponseUpdate(responseMsg);
+
+                this.updateAiResponseMsg = false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void InitMaintenancePanel()
+        {
+            this.maintenancePanel = gameObject;
+
+            if (this.sessionIDInputObject != null)
+            {
+                this.sessionIDTextInput = this.sessionIDInputObject.GetComponent<Text>();
+            }
+
+            if (this.deviceIDObject != null)
+            {
+                this.deviceIDText = this.deviceIDObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.connStateObject != null)
+            {
+                this.connStateLabelText = this.connStateObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.aiUriTextInputObject != null)
+            {
+                this.aiUriTextInput = this.aiUriTextInputObject.GetComponent<Text>();
+            }
+
+            if (this.deviceModelNameObject != null)
+            {
+                this.deviceModelNameText = this.deviceModelNameObject.GetComponent<TextMeshProUGUI>();
+                this.deviceModelNameText.text = this.dtmiName;
+            }
+
+            if (this.deviceModelIDObject != null)
+            {
+                this.deviceModelIDText = this.deviceModelIDObject.GetComponent<TextMeshProUGUI>();
+                this.deviceModelIDText.text = this.dtmiUri;
+            }
+
+            if (this.aiModelSelectorObject != null)
+            {
+                this.aiModelSelector = this.aiModelSelectorObject.GetComponent<TMP_Dropdown>();
+
+                this.aiModelSelector.onValueChanged.AddListener(
+                    delegate { this.OnPredictionModelSelected(); }
+                );
+            }
+
+            if (this.selectedAiModelObject != null)
+            {
+                this.selectedAiModelText = this.selectedAiModelObject.GetComponent<TextMeshProUGUI>();
+                this.selectedAiModelText.text = ConfigConst.NOT_SET;
+            }
+
+            if (this.queryContentObject != null)
+            {
+                this.queryContentText = this.queryContentObject.GetComponent<Text>();
+            }
+
+            if (this.rememberQueryHistoryToggleObject != null)
+            {
+                this.rememberQueryHistoryToggle = this.rememberQueryHistoryToggleObject.GetComponent<Toggle>();
+                this.rememberQueryHistoryToggle.isOn = true;
+
+                this.rememberQueryHistoryToggle.onValueChanged.AddListener(
+                    delegate
+                    {
+                        this.OnRememberQueryHistoryToggleClicked();
+                    }
+                );
+            }
+
+            if (this.includeSystemSpecsToggleObject != null)
+            {
+                // no click listener required - this will be checked when the query is submitted
+                // and the system specs will be integrated along a prompt
+                this.includeSystemSpecsToggle = this.includeSystemSpecsToggleObject.GetComponent<Toggle>();
+            }
+
+            if (this.includeSystemDataToggleObject != null)
+            {
+                // no click listener required - this will be checked when the query is submitted
+                // and the system data will be integrated along a prompt
+                this.includeSystemDataToggle = this.includeSystemDataToggleObject.GetComponent<Toggle>();
+            }
+
+            if (this.systemDataCacheHoursContentObject != null)
+            {
+                this.systemDataCacheHoursText = this.systemDataCacheHoursContentObject.GetComponent<Text>();
+            }
+
+            if (this.submittedQueryContentObject != null)
+            {
+                this.submittedQueryContentText = this.submittedQueryContentObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.recommendationsContentObject != null)
+            {
+                this.hasRecommendationsPanel = true;
+
+                this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            // init buttons
+            if (this.clearCacheButtonObject != null)
+            {
+                this.clearCacheButton = this.clearCacheButtonObject.GetComponent<Button>();
+
+                if (this.clearCacheButton != null)
+                {
+                    this.clearCacheButton.onClick.AddListener(() => this.ClearPredictionEngineCache());
+                }
+            }
+
+            if (this.resetQueryButtonObject != null)
+            {
+                this.resetQueryButton = this.resetQueryButtonObject.GetComponent<Button>();
+
+                if (this.resetQueryButton != null)
+                {
+                    this.resetQueryButton.onClick.AddListener(() => this.ResetPredictionEngineQueries());
+                }
+            }
+
+            if (this.reloadModelsButtonObject != null)
+            {
+                this.reloadModelsButton = this.reloadModelsButtonObject.GetComponent<Button>();
+
+                if (this.reloadModelsButton != null)
+                {
+                    this.reloadModelsButton.onClick.AddListener(() => this.ReloadPredictionEngineModels());
+                }
+            }
+
+            if (this.sendQueryButtonObject != null)
+            {
+                this.sendQueryButton = this.sendQueryButtonObject.GetComponent<Button>();
+
+                if (this.sendQueryButton != null)
+                {
+                    this.sendQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery());
+                }
+            }
+
+            if (this.uploadDocsButtonObject != null)
+            {
+                this.uploadDocsButton = this.uploadDocsButtonObject.GetComponent<Button>();
+
+                if (this.uploadDocsButton != null)
+                {
+                    this.uploadDocsButton.onClick.AddListener(() => this.UploadDocsClicked());
+                }
+            }
+
+            // init event listener
+            if (this.eventListenerContainer != null)
+            {
+                try
+                {
+                    this.eventListener = this.eventListenerContainer.GetComponent<IDataContextExtendedListener>();
+                }
+                catch (Exception e)
+                {
+                    this.eventListener = null;
+
+                    Debug.LogError(
+                        "Can't find IDataContextExtendedListener reference in event listener container GameObject. Ignoring.");
+                }
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="modelList"></param>
@@ -721,19 +898,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                     this.recommendationsContentText.text = builder.ToString();
                 }
-                else if (this.aiResponseText != null)
-                {
-                    StringBuilder builder = new StringBuilder(this.aiResponseText.text);
-
-                    if (builder.Length > 0)
-                    {
-                        builder.Append("\n\n");
-                    }
-
-                    builder.Append(responseMsg);
-
-                    this.aiResponseText.text = builder.ToString();
-                }
             } else {
                 Debug.Log($"Cached AI response was empty for {sessionID}.");
             }
@@ -771,7 +935,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             bool isComplete = false;
 
             new Thread(() => {
-                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryContentText.text))
+                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
                 {
                     Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
                 }
