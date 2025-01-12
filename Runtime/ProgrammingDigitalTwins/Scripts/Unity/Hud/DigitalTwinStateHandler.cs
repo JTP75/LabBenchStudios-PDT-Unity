@@ -137,9 +137,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject displayMaintenancePanel = null;
 
         [SerializeField]
-        private GameObject maintenancePanelContentObject = null;
-
-        [SerializeField]
         private GameObject eventListenerContainer = null;
 
         [SerializeField]
@@ -195,7 +192,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private bool hasDisplayMaintenancePanel = false;
         private bool isDisplayMaintenancePanelActive = false;
-        private bool hasMaintenancePanelContentContainer = false;
 
         private bool enableIncomingTelemetry = true;
 
@@ -627,13 +623,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 this.hasStatusPanelTelemetryContainer = true;
 
                 this.statusContentText = this.statusPanelStateContentObject.GetComponent<TextMeshProUGUI>();
-            }
-
-            if (this.maintenancePanelContentObject != null)
-            {
-                this.hasMaintenancePanelContentContainer = true;
-
-                this.maintenancePanelContentText = this.maintenancePanelContentObject.GetComponent<TextMeshProUGUI>();
             }
 
             if (this.animationListenerContainerList != null && this.animationListenerContainerList.Count > 0)

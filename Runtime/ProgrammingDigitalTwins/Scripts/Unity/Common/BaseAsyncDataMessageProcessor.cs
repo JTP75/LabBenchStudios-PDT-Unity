@@ -296,6 +296,8 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Debug.Log($"AI models received: {modelListContainer.GetUri()} - {modelListContainer.GetModelList().Count}");
 
                 this.predictionEngineModelListQueue.Enqueue(modelListContainer);
+
+                this.ProcessModelListUpdate(modelListContainer);
             }
         }
 
@@ -310,6 +312,8 @@ namespace LabBenchStudios.Pdt.Unity.Common
                 Debug.Log($"AI response received: {queryResponseContainer.GetSessionID()} - {queryResponseContainer.GetUri()}:\n{queryResponseContainer.GetResponse()}");
 
                 this.predictionEngineResponseQueue.Enqueue(queryResponseContainer);
+
+                this.ProcessQueryResponseUpdate(queryResponseContainer);
             }
         }
 

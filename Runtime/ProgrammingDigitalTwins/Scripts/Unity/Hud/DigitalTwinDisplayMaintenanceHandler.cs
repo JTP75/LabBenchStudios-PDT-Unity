@@ -42,6 +42,7 @@ using LabBenchStudios.Pdt.Unity.Common;
 using System.Collections;
 using System.Threading;
 using System.Dynamic;
+using LabBenchStudios.Pdt.Util;
 
 namespace LabBenchStudios.Pdt.Unity.Hud
 {
@@ -52,9 +53,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         [SerializeField]
         private GameObject sessionIDInputObject = null;
-
-        [SerializeField]
-        private GameObject clearCacheButtonObject = null;
 
         [SerializeField]
         private GameObject deviceIDObject = null;
@@ -96,7 +94,16 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject recommendationsContentObject = null;
 
         [SerializeField]
-        private GameObject resetQueryButtonObject = null;
+        private GameObject selectedPathObject = null;
+
+        [SerializeField]
+        private GameObject selectedFileObject = null;
+
+        [SerializeField]
+        private GameObject resetInteractionButtonObject = null;
+
+        [SerializeField]
+        private GameObject saveInteractionButtonObject = null;
 
         [SerializeField]
         private GameObject reloadModelsButtonObject = null;
@@ -113,6 +120,10 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         [SerializeField]
         private GameObject eventListenerContainer = null;
 
+
+        // consts
+
+        public const float DEFAULT_SYS_CACHE_HRS = 1.0f;
 
         // local vars
 
@@ -136,28 +147,30 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private Text aiUriTextInput = null;
         private Text queryContentText = null;
         private Text systemDataCacheHoursText = null;
+        private Text selectedPathText = null;
+        private Text selectedFileText = null;
 
-        private Button clearCacheButton = null;
-        private Button resetQueryButton = null;
+        private Button saveInteractionButton = null;
+        private Button resetInteractionButton = null;
         private Button reloadModelsButton = null;
         private Button sendGeneralQueryButton = null;
         private Button sendPdmQueryButton = null;
         private Button uploadDocsButton = null;
 
         private bool hasRecommendationsPanel = false;
+        private bool updateAiModelList = false;
+        private bool updateAiResponseMsg = false;
+
 
         private string sessionID = ConfigConst.NOT_SET;
         private string deviceID = ConfigConst.NOT_SET;
         private string dtmiUri  = ModelNameUtil.IOT_MODEL_CONTEXT_MODEL_ID;
         private string dtmiName = ModelNameUtil.IOT_MODEL_CONTEXT_NAME;
         private string serverUri = "";
-
         private string selectedAiModel = "";
-        
         private string queryRequestMsg = "";
-
-        private bool updateAiModelList = false;
-        private bool updateAiResponseMsg = false;
+        private string selectedPathName = null;
+        private string selectedCacheName = null;
 
         private DigitalTwinModelState digitalTwinModelState = null;
 
@@ -289,7 +302,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         public void OnRememberQueryHistoryToggleClicked()
         {
-            if (! this.rememberQueryHistoryToggle.isOn)
+            if (! this.IsQueryHistoryEnabled())
             {
                 this.ResetQueryRequestMsg();
             }
@@ -325,22 +338,141 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <summary>
         /// 
         /// </summary>
-        public void ClearPredictionEngineCache()
+        public void SavePredictionEngineInteraction()
         {
             this.UpdateUserSettings();
-            this.ResetPredictionEngineQueries();
 
-            Debug.Log($"Clearing cached queries for all sessions.");
+            // save query and results
 
-            this.predictionManager.ClearAllCachedQueries();
+            Debug.Log($"Saving prediction system interaction for {this.sessionID} - {this.selectedAiModel}");
+
+            bool success = this.GetPredictionSystemManager().SavePredictionCache(this.sessionID);
+
+            if (success) {
+                Debug.Log($"Prediction system interaction for {this.sessionID} saved.");
+            } else {
+                Debug.Log($"Failed to save prediction system interaction for {this.sessionID}.");
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void ResetPredictionEngineQueries()
+        /// <returns></returns>
+        public PredictionSystemManager GetPredictionSystemManager()
         {
-            this.UpdateUserSettings();
+            if (this.predictionManager == null)
+            {
+                this.predictionManager =
+                    EventProcessor.GetInstance().GetSystemModelManager().GetPredictionSystemManager();
+
+                this.predictionManager.SetPredictionModelListener(this);
+                this.predictionManager.SetSystemStatusEventListener(this);
+                this.predictionManager.SetQueryResponseListener(this);
+            }
+
+            return this.predictionManager;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public float GetSystemDataCacheHours()
+        {
+            float cacheHours = DEFAULT_SYS_CACHE_HRS;
+
+            if (this.systemDataCacheHoursText != null)
+            {
+                string cacheHoursStr = this.systemDataCacheHoursText.text;
+
+                try {
+                    cacheHours = float.Parse(cacheHoursStr);
+                } catch (Exception e) {
+                    Debug.Log($"Cache hours for system data cannot be derived from text: {cacheHoursStr}. Using default: {cacheHours}");
+                }
+
+                if (cacheHours <= 0)
+                {
+                    cacheHours = DEFAULT_SYS_CACHE_HRS;
+
+                    Debug.Log($"Cache hours for system <= 0. Using default: {cacheHours}");
+
+                    this.InitSystemDataCacheHours(cacheHours);
+                }
+            }
+
+            return cacheHours;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitSystemDataCacheHours()
+        {
+            this.InitSystemDataCacheHours(DEFAULT_SYS_CACHE_HRS);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hrs"></param>
+        public void InitSystemDataCacheHours(float hrs)
+        {
+            if (this.systemDataCacheHoursText != null)
+            {
+                this.systemDataCacheHoursText.text = hrs.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsQueryHistoryEnabled()
+        {
+            if (this.rememberQueryHistoryToggle != null && this.rememberQueryHistoryToggle.isOn)
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsIncludeSystemDataEnabled()
+        {
+            if (this.includeSystemDataToggle != null && this.includeSystemDataToggle.isOn)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsIncludeSystemSpecsEnabled()
+        {
+            if (this.includeSystemSpecsToggle != null && this.includeSystemSpecsToggle.isOn)
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ResetAllRequestData()
+        {
+            this.queryRequestMsg = "";
 
             if (this.queryContentText != null)
             {
@@ -357,9 +489,20 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.submittedQueryContentText.text = "";
             }
 
-            Debug.Log($"Clearing cached queries for session: {this.sessionID}");
+            this.InitSystemDataCacheHours();
+        }
 
-            this.predictionManager.ClearCachedQueries(this.sessionID);
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ResetPredictionEngineInteraction()
+        {
+            this.UpdateUserSettings();
+            this.ResetAllRequestData();
+
+            Debug.Log($"Clearing cached queries for all sessions.");
+
+            this.GetPredictionSystemManager().ClearAllCachedQueries();
         }
 
         /// <summary>
@@ -396,15 +539,14 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 builder.Append(this.GenerateBasicPdmQuery());
 
                 bool sysSpecsIncluded = false;
-                bool sysDataIncluded = false;
 
-                if (this.includeSystemSpecsToggle != null && this.includeSystemSpecsToggle.isOn)
+                if (this.IsIncludeSystemSpecsEnabled())
                 {
                     builder.Append(this.GenerateSystemSpecsQuery());
                     sysSpecsIncluded = true;
                 }
 
-                if (this.includeSystemDataToggle != null && this.includeSystemDataToggle.isOn)
+                if (this.IsIncludeSystemDataEnabled())
                 {
                     if (!sysSpecsIncluded)
                     {
@@ -413,7 +555,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                     }
 
                     builder.Append(this.GenerateSystemDataQuery());
-                    sysDataIncluded = true;
                 }
 
                 this.queryContentText.text = builder.ToString();
@@ -529,26 +670,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             builder.Append("\nThe system's performance includes the following measurements:\n");
 
-            float cacheHours = 1;
+            float cacheHours = this.GetSystemDataCacheHours();
 
-            if (this.systemDataCacheHoursText != null)
-            {
-                string cacheHoursStr = this.systemDataCacheHoursText.text;
-
-                try {
-                    cacheHours = float.Parse(cacheHoursStr);
-                } catch (Exception e) {
-                    Debug.Log($"Cache hours for system data cannot be derived from text: {cacheHoursStr}. Using default: {cacheHours}");
-                }
-
-                if (cacheHours <= 0)
-                {
-                    cacheHours = 1;
-                    Debug.Log($"Cache hours for system <= 0. Using default: {cacheHours}");
-                }
-            }
-
-            builder.Append($"It's been running for {cacheHours} hours.");
+            builder.Append($"Query will consider {cacheHours} hours of operational data.");
 
             return builder.ToString();
         }
@@ -561,8 +685,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             try
             {
                 // first: retrieve the prediction manager and init queues
-                this.predictionManager =
-                    EventProcessor.GetInstance().GetSystemModelManager().GetPredictionSystemManager();
+                this.predictionManager = this.GetPredictionSystemManager();
 
                 this.aiQueryRequestQueue = new Queue<string>();
                 this.aiQueryResponseQueue = new Queue<string>();
@@ -573,11 +696,10 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 // third: update the state properties
                 this.UpdateModelDataAndProperties();
 
-                // fourth: handle any remaining updates and register for events
-                this.predictionManager.SetPredictionModelListener(this);
-                this.predictionManager.SetSystemStatusEventListener(this);
-                this.predictionManager.SetQueryResponseListener(this);
+                // third: init interaction path and file (initial - this will be set for each session ID)
+                this.InitPathInfo();
 
+                // fourth: handle any remaining updates and register for events
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
 
                 // fifth: start the prediction engine poller
@@ -692,7 +814,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             string uri = modelListContainer.GetUri();
             List<string> modelList = modelListContainer.GetModelList();
 
-            this.ProcessModelListUpdate(modelList);
+            this.updateAiModelList = true;
+
+            //this.ProcessModelListUpdate(modelList);
         }
 
         /// <summary>
@@ -705,7 +829,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             string uri = queryResponseContainer.GetUri();
             string response = queryResponseContainer.GetResponse();
 
-            this.ProcessQueryResponseUpdate(response);
+            this.updateAiResponseMsg = true;
+
+            //this.ProcessQueryResponseUpdate(response);
         }
 
         // private methods
@@ -721,26 +847,45 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         private void CheckPredictionEngineForUpdates()
         {
-            List<string> modelList = this.predictionManager.GetCachedModelList(this.serverUri);
+            List<string> modelList = this.GetPredictionSystemManager().GetCachedModelList(this.serverUri);
 
             if (modelList != null && this.updateAiModelList)
             {
-                Debug.Log($"Updating model list: {modelList.Count}");
                 this.ProcessModelListUpdate(modelList);
-
-                this.updateAiModelList = false;
             }
 
-            PredictionSystemQueryCache queryCache = this.predictionManager.GetQueryCache(this.sessionID);
+            PredictionSystemQueryCache queryCache = this.GetPredictionSystemManager().GetQueryCache(this.sessionID);
 
             if (queryCache != null && this.updateAiResponseMsg) {
                 string queryMsg = queryCache.GetLatestQueryMessage();
                 string responseMsg = queryCache.GetLatestResponseMessage();
 
-                Debug.Log($"Updating response text: {responseMsg?.Length}");
                 this.ProcessQueryResponseUpdate(responseMsg);
+            }
+        }
 
-                this.updateAiResponseMsg = false;
+        /// <summary>
+        /// 
+        /// </summary>
+        private void InitPathInfo()
+        {
+            try
+            {
+                this.selectedPathName = this.GetPredictionSystemManager().GetRootFilePath();
+                this.selectedCacheName = this.GetPredictionSystemManager().GetCacheFilePath();
+                
+                if (this.selectedPathText != null) {
+                    this.selectedPathText.text = this.selectedPathName;
+                }
+
+                if (this.selectedFileText != null) {
+                    this.selectedFileText.text = this.selectedCacheName;
+                }
+
+                Debug.Log($"Setting interaction storage filename: {this.selectedCacheName}");
+            } catch (Exception e)
+            {
+                Debug.LogError($"Exception thrown setting path and file. Message: {e.Message}. Stack: {e.StackTrace}");
             }
         }
 
@@ -847,24 +992,35 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
             }
 
-            // init buttons
-            if (this.clearCacheButtonObject != null)
+            // init interation storage names
+            if (this.selectedPathObject != null)
             {
-                this.clearCacheButton = this.clearCacheButtonObject.GetComponent<Button>();
+                this.selectedPathText = this.selectedPathObject.GetComponent<Text>();
+            }
 
-                if (this.clearCacheButton != null)
+            if (this.selectedFileObject != null)
+            {
+                this.selectedFileText = this.selectedFileObject.GetComponent<Text>();
+            }
+
+            // init buttons
+            if (this.saveInteractionButtonObject != null)
+            {
+                this.saveInteractionButton = this.saveInteractionButtonObject.GetComponent<Button>();
+
+                if (this.saveInteractionButton != null)
                 {
-                    this.clearCacheButton.onClick.AddListener(() => this.ClearPredictionEngineCache());
+                    this.saveInteractionButton.onClick.AddListener(() => this.SavePredictionEngineInteraction());
                 }
             }
 
-            if (this.resetQueryButtonObject != null)
+            if (this.resetInteractionButtonObject != null)
             {
-                this.resetQueryButton = this.resetQueryButtonObject.GetComponent<Button>();
+                this.resetInteractionButton = this.resetInteractionButtonObject.GetComponent<Button>();
 
-                if (this.resetQueryButton != null)
+                if (this.resetInteractionButton != null)
                 {
-                    this.resetQueryButton.onClick.AddListener(() => this.ResetPredictionEngineQueries());
+                    this.resetInteractionButton.onClick.AddListener(() => this.ResetPredictionEngineInteraction());
                 }
             }
 
@@ -886,6 +1042,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.sendGeneralQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(false));
                 }
+
+                this.sendGeneralQueryButton.interactable = false;
             }
 
             if (this.sendPdmQueryButtonObject != null)
@@ -896,6 +1054,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.sendPdmQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(true));
                 }
+
+                this.sendPdmQueryButton.interactable = false;
             }
 
             if (this.uploadDocsButtonObject != null)
@@ -906,6 +1066,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.uploadDocsButton.onClick.AddListener(() => this.UploadDocsClicked());
                 }
+
+                this.uploadDocsButton.interactable = false;
             }
 
             // init event listener
@@ -923,6 +1085,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                         "Can't find IDataContextExtendedListener reference in event listener container GameObject. Ignoring.");
                 }
             }
+
+            this.ResetAllRequestData();
         }
 
         /// <summary>
@@ -937,6 +1101,22 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                 this.aiModelSelector.ClearOptions();
                 this.aiModelSelector.AddOptions(modelList);
+                this.updateAiModelList = false;
+
+                if (string.IsNullOrEmpty(this.selectedAiModel))
+                {
+                    this.aiModelSelector.SetValueWithoutNotify(0);
+
+                    this.OnPredictionModelSelected();
+                }
+
+                if (this.sendGeneralQueryButton != null) {
+                    this.sendGeneralQueryButton.interactable = true;
+                }
+
+                if (this.sendPdmQueryButton != null) {
+                    this.sendPdmQueryButton.interactable = true;
+                }
             } else {
                 Debug.Log($"No Cached AI models retrieved from {this.serverUri}.");
             }
@@ -948,11 +1128,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <param name="responseMsg"></param>
         private void ProcessQueryResponseUpdate(string responseMsg)
         {
-            Debug.Log($"Cached AI query response received: {this.sessionID} - {this.serverUri}");
-
             if (!string.IsNullOrEmpty(responseMsg)) {
                 if (this.recommendationsContentText != null)
                 {
+                    Debug.Log($"Cached AI query response received: {this.sessionID} - {this.serverUri}");
+
                     StringBuilder builder = new StringBuilder(this.recommendationsContentText.text);
 
                     if (builder.Length > 0)
@@ -963,9 +1143,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                     builder.Append(responseMsg);
 
                     this.recommendationsContentText.text = builder.ToString();
+                    this.updateAiResponseMsg = false;
                 }
-            } else {
-                Debug.Log($"Cached AI response was empty for {sessionID}.");
             }
         }
 
@@ -978,7 +1157,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             bool isComplete = false;
 
             new Thread(() => {
-               this.predictionManager.GetAllRegisteredModels(this.sessionID, this.serverUri);
+               this.GetPredictionSystemManager().GetAllRegisteredModels(this.sessionID, this.serverUri);
 
                 isComplete = true;
                 this.updateAiModelList = true;
@@ -1001,7 +1180,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             bool isComplete = false;
 
             new Thread(() => {
-                if (this.predictionManager.SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
+                if (this.GetPredictionSystemManager().SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
                 {
                     Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
                 }
@@ -1032,6 +1211,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             {
                 this.serverUri = this.aiUriTextInput.text;
             }
+
+            // path and file need to be updated if session ID changes
+            this.InitPathInfo();
         }
 
         /// <summary>
@@ -1042,6 +1224,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             if (this.deviceIDText != null) this.deviceIDText.text = this.deviceID;
             if (this.deviceModelIDText != null) this.deviceModelIDText.text = this.dtmiUri;
             if (this.deviceModelNameText != null) this.deviceModelNameText.text = this.dtmiName;
+            if (this.selectedAiModelText != null) this.selectedAiModelText.text = this.selectedAiModel;
         }
 
         /// <summary>
