@@ -1,47 +1,63 @@
-# Programming Digital Twins - Unity Package
-# [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity)
+# Programming Digital Twins - Lab Bench Studios PDT Unity Package
 
-This is the plugin repository for [Unity](https://unity.com/)-based software and other application-specific components (written in C#)
-related to my Building Digital Twins course at Northeastern University. The intent of this repository is to provide students with a
-simple [Unity](https://unity.com/) plugin that can provide the basis for a simple digital twin implementation for personal testing
-and validation related to the lab module assignments that are part of the Building Digital Twins course.
+## Overview
+
+This is an EXPERIMENTAL RESEARCH package designed for use with [Unity](https://unity.com/) and other components related to my
+Building Digital Twins course at Northeastern University. The intent of this repository is to provide students with an experimental
+Digital Twin research environment for personal testing and experimentation.
 
 For convenience to the reader, some of the basic functionality has already been implemented, with other key components requiring implementation
 by users of the repository (e.g., students taking my Building Digital Twins course).
 
-## Links, Exercises, Updates, Errata, and Clarifications
+Project Link: [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity)
 
-Kanban Board Exercises: [Programming Digital Twins Requirements](https://github.com/orgs/programming-digital-twins/projects/1)
+### Project Objectives
 
-For other references, see the following links to access exercises for this project. Please note that many of the exercises and sample source code
-in this repository is based on many of the examples outlined in the [Programming the IoT Kanban Board](https://github.com/orgs/programming-the-iot/projects/1),
-which is aligned with my book, [Programming the Internet of Things Book](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
- - [Original Constrained Device Application Source Code Template](https://github.com/programming-the-iot/python-components)
- - [Programming Digital Twins Edge Components Source Code Template](https://github.com/programming-digital-twins/pdt-edge-components)
- - [Programming the Internet of Things Book](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/)
+The [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity) research project has three primary objectives:
 
-## How to use this repository
+(1) Build a largely F/OSS Digital Twin framework that can work with other [Programming Digital Twins projects](https://github.com/programming-digital-twins) and their repositories to sync live data, DTDL models, and a JSON-based constraint mapping layer, and render within a COTS physics sim engine (e.g., Unity 6).
+
+(2) Use a digital twin asset's configuration data to auto-generate a GPT AI prompt to query one or more locally running LLM's to retrieve predictive maintenance recommendations for the specific system within the Digital Twin environment.
+
+(3) Provide a baseline technology platform for my Northeastern University College of Engineering graduate students (and me) to learn and experiment with various Digital Twin use cases.
+
+### Helpful Links
+
+PDT Kanban Board: [Programming Digital Twins Requirements](https://github.com/orgs/programming-digital-twins/projects/1)
+
+Please see the following links for some helpful information about the PDT exercises and other associated repositories. Please note that many of the exercises and sample source code in this repository is based on some of the patterns and exercises from my book, [Programming the Internet of Things Book](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/).
+ - Programming Digital Twins (PDT) specific:
+   - [Programming Digital Twins Exercises (aka PDT Kanban Board)](https://github.com/orgs/programming-digital-twins/projects/1)
+   - [Programming Digital Twins - LBS PDT Unity Package](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/)
+   - [Programming Digital Twins Client Framework Repository](https://github.com/programming-digital-twins/pdt-cfw-components)
+   - [Programming Digital Twins Edge Components Repository](https://github.com/programming-digital-twins/pdt-edge-components)
+   - [Programming Digital Twins Exercise Doc Templates Repository](https://github.com/programming-digital-twins/pdt-exercise-docs)
+ - Other reading links:
+   - [Programming the Internet of Things Exercises (aka PIOT Kanban Board)](https://github.com/orgs/programming-the-iot/projects/5)
+   - [Programming the Internet of Things Book](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401/)
+
+## Usage
+
+In general, follow exercise instructions for the Digital Twin App (DTA) in the [Programming Digital Twins Kanban Board](https://github.com/orgs/programming-digital-twins/projects/1). More specifically, read the following:
+NOTE: Check back regularly for version updates, as this package is under active development and is purely EXPERIMENTAL (e.g., perpetual 'alpha' mode and not released).
 
 ### Installation (within Unity 6)
 
-- Open Unity 6
-  - Select: Window -> Package Manager -> Install package from git URL
-  - Enter: This repository's git URL
-  - Click: Install
+#### As a Unity Plugin built from your local repo (recommended)
 
-### Usage
+- See the instructions under 'Option 1 - Custom Build' at [PDT-DTA-03-002](https://github.com/programming-digital-twins/pdt-exercise-tasks/issues/77)
 
-- Follow exercise instructions for the Digital Twin App (DTA) in the [Programming Digital Twins Kanban Board](https://github.com/orgs/programming-digital-twins/projects/1)
+#### As a Unity Plugin from Git
 
-Note: Check back regularly for version updates, as this package is under active development and is in 'alpha' mode (e.g., UNRELEASED).
+- See the instructions under 'Option 2 - Pre-Built' at [PDT-DTA-03-002](https://github.com/programming-digital-twins/pdt-exercise-tasks/issues/77)
 
-### About the package and its design
+## Organization
 
 If you're reading [Programming the Internet of Things: An Introduction to Building Integrated, Device to Cloud IoT Solutions](https://learning.oreilly.com/library/view/programming-the-internet/9781492081401),
 you'll see some design similarities to the exercises described in each chapter and the source code contained within this repository. While the software components contained herein
 are written in C# and follow, they follow a similar design philosophy as that of the Java, or Gateway Device App, components written for the book and are part of my other course, Connected Devices.
 
-## How to navigate the directory structure of this repository
+### Repository Navigation
 
 This repository is comprised of the following key paths:
 - [LabBenchStudios-PDT-Unity](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity): All other assets are contained within this path.
@@ -66,18 +82,18 @@ This repository is comprised of the following key paths:
 NOTE: The directory structure and all files are subject to change based on feedback I receive from readers of my book and students in my IoT class,
 as well as improvements I find to be helpful for overall repo betterment.
 
-# Other things to know
+## Other things to know
 
-## Pull requests
+### Pull requests
 
 PR's are disabled while the codebase is being developed.
 
-## Updates
+### Updates
 
 Much of this repository, and in particular unit and integration tests, will continue to evolve, so please check back regularly for potential updates.
 Please note that API changes can - and likely will - occur at any time.
 
-# DEPENDENCIES and REFERENCES
+# REFERENCES
 
 This repository requires various [Unity Technologies Inc.](https://unity.com/) features and packages, and is intended to be installed within a Unity 6 environment.
 
@@ -92,7 +108,9 @@ This package is dependent upon the Unity 6 Editor and Game Engine.
   - Version: 6000.0.32f1
     - NOTE: This codebase and its references may function with other Unity Editor versions; however, all testing currently utilizes version 6000.0.32f1. This package is not intended to be used outside of a compatible Unity Editor environment.
 
-## Unity Feature Dependency References (not included - must be installed separately)
+## Unity-Specific Dependencies (not included - must be installed separately)
+
+### Unity Feature Dependency References
 
 This package requires the following Unity Features to be installed prior to this package's installation. NOTE: Other Unity-specific features may be required in the future.
 
@@ -126,7 +144,7 @@ This package requires the following Unity Features to be installed prior to this
   - Note: See feature 'Description' and 'Packages Included' for more detail.
   - Terms of Use: https://docs.unity3d.com/Manual/TermsOfUse.html
 
-## Unity Package Dependency References (not included - must be installed separately)
+### Unity Package Dependency References
 
 This package requires the following Unity packages to be installed prior to this package's installation. NOTE: Other Unity-specific packages may be required in the future.
 
@@ -155,7 +173,7 @@ This package requires the following Unity packages to be installed prior to this
   - Version 2.7.2
   - License: https://docs.unity3d.com/Packages/com.unity.splines@2.7/license/LICENSE.html
 
-## Library Dependency References (included as DLL references within the ./Plugins folder)
+## Included Library (DLL) References (see the ./Plugins folder)
 
 - LBS.PdtCfwComponents.dll: [pdt-cfw-components](https://github.com/programming-digital-twins/pdt-cfw-components)
   - Reference: Andrew D. King. Programming Digital Twins Client Framework Components. (2024) [Online]. Available: https://github.com/programming-digital-twins/pdt-cfw-components.
@@ -195,7 +213,7 @@ This package requires the following Unity packages to be installed prior to this
 
 - OllamaSharp.dll
   - Reference: Andreas Wäscher. Provides .NET bindings for the Ollama API. OllamaSharp. (2025) [Online]. Available: https://github.com/awaescher/OllamaSharp.
-  - DLL Version: 4.0.20
+  - DLL Version: 4.0.22
   - DLL License [MIT](https://github.com/awaescher/OllamaSharp#MIT-1-ov-file)
 
 - System.Buffers.dll
@@ -258,4 +276,4 @@ Assets and Models: [LICENSE-ASSETS](https://github.com/programming-digital-twins
 
 Source Code: [LICENSE-CODE](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/LICENSE-CODE.md). The repository's code artifacts LICENSE file (e.g., source code [mostly C#]). These artifacts are contained within this repository's ./Runtime/ProgrammingDigitalTwins/Scripts path.
 
-Third Party Libraries: See REFERENCES above and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). The repository's DLL dependencies notices file. These artifacts are contained within this repository's ./Plugins path.
+Third Party Libraries: See REFERENCES above and [Third Party Notices.md](https://github.com/programming-digital-twins/LabBenchStudios-PDT-Unity/blob/alpha/Third%20Party%20Notices.md). The repository's DLL dependencies notices file. These artifacts are contained within this repository's ./Plugins path. These DLL's, along with the LBS.PdtCfwComponents.dll can also be built by the user following the installation guidelines in the [Programming Digital Twins Client Framework Repository](https://github.com/programming-digital-twins/pdt-cfw-components).
