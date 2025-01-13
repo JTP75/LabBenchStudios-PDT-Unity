@@ -1,11 +1,10 @@
-# Programming Digital Twins - Lab Bench Studios PDT Unity Package - EXPERIMENTAL
+# Programming Digital Twins - Lab Bench Studios PDT Unity Package
 
 ## Overview
 
-This is an EXPERIMENTAL RESEARCH plugin repository for [Unity](https://unity.com/)-based software and other application-specific components
-(written in C#) related to my Building Digital Twins course at Northeastern University. The intent of this repository is to provide students
-with a simple [Unity](https://unity.com/) plugin that can provide the basis for a simple digital twin implementation for personal testing
-and validation related to the lab module assignments that are part of the Building Digital Twins course.
+This is an EXPERIMENTAL RESEARCH plugin designed for use with [Unity](https://unity.com/) and other components related to my
+Building Digital Twins course at Northeastern University. The intent of this repository is to provide students with an experimental
+Digital Twin research environment for personal testing and experimentation.
 
 For convenience to the reader, some of the basic functionality has already been implemented, with other key components requiring implementation
 by users of the repository (e.g., students taking my Building Digital Twins course).
