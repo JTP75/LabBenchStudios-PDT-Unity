@@ -102,6 +102,13 @@ namespace LabBenchStudios.Pdt.Unity.Common
         private Queue<SensorData> sensorDataQueue = null;
         private Queue<SystemPerformanceData> sysPerfDataQueue = null;
 
+        private bool enablePredictionEngineQueueUpdates = false;
+
+        // Unity methods
+
+        /// <summary>
+        /// 
+        /// </summary>                    
         void Start()
         {
             // first
@@ -127,6 +134,10 @@ namespace LabBenchStudios.Pdt.Unity.Common
         }
 
         // Update is called once per frame
+
+        /// <summary>
+        /// 
+        /// </summary>
         void Update()
         {
             if (this.enableDebugLogProcessing)
@@ -181,16 +192,21 @@ namespace LabBenchStudios.Pdt.Unity.Common
 
             if (this.enablePredictionProcessing)
             {
-                QueryResponseContainer queryData = this.GetQueryResponseDataFromQueue();
+                if (this.enablePredictionEngineQueueUpdates)
+                {
+                    QueryResponseContainer queryData = this.GetQueryResponseDataFromQueue();
 
-                if (queryData != null) {
-                    this.ProcessQueryResponseUpdate(queryData);
-                }
+                    if (queryData != null)
+                    {
+                        this.ProcessQueryResponseUpdate(queryData);
+                    }
 
-                ModelListContainer modelData = this.GetModelListDataFromQueue();
+                    ModelListContainer modelData = this.GetModelListDataFromQueue();
 
-                if (modelData != null) {
-                    this.ProcessModelListUpdate(modelData);
+                    if (modelData != null)
+                    {
+                        this.ProcessModelListUpdate(modelData);
+                    }
                 }
             }
 
@@ -319,6 +335,15 @@ namespace LabBenchStudios.Pdt.Unity.Common
 
 
         // protected methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enable"></param>
+        protected void SetEnablePredictionEngineQueueUpdatesFlag(bool enable)
+        {
+            this.enablePredictionEngineQueueUpdates = enable;
+        }
 
         /// <summary>
         /// 

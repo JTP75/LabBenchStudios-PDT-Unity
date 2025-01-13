@@ -24,6 +24,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.Threading;
 using System.Text;
 
 using UnityEngine;
@@ -38,11 +40,6 @@ using LabBenchStudios.Pdt.Plexus;
 using LabBenchStudios.Pdt.Prediction;
 
 using LabBenchStudios.Pdt.Unity.Common;
-
-using System.Collections;
-using System.Threading;
-using System.Dynamic;
-using LabBenchStudios.Pdt.Util;
 
 namespace LabBenchStudios.Pdt.Unity.Hud
 {
@@ -167,9 +164,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private Button uploadDocsButton = null;
 
         private bool hasRecommendationsPanel = false;
-        private bool updateAiModelList = false;
-        private bool updateAiResponseMsg = false;
+        private bool predictionEngineModelListUpdateReceived = false;
+        private bool predictionEngineQueryResponseReceived = false;
         private bool isQueryResponseTimerExpired = false;
+        private bool isQueryResponseTimerStopped = false;
+
 
         private float maxResponseWaitSecs = DEFAULT_MAX_WAIT_SECS;
 
@@ -191,8 +190,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         private PredictionSystemManager predictionManager = null;
 
-        private Queue<string> aiQueryRequestQueue = null;
-        private Queue<string> aiQueryResponseQueue = null;
 
         // public methods (button interactions)
 
@@ -568,20 +565,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             Debug.Log($"Attempting to reload prediction models: {this.sessionID} - {this.serverUri}");
 
-            if (this.reloadModelsButton != null) {
-                this.reloadModelsButton.interactable = false;
-            }
+            this.SetPredictionEngineUserButtonsEnabled(false);
 
-            Debug.Log($"Starting prediction engine model retrieval co-routine: {this.serverUri}");
-
-            // this will asynchronously issue the request to the prediction engine
-            StartCoroutine(this.ReloadPredictionEngineModelsCoroutine());
-
-            Debug.Log($"Starting prediction engine model response checker [invoke repeating]: {this.serverUri}");
-
-            // this will update the drop down on the UI thread - once updated, this
-            // will be canceled and the reload models button will be interactable again
-            InvokeRepeating(nameof(this.CheckPredictionEngineForModelUpdates), 0.5f, 0.5f);
+            this.StartModelListUpdateTrackingState();
         }
 
         /// <summary>
@@ -636,6 +622,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             this.queryRequestMsg += builder.ToString();
             this.queryContentText.text = "";
+
+            this.SetPredictionEngineUserButtonsEnabled(false);
 
             this.UpdateSubmittedQueryMessageText(this.queryRequestMsg, false);
             
@@ -850,8 +838,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 // first: retrieve the prediction manager and init queues
                 this.predictionManager = this.GetPredictionSystemManager();
 
-                this.aiQueryRequestQueue = new Queue<string>();
-                this.aiQueryResponseQueue = new Queue<string>();
+                base.SetEnablePredictionEngineQueueUpdatesFlag(false);
                 
                 // second: init the maintenance panel controls
                 this.InitMaintenancePanel();
@@ -866,10 +853,14 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 base.RegisterForSystemStatusEvents((ISystemStatusEventListener) this);
 
                 // fifth: start the prediction engine poller
+                //
+                // NOTE: this is now handled via co-routines and invoke repeating calls
+                // managed from button clicks in the UI to avoid running a background
+                // repeating call perpetually
                 if (base.IsPredictionProcessingEnabled())
                 {
                     //InvokeRepeating(nameof(CheckPredictionEngineForUpdates), 0.5f, 0.5f);
-                    InvokeRepeating(nameof(CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
+                    //InvokeRepeating(nameof(CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
                 }
             }
             catch (Exception ex)
@@ -975,12 +966,10 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <param name="modelListContainer"></param>
         protected override void ProcessModelListUpdate(ModelListContainer modelListContainer)
         {
-            string uri = modelListContainer.GetUri();
-            List<string> modelList = modelListContainer.GetModelList();
+            //string uri = modelListContainer.GetUri();
+            //List<string> modelList = modelListContainer.GetModelList();
 
-            this.updateAiModelList = true;
-
-            //this.HandleModelListUpdate(modelList);
+            this.predictionEngineModelListUpdateReceived = true;
         }
 
         /// <summary>
@@ -989,13 +978,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <param name="queryResponseContainer"></param>
         protected override void ProcessQueryResponseUpdate(QueryResponseContainer queryResponseContainer)
         {
-            string sessionID = queryResponseContainer.GetSessionID();
-            string uri = queryResponseContainer.GetUri();
-            string response = queryResponseContainer.GetResponse();
+            //string sessionID = queryResponseContainer.GetSessionID();
+            //string uri = queryResponseContainer.GetUri();
+            //string response = queryResponseContainer.GetResponse();
 
-            this.updateAiResponseMsg = true;
-
-            //this.HandleQueryResponseUpdate(response);
+            this.predictionEngineQueryResponseReceived = true;
         }
 
         // private methods
@@ -1043,15 +1030,19 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             List<string> modelList = this.GetPredictionSystemManager().GetCachedModelList(this.serverUri);
 
-            if (modelList != null && this.updateAiModelList)
+            if (modelList != null && this.predictionEngineModelListUpdateReceived)
             {
+                // reset model update state
+                this.StopModelListUpdateTrackingState();
+
                 this.HandleModelListUpdate(modelList);
 
-                CancelInvoke(nameof(CheckPredictionEngineForModelUpdates));
+                this.SetPredictionEngineUserButtonsEnabled(true);
+            }
 
-                if (this.reloadModelsButton != null) {
-                    this.reloadModelsButton.interactable = true;
-                }
+            if (this.predictionEngineModelListUpdateReceived)
+            {
+                this.StopModelListUpdateTrackingState();
             }
         }
 
@@ -1066,29 +1057,29 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         private void CheckPredictionEngineForResponseUpdates()
         {
-            if (this.updateAiResponseMsg)
+            PredictionSystemQueryCache queryCache = this.GetPredictionSystemManager().GetQueryCache(this.sessionID);
+
+            if (queryCache != null && this.predictionEngineQueryResponseReceived)
             {
-                // reset response update state
-                this.StopResponseUpdateTrackingState();
+                string queryMsg = queryCache.GetLatestQueryMessage();
+                string responseMsg = queryCache.GetLatestResponseMessage();
 
-                PredictionSystemQueryCache queryCache = this.GetPredictionSystemManager().GetQueryCache(this.sessionID);
-
-                if (queryCache != null)
+                if (!string.IsNullOrEmpty(responseMsg))
                 {
-                    string queryMsg = queryCache.GetLatestQueryMessage();
-                    string responseMsg = queryCache.GetLatestResponseMessage();
+                    int byteCount = (responseMsg != null ? responseMsg.Length : 0);
+                    float resultSecs = this.GetMaxWaitSeconds() - this.maxResponseWaitSecs;
+                    string statusMsg = $"Received prediction engine response in {resultSecs} secs. {byteCount} bytes.";
 
-                    if (!string.IsNullOrEmpty(responseMsg))
-                    {
-                        int byteCount = responseMsg?.Length ?? 0;
-                        float resultSecs = this.GetMaxWaitSeconds() - this.maxResponseWaitSecs;
-                        string statusMsg = $"Received prediction engine response in {resultSecs} secs. {byteCount} bytes.";
+                    this.UpdateResponseStatusText(statusMsg);
+                    this.HandleQueryResponseUpdate(responseMsg);
 
-                        this.UpdateResponseStatusText(statusMsg);
-                        this.HandleQueryResponseUpdate(responseMsg);
+                    Debug.Log(statusMsg);
+                }
 
-                        //CancelInvoke(nameof(CheckPredictionEngineForResponseUpdates));
-                    }
+                // reset response update state
+                if (! this.isQueryResponseTimerStopped)
+                {
+                    this.StopResponseUpdateTimer();
                 }
             }
         }
@@ -1303,8 +1294,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.sendGeneralQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(false));
                 }
-
-                this.sendGeneralQueryButton.interactable = false;
             }
 
             if (this.sendPdmQueryButtonObject != null)
@@ -1315,8 +1304,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.sendPdmQueryButton.onClick.AddListener(() => this.SendPredictionEngineQuery(true));
                 }
-
-                this.sendPdmQueryButton.interactable = false;
             }
 
             if (this.uploadDocsButtonObject != null)
@@ -1327,8 +1314,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 {
                     this.uploadDocsButton.onClick.AddListener(() => this.UploadDocsClicked());
                 }
+            }
 
-                this.uploadDocsButton.interactable = false;
+            this.SetPredictionEngineUserButtonsEnabled(false);
+
+            // make sure we can load models
+            if (this.reloadModelsButton != null) {
+                this.reloadModelsButton.interactable = true;
             }
 
             // init event listener
@@ -1362,7 +1354,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                 this.aiModelSelector.ClearOptions();
                 this.aiModelSelector.AddOptions(modelList);
-                this.updateAiModelList = false;
 
                 if (string.IsNullOrEmpty(this.selectedAiModel))
                 {
@@ -1371,13 +1362,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                     this.OnPredictionModelSelected();
                 }
 
-                if (this.sendGeneralQueryButton != null) {
-                    this.sendGeneralQueryButton.interactable = true;
-                }
+                this.SetPredictionEngineUserButtonsEnabled(true);
 
-                if (this.sendPdmQueryButton != null) {
-                    this.sendPdmQueryButton.interactable = true;
-                }
+                this.predictionEngineModelListUpdateReceived = false;
             } else {
                 Debug.Log($"No Cached AI models retrieved from {this.serverUri}.");
             }
@@ -1390,8 +1377,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private void HandleQueryResponseUpdate(string responseMsg)
         {
             if (!string.IsNullOrEmpty(responseMsg)) {
-                this.updateAiResponseMsg = false;
                 this.UpdateResponseMessageText(responseMsg, true);
+
+                this.SetPredictionEngineUserButtonsEnabled(true);
+
+                this.predictionEngineQueryResponseReceived = false;
+
+                this.StopResponseUpdateTrackingState();                
             }
         }
 
@@ -1401,6 +1393,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private void StartResponseUpdateTrackingState()
         {
             Debug.Log("Response tracking state STARTED.");
+
+            Debug.Log($"Starting prediction engine query submission co-routine: {this.serverUri}");
 
             // this will asynchronously issue the request to the prediction engine
             StartCoroutine(this.SendPredictionEngineQueryCoroutine());
@@ -1412,11 +1406,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             // - if the timer expires, the query will be canceled and timer reset
             InvokeRepeating(nameof(this.UpdatePredictionEngineResponseWaitSeconds), 1.0f, 1.0f);
 
-            //Debug.Log($"Starting prediction engine response retrieval [invoke repeating]: {this.serverUri}");
+            Debug.Log($"Starting prediction engine response retrieval [invoke repeating]: {this.serverUri}");
 
             // this will update the response text area on the UI thread - once updated,
             // this will be canceled
-            //InvokeRepeating(nameof(this.CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
+            InvokeRepeating(nameof(this.CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
         }
 
         /// <summary>
@@ -1424,12 +1418,55 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// </summary>
         private void StopResponseUpdateTrackingState()
         {
-            Debug.LogError("Response tracking state STOPPED.");
+            StopCoroutine(this.SendPredictionEngineQueryCoroutine());
+            CancelInvoke(nameof(CheckPredictionEngineForResponseUpdates));
 
-            //this.updateAiResponseMsg = false;
+            this.predictionEngineQueryResponseReceived = false;
 
-            //CancelInvoke(nameof(CheckPredictionEngineForResponseUpdates));
+            Debug.Log("Response tracking state STOPPED.");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void StopResponseUpdateTimer()
+        {
             CancelInvoke(nameof(UpdatePredictionEngineResponseWaitSeconds));
+
+            this.isQueryResponseTimerStopped = true;
+
+            Debug.Log("Response tracking timer STOPPED.");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void StartModelListUpdateTrackingState()
+        {
+            Debug.Log("Model update tracking state STARTED.");
+
+            Debug.Log($"Starting prediction engine model retrieval co-routine: {this.serverUri}");
+
+            // this will asynchronously issue the request to the prediction engine
+            StartCoroutine(this.ReloadPredictionEngineModelsCoroutine());
+
+            Debug.Log($"Starting prediction engine model response checker [invoke repeating]: {this.serverUri}");
+
+            // this will update the drop down on the UI thread - once updated, this
+            // will be canceled and the reload models button will be interactable again
+            InvokeRepeating(nameof(this.CheckPredictionEngineForModelUpdates), 0.5f, 0.5f);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void StopModelListUpdateTrackingState()
+        {
+            StopCoroutine(this.ReloadPredictionEngineModelsCoroutine());
+
+            CancelInvoke(nameof(CheckPredictionEngineForModelUpdates));
+
+            Debug.Log("Model update tracking state STOPPED.");
         }
 
         /// <summary>
@@ -1444,7 +1481,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                this.GetPredictionSystemManager().GetAllRegisteredModels(this.sessionID, this.serverUri);
 
                 isComplete = true;
-                this.updateAiModelList = true;
+                this.predictionEngineModelListUpdateReceived = true;
             }).Start();
 
             while (! isComplete)
@@ -1462,7 +1499,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private IEnumerator SendPredictionEngineQueryCoroutine()
         {
             bool isComplete = false;
-            this.isQueryResponseTimerExpired = false;
+            //this.isQueryResponseTimerExpired = false;
 
             new Thread(() => {
                 if (this.GetPredictionSystemManager().SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
@@ -1472,15 +1509,53 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
                 isComplete = true;
                 //this.isQueryResponseTimerExpired = true;
-                this.updateAiResponseMsg = true;
+                this.predictionEngineQueryResponseReceived = true;
             }).Start();
 
-            while (! isComplete || ! this.isQueryResponseTimerExpired)
+            while (! isComplete)// || ! this.isQueryResponseTimerExpired)
             {
                 yield return null;
             }
 
             yield return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enable"></param>
+        private void SetPredictionEngineUserButtonsEnabled(bool enable)
+        {
+            if (this.sendGeneralQueryButton != null) {
+                this.sendGeneralQueryButton.interactable = enable;
+            }
+
+            if (this.sendPdmQueryButton != null) {
+                this.sendPdmQueryButton.interactable = enable;
+            }
+
+            if (this.reloadModelsButton != null) {
+                this.reloadModelsButton.interactable = enable;
+            }
+
+            if (this.resetInteractionButton != null)
+            {
+                this.resetInteractionButton.interactable = enable;
+            }
+
+            if (this.saveInteractionButton != null)
+            {
+                this.saveInteractionButton.interactable = enable;
+            }
+
+            if (this.uploadDocsButton != null)
+            {
+                // TODO: this isn't yet supported
+                if (! enable)
+                {
+                    this.uploadDocsButton.interactable = enable;
+                }
+            }
         }
 
         /// <summary>
