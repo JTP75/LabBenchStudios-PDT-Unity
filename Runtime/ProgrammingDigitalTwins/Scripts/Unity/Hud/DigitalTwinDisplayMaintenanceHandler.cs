@@ -85,13 +85,19 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private GameObject includeSystemDataToggleObject;
 
         [SerializeField]
-        private GameObject systemDataCacheHoursContentObject = null;
+        private InputField maxHoursDataContentObject = null;
+
+        [SerializeField]
+        private InputField maxWaitSecondsContentObject = null;
 
         [SerializeField]
         private GameObject submittedQueryContentObject = null;
 
         [SerializeField]
         private GameObject recommendationsContentObject = null;
+
+        [SerializeField]
+        private GameObject responseStatusContentObject = null;
 
         [SerializeField]
         private GameObject selectedPathObject = null;
@@ -123,7 +129,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
         // consts
 
-        public const float DEFAULT_SYS_CACHE_HRS = 1.0f;
+        public const float DEFAULT_MAX_DATA_HRS = 1.0f;
+        public const float DEFAULT_MAX_WAIT_SECS = 60.0f;
 
         // local vars
 
@@ -142,11 +149,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private TMP_Text selectedAiModelText = null;
         private TMP_Text submittedQueryContentText = null;
         private TMP_Text recommendationsContentText = null;
+        private TMP_Text responseStatusText = null;
 
         private Text sessionIDTextInput = null;
         private Text aiUriTextInput = null;
         private Text queryContentText = null;
-        private Text systemDataCacheHoursText = null;
+        private Text maxDataHoursText = null;
+        private Text maxWaitSecondsText = null;
         private Text selectedPathText = null;
         private Text selectedFileText = null;
 
@@ -160,7 +169,9 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private bool hasRecommendationsPanel = false;
         private bool updateAiModelList = false;
         private bool updateAiResponseMsg = false;
+        private bool isQueryResponseTimerExpired = false;
 
+        private float maxResponseWaitSecs = DEFAULT_MAX_WAIT_SECS;
 
         private string sessionID = ConfigConst.NOT_SET;
         private string deviceID = ConfigConst.NOT_SET;
@@ -378,13 +389,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// 
         /// </summary>
         /// <returns></returns>
-        public float GetSystemDataCacheHours()
+        public float GetMaxDataHours()
         {
-            float cacheHours = DEFAULT_SYS_CACHE_HRS;
+            float cacheHours = DEFAULT_MAX_DATA_HRS;
 
-            if (this.systemDataCacheHoursText != null)
+            if (this.maxDataHoursText != null)
             {
-                string cacheHoursStr = this.systemDataCacheHoursText.text;
+                string cacheHoursStr = this.maxDataHoursText.text;
 
                 try {
                     cacheHours = float.Parse(cacheHoursStr);
@@ -392,13 +403,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                     Debug.Log($"Cache hours for system data cannot be derived from text: {cacheHoursStr}. Using default: {cacheHours}");
                 }
 
-                if (cacheHours <= 0)
+                if (cacheHours <= 0.0f)
                 {
-                    cacheHours = DEFAULT_SYS_CACHE_HRS;
+                    cacheHours = DEFAULT_MAX_DATA_HRS;
 
                     Debug.Log($"Cache hours for system <= 0. Using default: {cacheHours}");
 
-                    this.InitSystemDataCacheHours(cacheHours);
+                    this.InitMaxDataHours(cacheHours);
                 }
             }
 
@@ -408,20 +419,72 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <summary>
         /// 
         /// </summary>
-        public void InitSystemDataCacheHours()
+        /// <returns></returns>
+        public float GetMaxWaitSeconds()
         {
-            this.InitSystemDataCacheHours(DEFAULT_SYS_CACHE_HRS);
+            float waitSeconds = DEFAULT_MAX_WAIT_SECS;
+
+            if (this.maxWaitSecondsText != null)
+            {
+                string waitSecondsStr = this.maxWaitSecondsText.text;
+
+                try {
+                    waitSeconds = float.Parse(waitSecondsStr);
+                } catch (Exception e) {
+                    Debug.Log($"Max wait seconds for prediction engine response cannot be derived from text: {waitSecondsStr}. Using default: {waitSeconds}");
+                }
+
+                if (waitSeconds <= 0.0f)
+                {
+                    waitSeconds = DEFAULT_MAX_WAIT_SECS;
+
+                    Debug.Log($"Max wait seconds for prediction engine response <= 0. Using default: {waitSeconds}");
+
+                    this.InitMaxWaitSeconds(waitSeconds);
+                }
+            }
+
+            return waitSeconds;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitMaxDataHours()
+        {
+            this.InitMaxDataHours(DEFAULT_MAX_DATA_HRS);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="hrs"></param>
-        public void InitSystemDataCacheHours(float hrs)
+        public void InitMaxDataHours(float hrs)
         {
-            if (this.systemDataCacheHoursText != null)
+            if (this.maxDataHoursText != null)
             {
-                this.systemDataCacheHoursText.text = hrs.ToString();
+                this.maxDataHoursText.text = hrs.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitMaxWaitSeconds()
+        {
+            this.InitMaxWaitSeconds(DEFAULT_MAX_WAIT_SECS);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="secs"></param>
+        public void InitMaxWaitSeconds(float secs)
+        {
+            if (this.maxWaitSecondsText != null)
+            {
+                this.maxWaitSecondsText.text = secs.ToString();
+                this.maxResponseWaitSecs = secs;                
             }
         }
 
@@ -474,22 +537,13 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         {
             this.queryRequestMsg = "";
 
-            if (this.queryContentText != null)
-            {
-                this.queryContentText.text = "";
-            }
+            this.UpdateRequestedQueryMessageText("", false);
+            this.UpdateSubmittedQueryMessageText("", false);
+            this.UpdateResponseMessageText("", false);
+            this.UpdateResponseStatusText("");
 
-            if (this.recommendationsContentText != null)
-            {
-                this.recommendationsContentText.text = "";
-            }
-
-            if (this.submittedQueryContentText != null)
-            {
-                this.submittedQueryContentText.text = "";
-            }
-
-            this.InitSystemDataCacheHours();
+            this.InitMaxDataHours();
+            this.InitMaxWaitSeconds();
         }
 
         /// <summary>
@@ -514,7 +568,20 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             Debug.Log($"Attempting to reload prediction models: {this.sessionID} - {this.serverUri}");
 
+            if (this.reloadModelsButton != null) {
+                this.reloadModelsButton.interactable = false;
+            }
+
+            Debug.Log($"Starting prediction engine model retrieval co-routine: {this.serverUri}");
+
+            // this will asynchronously issue the request to the prediction engine
             StartCoroutine(this.ReloadPredictionEngineModelsCoroutine());
+
+            Debug.Log($"Starting prediction engine model response checker [invoke repeating]: {this.serverUri}");
+
+            // this will update the drop down on the UI thread - once updated, this
+            // will be canceled and the reload models button will be interactable again
+            InvokeRepeating(nameof(this.CheckPredictionEngineForModelUpdates), 0.5f, 0.5f);
         }
 
         /// <summary>
@@ -568,13 +635,109 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             }
 
             this.queryRequestMsg += builder.ToString();
-            this.submittedQueryContentText.text = this.queryRequestMsg;
             this.queryContentText.text = "";
+
+            this.UpdateSubmittedQueryMessageText(this.queryRequestMsg, false);
             
             Debug.Log($"Submitting query to prediction engine: {this.sessionID} - {this.serverUri}. Model: {this.selectedAiModel}");
             Debug.Log($"Prediction engine query: {this.queryRequestMsg}");
 
-            StartCoroutine(this.SendPredictionEngineQueryCoroutine());
+            Debug.Log($"Starting prediction engine response submission co-routine: {this.serverUri}");
+
+            this.StartResponseUpdateTrackingState();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        public void UpdateResponseStatusText(string msg)
+        {
+            if (this.responseStatusText != null)
+            {
+                this.responseStatusText.text = msg;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        public void UpdateResponseMessageText(string msg, bool doAppend)
+        {
+            if (this.recommendationsContentText != null)
+            {
+                if (doAppend)
+                {
+                    StringBuilder builder = new StringBuilder();
+
+                    if (this.recommendationsContentText.text.Length > 0)
+                    {
+                        builder.Append(this.recommendationsContentText.text);
+                        builder.Append("\n\n====================\n\n");
+                    }
+
+                    builder.Append(msg);
+
+                    this.recommendationsContentText.text = builder.ToString();
+                } else {
+                    this.recommendationsContentText.text = msg;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        public void UpdateRequestedQueryMessageText(string msg, bool doAppend)
+        {
+            if (this.queryContentText != null)
+            {
+                if (doAppend)
+                {
+                    StringBuilder builder = new StringBuilder();
+
+                    if (this.recommendationsContentText.text.Length > 0)
+                    {
+                        builder.Append(this.recommendationsContentText.text);
+                        builder.Append("\n\n");
+                    }
+
+                    builder.Append(msg);
+
+                    this.queryContentText.text = builder.ToString();
+                } else {
+                    this.queryContentText.text = msg;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        public void UpdateSubmittedQueryMessageText(string msg, bool doAppend)
+        {
+            if (this.submittedQueryContentText != null)
+            {
+                if (doAppend)
+                {
+                    StringBuilder builder = new StringBuilder();
+
+                    if (this.submittedQueryContentText.text.Length > 0)
+                    {
+                        builder.Append(this.submittedQueryContentText.text);
+                        builder.Append("\n\n");
+                    }
+
+                    builder.Append(msg);
+
+                    this.submittedQueryContentText.text = builder.ToString();
+                } else {
+                    this.submittedQueryContentText.text = msg;
+                }
+            }
         }
 
         /// <summary>
@@ -670,7 +833,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             builder.Append("\nThe system's performance includes the following measurements:\n");
 
-            float cacheHours = this.GetSystemDataCacheHours();
+            float cacheHours = this.GetMaxDataHours();
 
             builder.Append($"Query will consider {cacheHours} hours of operational data.");
 
@@ -705,7 +868,8 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 // fifth: start the prediction engine poller
                 if (base.IsPredictionProcessingEnabled())
                 {
-                    InvokeRepeating(nameof(CheckPredictionEngineForUpdates), 1.0f, 1.0f);
+                    //InvokeRepeating(nameof(CheckPredictionEngineForUpdates), 0.5f, 0.5f);
+                    InvokeRepeating(nameof(CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
                 }
             }
             catch (Exception ex)
@@ -816,7 +980,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             this.updateAiModelList = true;
 
-            //this.ProcessModelListUpdate(modelList);
+            //this.HandleModelListUpdate(modelList);
         }
 
         /// <summary>
@@ -831,7 +995,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
 
             this.updateAiResponseMsg = true;
 
-            //this.ProcessQueryResponseUpdate(response);
+            //this.HandleQueryResponseUpdate(response);
         }
 
         // private methods
@@ -845,13 +1009,14 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// handles the UI updates via a polling function, as all query / response data
         /// along with loaded model names are available via the prediction engine's cache.
         /// </summary>
+        /*
         private void CheckPredictionEngineForUpdates()
         {
             List<string> modelList = this.GetPredictionSystemManager().GetCachedModelList(this.serverUri);
 
             if (modelList != null && this.updateAiModelList)
             {
-                this.ProcessModelListUpdate(modelList);
+                this.HandleModelListUpdate(modelList);
             }
 
             PredictionSystemQueryCache queryCache = this.GetPredictionSystemManager().GetQueryCache(this.sessionID);
@@ -860,7 +1025,93 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 string queryMsg = queryCache.GetLatestQueryMessage();
                 string responseMsg = queryCache.GetLatestResponseMessage();
 
-                this.ProcessQueryResponseUpdate(responseMsg);
+                this.HandleQueryResponseUpdate(responseMsg);
+            }
+        }
+        */
+
+        /// <summary>
+        /// This is necessary as async updates via the prediction modeling lib are
+        /// blocked from updating any UI components (log messages are processed properly).
+        /// 
+        /// The request to the prediction engine is issued asynchronously, and updates
+        /// are handled via callback to notify the DT logging infrastructure. This routine
+        /// handles the UI updates via a polling function, as all query / response data
+        /// along with loaded model names are available via the prediction engine's cache.
+        /// </summary>
+        private void CheckPredictionEngineForModelUpdates()
+        {
+            List<string> modelList = this.GetPredictionSystemManager().GetCachedModelList(this.serverUri);
+
+            if (modelList != null && this.updateAiModelList)
+            {
+                this.HandleModelListUpdate(modelList);
+
+                CancelInvoke(nameof(CheckPredictionEngineForModelUpdates));
+
+                if (this.reloadModelsButton != null) {
+                    this.reloadModelsButton.interactable = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This is necessary as async updates via the prediction modeling lib are
+        /// blocked from updating any UI components (log messages are processed properly).
+        /// 
+        /// The request to the prediction engine is issued asynchronously, and updates
+        /// are handled via callback to notify the DT logging infrastructure. This routine
+        /// handles the UI updates via a polling function, as all query / response data
+        /// along with loaded model names are available via the prediction engine's cache.
+        /// </summary>
+        private void CheckPredictionEngineForResponseUpdates()
+        {
+            if (this.updateAiResponseMsg)
+            {
+                // reset response update state
+                this.StopResponseUpdateTrackingState();
+
+                PredictionSystemQueryCache queryCache = this.GetPredictionSystemManager().GetQueryCache(this.sessionID);
+
+                if (queryCache != null)
+                {
+                    string queryMsg = queryCache.GetLatestQueryMessage();
+                    string responseMsg = queryCache.GetLatestResponseMessage();
+
+                    if (!string.IsNullOrEmpty(responseMsg))
+                    {
+                        int byteCount = responseMsg?.Length ?? 0;
+                        float resultSecs = this.GetMaxWaitSeconds() - this.maxResponseWaitSecs;
+                        string statusMsg = $"Received prediction engine response in {resultSecs} secs. {byteCount} bytes.";
+
+                        this.UpdateResponseStatusText(statusMsg);
+                        this.HandleQueryResponseUpdate(responseMsg);
+
+                        //CancelInvoke(nameof(CheckPredictionEngineForResponseUpdates));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void UpdatePredictionEngineResponseWaitSeconds()
+        {
+            if (this.responseStatusText != null)
+            {
+                string msg = $"Waiting on response for {this.maxResponseWaitSecs} seconds...";                
+                this.UpdateResponseStatusText(msg);
+
+                this.maxResponseWaitSecs--;
+
+                if (this.maxResponseWaitSecs < 0) {
+                    msg = "Wait time expired. No timely response from Prediction Engine.";
+                    this.UpdateResponseStatusText(msg);
+
+                    this.isQueryResponseTimerExpired = true;
+                    this.maxResponseWaitSecs = this.GetMaxWaitSeconds();
+                }
             }
         }
 
@@ -975,9 +1226,14 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.includeSystemDataToggle = this.includeSystemDataToggleObject.GetComponent<Toggle>();
             }
 
-            if (this.systemDataCacheHoursContentObject != null)
+            if (this.maxHoursDataContentObject != null)
             {
-                this.systemDataCacheHoursText = this.systemDataCacheHoursContentObject.GetComponent<Text>();
+                this.maxDataHoursText = this.maxHoursDataContentObject.GetComponent<Text>();
+            }
+
+            if (this.maxWaitSecondsContentObject != null)
+            {
+                this.maxWaitSecondsText = this.maxWaitSecondsContentObject.GetComponent<Text>();
             }
 
             if (this.submittedQueryContentObject != null)
@@ -990,6 +1246,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 this.hasRecommendationsPanel = true;
 
                 this.recommendationsContentText = this.recommendationsContentObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (this.responseStatusContentObject != null)
+            {
+                this.responseStatusText = this.responseStatusContentObject.GetComponent<TextMeshProUGUI>();
             }
 
             // init interation storage names
@@ -1093,7 +1354,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// 
         /// </summary>
         /// <param name="modelList"></param>
-        private void ProcessModelListUpdate(List<string> modelList)
+        private void HandleModelListUpdate(List<string> modelList)
         {
             if (modelList != null && modelList.Count > 0)
             {
@@ -1126,26 +1387,49 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// 
         /// </summary>
         /// <param name="responseMsg"></param>
-        private void ProcessQueryResponseUpdate(string responseMsg)
+        private void HandleQueryResponseUpdate(string responseMsg)
         {
             if (!string.IsNullOrEmpty(responseMsg)) {
-                if (this.recommendationsContentText != null)
-                {
-                    Debug.Log($"Cached AI query response received: {this.sessionID} - {this.serverUri}");
-
-                    StringBuilder builder = new StringBuilder(this.recommendationsContentText.text);
-
-                    if (builder.Length > 0)
-                    {
-                        builder.Append("\n\n");
-                    }
-
-                    builder.Append(responseMsg);
-
-                    this.recommendationsContentText.text = builder.ToString();
-                    this.updateAiResponseMsg = false;
-                }
+                this.updateAiResponseMsg = false;
+                this.UpdateResponseMessageText(responseMsg, true);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void StartResponseUpdateTrackingState()
+        {
+            Debug.Log("Response tracking state STARTED.");
+
+            // this will asynchronously issue the request to the prediction engine
+            StartCoroutine(this.SendPredictionEngineQueryCoroutine());
+
+            Debug.Log($"Starting prediction engine response countdown timer [invoke repeating]: {this.serverUri}");
+
+            // this will update the response text area with a timer message indicating
+            // that we're still waiting for the response from the prediction engine
+            // - if the timer expires, the query will be canceled and timer reset
+            InvokeRepeating(nameof(this.UpdatePredictionEngineResponseWaitSeconds), 1.0f, 1.0f);
+
+            //Debug.Log($"Starting prediction engine response retrieval [invoke repeating]: {this.serverUri}");
+
+            // this will update the response text area on the UI thread - once updated,
+            // this will be canceled
+            //InvokeRepeating(nameof(this.CheckPredictionEngineForResponseUpdates), 0.5f, 0.5f);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void StopResponseUpdateTrackingState()
+        {
+            Debug.LogError("Response tracking state STOPPED.");
+
+            //this.updateAiResponseMsg = false;
+
+            //CancelInvoke(nameof(CheckPredictionEngineForResponseUpdates));
+            CancelInvoke(nameof(UpdatePredictionEngineResponseWaitSeconds));
         }
 
         /// <summary>
@@ -1178,6 +1462,7 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private IEnumerator SendPredictionEngineQueryCoroutine()
         {
             bool isComplete = false;
+            this.isQueryResponseTimerExpired = false;
 
             new Thread(() => {
                 if (this.GetPredictionSystemManager().SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
@@ -1186,10 +1471,11 @@ namespace LabBenchStudios.Pdt.Unity.Hud
                 }
 
                 isComplete = true;
+                //this.isQueryResponseTimerExpired = true;
                 this.updateAiResponseMsg = true;
             }).Start();
 
-            while (! isComplete)
+            while (! isComplete || ! this.isQueryResponseTimerExpired)
             {
                 yield return null;
             }
@@ -1225,6 +1511,18 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             if (this.deviceModelIDText != null) this.deviceModelIDText.text = this.dtmiUri;
             if (this.deviceModelNameText != null) this.deviceModelNameText.text = this.dtmiName;
             if (this.selectedAiModelText != null) this.selectedAiModelText.text = this.selectedAiModel;
+
+            if (this.maxDataHoursText != null)
+            {
+                this.maxDataHoursText.text = this.GetMaxDataHours().ToString();
+                this.maxHoursDataContentObject.ForceLabelUpdate();
+            }
+
+            if (this.maxWaitSecondsText != null)
+            {
+                this.maxWaitSecondsText.text = this.GetMaxWaitSeconds().ToString();
+                this.maxWaitSecondsContentObject.ForceLabelUpdate();
+            }
         }
 
         /// <summary>
