@@ -43,13 +43,13 @@ NOTE: Check back regularly for version updates, as this package is under active 
 
 ### Installation (within Unity 6)
 
+#### As a Unity Plugin built from your local repo (recommended)
+
+- See the instructions under 'Option 1 - Custom Build' at [PDT-DTA-03-002](https://github.com/programming-digital-twins/pdt-exercise-tasks/issues/77)
+
 #### As a Unity Plugin from Git
 
-- See the instructions at []()
-
-#### As a Unity Plugin built from your local repo
-
-- See the instructions at []()
+- See the instructions under 'Option 2 - Pre-Built' at [PDT-DTA-03-002](https://github.com/programming-digital-twins/pdt-exercise-tasks/issues/77)
 
 ## Organization
 
