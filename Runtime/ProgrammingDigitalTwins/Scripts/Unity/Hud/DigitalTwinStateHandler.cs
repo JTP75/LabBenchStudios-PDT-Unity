@@ -38,6 +38,7 @@ using LabBenchStudios.Pdt.Plexus;
 
 using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Unity.Hud;
+using Codice.CM.Triggers;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
@@ -1310,8 +1311,26 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 {
                     this.typeNameSelector.ClearOptions();
                     this.typeNameSelector.AddOptions(typeNameList);
-
+                    
                     Debug.Log($"Added {typeNameList.Count} config type names.");
+
+                    // set the option index to that of the currently selected name
+                    string optionName = "";
+
+                    if (!string.IsNullOrEmpty(this.customName))
+                    {
+                        optionName = this.customName;
+                    } else {
+                        optionName = this.dtmiName;
+                    }
+
+                    try {
+                        int index = typeNameList.IndexOf(optionName);
+                        this.typeNameSelector.SetValueWithoutNotify(index);
+                    } catch (Exception e) {
+                        // ignore - this doesn't functionally matter, it simply
+                        // makes the UI display look cleaner
+                    }
                 }
             }
         }
