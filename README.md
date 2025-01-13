@@ -39,7 +39,7 @@ Please see the following links for some helpful information about the PDT exerci
 ## Usage
 
 In general, follow exercise instructions for the Digital Twin App (DTA) in the [Programming Digital Twins Kanban Board](https://github.com/orgs/programming-digital-twins/projects/1). More specifically, read the following:
-NOTE: Check back regularly for version updates, as this package is under active development and is in 'alpha' mode (e.g., UNRELEASED).
+NOTE: Check back regularly for version updates, as this package is under active development and is purely EXPERIMENTAL (e.g., perpetual 'alpha' mode and not released).
 
 ### Installation (within Unity 6)
 
