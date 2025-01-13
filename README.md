@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an EXPERIMENTAL RESEARCH plugin designed for use with [Unity](https://unity.com/) and other components related to my
+This is an EXPERIMENTAL RESEARCH package designed for use with [Unity](https://unity.com/) and other components related to my
 Building Digital Twins course at Northeastern University. The intent of this repository is to provide students with an experimental
 Digital Twin research environment for personal testing and experimentation.
 
