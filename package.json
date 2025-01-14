@@ -1,6 +1,6 @@
 {
   "name": "com.labbenchstudios.pdt.unity",
-  "version": "0.1.6.0001",
+  "version": "0.1.6",
   "displayName": "LabBenchStudios PDT Package for Unity",
   "description": "Unity Package that provides necessary components and samples to use the PDT client framework.",
   "unity": "6000.0",
