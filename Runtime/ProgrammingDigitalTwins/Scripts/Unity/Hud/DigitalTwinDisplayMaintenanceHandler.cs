@@ -966,9 +966,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <param name="modelListContainer"></param>
         protected override void ProcessModelListUpdate(ModelListContainer modelListContainer)
         {
-            //string uri = modelListContainer.GetUri();
-            //List<string> modelList = modelListContainer.GetModelList();
-
             this.predictionEngineModelListUpdateReceived = true;
         }
 
@@ -978,10 +975,6 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         /// <param name="queryResponseContainer"></param>
         protected override void ProcessQueryResponseUpdate(QueryResponseContainer queryResponseContainer)
         {
-            //string sessionID = queryResponseContainer.GetSessionID();
-            //string uri = queryResponseContainer.GetUri();
-            //string response = queryResponseContainer.GetResponse();
-
             this.predictionEngineQueryResponseReceived = true;
         }
 
@@ -1476,9 +1469,16 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private IEnumerator ReloadPredictionEngineModelsCoroutine()
         {
             bool isComplete = false;
+            bool hasError = false;
+            string msg = "";
 
             new Thread(() => {
-               this.GetPredictionSystemManager().GetAllRegisteredModels(this.sessionID, this.serverUri);
+                try {
+                    this.GetPredictionSystemManager().GetAllRegisteredModels(this.sessionID, this.serverUri);
+                } catch (Exception e) {
+                    msg = $"Failed to retrieve prediction engine models from: {this.serverUri}. Error: {e.Message}";
+                    hasError = true;
+                }
 
                 isComplete = true;
                 this.predictionEngineModelListUpdateReceived = true;
@@ -1488,6 +1488,15 @@ namespace LabBenchStudios.Pdt.Unity.Hud
             {
                 yield return null;
             }
+
+            if (hasError)
+            {
+                Debug.LogError(msg);
+            } else {
+                msg = $"Retrieved models from server: {this.serverUri}.";
+            }
+
+            StartCoroutine(this.HandlePredictionEngineRequestStatusUpdateCoroutine(msg, false));
 
             yield return true;
         }
@@ -1499,25 +1508,60 @@ namespace LabBenchStudios.Pdt.Unity.Hud
         private IEnumerator SendPredictionEngineQueryCoroutine()
         {
             bool isComplete = false;
-            //this.isQueryResponseTimerExpired = false;
+            bool hasError = false;
+            string msg = "";
 
             new Thread(() => {
-                if (this.GetPredictionSystemManager().SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
-                {
-                    Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
+                try {
+                    if (this.GetPredictionSystemManager().SubmitQuery(this.sessionID, this.selectedAiModel, this.serverUri, this.queryRequestMsg))
+                    {
+                        Debug.Log($"Submitted AI query: {this.sessionID} - {this.selectedAiModel}");
+                    }
+                } catch (Exception e) {
+                    msg = $"Failed to submit prediction engine query to: {this.serverUri}. Error: {e.Message}";
+                    hasError = true;
                 }
 
                 isComplete = true;
-                //this.isQueryResponseTimerExpired = true;
                 this.predictionEngineQueryResponseReceived = true;
             }).Start();
 
-            while (! isComplete)// || ! this.isQueryResponseTimerExpired)
+            while (! isComplete)
             {
                 yield return null;
             }
 
+            if (hasError)
+            {
+                Debug.LogError(msg);
+                StartCoroutine(this.HandlePredictionEngineRequestStatusUpdateCoroutine(msg, true));
+            }
+
             yield return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="enableQueryButtons"></param>
+        /// <returns></returns>
+        private IEnumerator HandlePredictionEngineRequestStatusUpdateCoroutine(string msg, bool enableQueryButtons)
+        {
+            this.UpdateResponseStatusText(msg);
+
+            if (this.reloadModelsButton != null) {
+                this.reloadModelsButton.interactable = true;
+            }
+
+            if (enableQueryButtons)
+            {
+                if (this.sendPdmQueryButton != null) {
+                    this.sendPdmQueryButton.interactable = true;
+                }
+            }
+
+            yield return null;
         }
 
         /// <summary>
