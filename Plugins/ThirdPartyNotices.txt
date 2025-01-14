@@ -23,6 +23,11 @@ and are provided for informational purposes only.
   - Version: 9.0.0
   - License: [MIT](https://licenses.nuget.org/MIT).
 
+- Microsoft.Extensions.AI.Abstractions.dll
+  - Reference: .NET Foundation. Microsoft.Extensions.AI.Abstractions. (2025) [Online]. Available: https://www.nuget.org/packages/Microsoft.Extensions.AI.Abstractions/9.0.1-preview.1.24570.5
+  - DLL Version: 9.0.1-preview.1.24570.5
+  - DLL License: [MIT](https://licenses.nuget.org/MIT).
+
 - MQTTnet.dll
   - Available: https://www.nuget.org/packages/MQTTnet/
   - Version: 4.3.7.1207
@@ -37,6 +42,11 @@ and are provided for informational purposes only.
   - Available: https://www.nuget.org/packages/Newtonsoft.Json
   - Version: 13.03
   - License: [MIT](https://licenses.nuget.org/MIT).
+
+- OllamaSharp.dll
+  - Reference: Andreas Wäscher. Provides .NET bindings for the Ollama API. OllamaSharp. (2025) [Online]. Available: https://github.com/awaescher/OllamaSharp.
+  - DLL Version: 4.0.22
+  - DLL License [MIT](https://github.com/awaescher/OllamaSharp#MIT-1-ov-file)
 
 - System.Buffers.dll
   - Available: https://www.nuget.org/packages/System.Buffers

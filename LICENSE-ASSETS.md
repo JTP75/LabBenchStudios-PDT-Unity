@@ -1,4 +1,4 @@
-Lab Bench Studios - PDT - Unity Package - Non-Source Code Assets and Models © 2024 by Andrew D. King
+Lab Bench Studios - PDT - Unity Package - Non-Source Code Assets and Models © 2024 - 2025 by Andrew D. King
 is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
 
