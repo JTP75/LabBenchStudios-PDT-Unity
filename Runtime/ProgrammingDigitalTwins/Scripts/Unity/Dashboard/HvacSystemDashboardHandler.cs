@@ -64,7 +64,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private IDigitalTwinStateProcessor thermostatStateProcessor = null;
         private IDigitalTwinStateProcessor humidifierStateProcessor = null;
-        private IDigitalTwinStateProcessor barometerStateProcessor  = null;
+        private IDigitalTwinStateProcessor barometerStateProcessor = null;
 
         private ThresholdCrossingContainer thresholdCrossingContainer = null;
 
@@ -162,8 +162,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             {
                 this.envCurTemperatureLog = this.envCurTemperatureDisplay?.GetComponent<TextMeshProUGUI>();
                 this.envNewTemperatureLog = this.envNewTemperatureDisplay?.GetComponent<TextMeshProUGUI>();
-                this.envCurHumidityLog    = this.envCurHumidityDisplay?.GetComponent<TextMeshProUGUI>();
-                this.envCurPressureLog    = this.envCurPressureDisplay?.GetComponent<TextMeshProUGUI>();
+                this.envCurHumidityLog = this.envCurHumidityDisplay?.GetComponent<TextMeshProUGUI>();
+                this.envCurPressureLog = this.envCurPressureDisplay?.GetComponent<TextMeshProUGUI>();
             }
             catch (Exception ex)
             {
@@ -190,29 +190,34 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             if (data != null)
             {
-                int typeID = data.GetDeviceType();
+                int typeCategoryID = data.GetDeviceCategory();
 
-                Debug.Log($"Processing incoming thermostat SensorData: {data.GetDeviceID()} - {typeID}");
-
-                switch (typeID)
+                if (typeCategoryID == ConfigConst.ENV_TYPE_CATEGORY)
                 {
-                    case ConfigConst.TEMP_SENSOR_TYPE:
-                        this.curTemp = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                    int typeID = data.GetDeviceType();
 
-                    case ConfigConst.HUMIDITY_SENSOR_TYPE:
-                        this.curHumidity = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                    Debug.Log($"Processing incoming environmental SensorData: {data.GetDeviceID()} - {typeCategoryID}.{typeID}");
 
-                    case ConfigConst.PRESSURE_SENSOR_TYPE:
-                        this.curPressure = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                    switch (typeID)
+                    {
+                        case ConfigConst.TEMP_SENSOR_TYPE:
+                            this.curTemp = (float)Math.Round(data.GetValue(), 1);
+                            break;
 
+                        case ConfigConst.HUMIDITY_SENSOR_TYPE:
+                            this.curHumidity = (float)Math.Round(data.GetValue(), 1);
+                            break;
+
+                        case ConfigConst.PRESSURE_SENSOR_TYPE:
+                            this.curPressure = (float)Math.Round(data.GetValue(), 1);
+                            break;
+
+                    }
+
+                    if (this.envCurTemperatureLog != null) this.envCurTemperatureLog.text = this.curTemp.ToString();
+                    if (this.envCurHumidityLog != null) this.envCurHumidityLog.text = this.curHumidity.ToString();
+                    if (this.envCurPressureLog != null) this.envCurPressureLog.text = this.curPressure.ToString();
                 }
-
-                if (this.envCurTemperatureLog != null) this.envCurTemperatureLog.text = this.curTemp.ToString();
-                if (this.envCurHumidityLog != null) this.envCurHumidityLog.text = this.curHumidity.ToString();
-                if (this.envCurPressureLog != null) this.envCurPressureLog.text = this.curPressure.ToString();
             }
         }
 

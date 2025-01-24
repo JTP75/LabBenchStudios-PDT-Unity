@@ -131,30 +131,35 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         {
             if (data != null)
             {
-                int typeID = data.GetDeviceType();
+                int typeCategoryID = data.GetDeviceCategory();
 
-                Debug.Log($"Processing incoming power system SensorData: {data.GetDeviceID()} - {typeID}");
-
-                switch (typeID)
+                if (typeCategoryID == ConfigConst.ENERGY_TYPE_CATEGORY)
                 {
-                    case ConfigConst.WIND_TURBINE_POWER_OUTPUT_SENSOR_TYPE:
-                        this.curOutputPower = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                    int typeID = data.GetDeviceType();
+                    
+                    Debug.Log($"Processing incoming power system SensorData: {data.GetDeviceID()} - {typeCategoryID}.{typeID}");
 
-                    case ConfigConst.WIND_TURBINE_AIR_SPEED_SENSOR_TYPE:
-                        this.curWindSpeed = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                    switch (typeID)
+                    {
+                        case ConfigConst.WIND_TURBINE_POWER_OUTPUT_SENSOR_TYPE:
+                            this.curOutputPower = (float)Math.Round(data.GetValue(), 1);
+                            break;
 
-                    case ConfigConst.WIND_TURBINE_ROTATIONAL_SPEED_SENSOR_TYPE:
-                        this.curWindTurbineRpm = (float) Math.Round(data.GetValue(), 1);
-                        break;
+                        case ConfigConst.WIND_TURBINE_AIR_SPEED_SENSOR_TYPE:
+                            this.curWindSpeed = (float)Math.Round(data.GetValue(), 1);
+                            break;
 
+                        case ConfigConst.WIND_TURBINE_ROTATIONAL_SPEED_SENSOR_TYPE:
+                            this.curWindTurbineRpm = (float)Math.Round(data.GetValue(), 1);
+                            break;
+
+                    }
+
+                    if (this.voltageOutputLog != null) this.voltageOutputLog.text = "120.0";
+                    if (this.wattageOutputLog != null) this.wattageOutputLog.text = this.curOutputPower.ToString();
+                    if (this.windSpeedLog != null) this.windSpeedLog.text = this.curWindSpeed.ToString();
+                    if (this.windTurbineRpmLog != null) this.windTurbineRpmLog.text = this.curWindTurbineRpm.ToString();
                 }
-
-                if (this.voltageOutputLog != null) this.voltageOutputLog.text = "120.0";
-                if (this.wattageOutputLog != null) this.wattageOutputLog.text = this.curOutputPower.ToString();
-                if (this.windSpeedLog != null) this.windSpeedLog.text = this.curWindSpeed.ToString();
-                if (this.windTurbineRpmLog != null) this.windTurbineRpmLog.text = this.curWindTurbineRpm.ToString();
             }
         }
 

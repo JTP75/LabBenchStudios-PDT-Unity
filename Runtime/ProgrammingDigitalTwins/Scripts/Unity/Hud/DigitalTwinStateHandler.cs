@@ -38,7 +38,6 @@ using LabBenchStudios.Pdt.Plexus;
 
 using LabBenchStudios.Pdt.Unity.Common;
 using LabBenchStudios.Pdt.Unity.Hud;
-using Codice.CM.Triggers;
 
 namespace LabBenchStudios.Pdt.Unity.Dashboard
 {
@@ -99,6 +98,9 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private GameObject propsPanelShowButtonObject = null;
 
         [SerializeField]
+        private GameObject constraintsPanelShowButtonObject = null;
+
+        [SerializeField]
         private GameObject statusPanelPropsContentObject = null;
 
         [SerializeField]
@@ -133,6 +135,9 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         [SerializeField]
         private GameObject propsEditorPanel = null;
+
+        [SerializeField]
+        private GameObject constraintsEditorPanel = null;
 
         [SerializeField]
         private GameObject displayMaintenancePanel = null;
@@ -177,6 +182,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         private Button closeModelPanelButton = null;
         private Button closeStatusPanelButton = null;
         private Button showPropsPanelButton = null;
+        private Button showConstraintsPanelButton = null;
 
         private bool enableDebugLogging = true;
 
@@ -190,6 +196,9 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private bool hasPropsEditorPanel = false;
         private bool isPropsEditorPanelActive = false;
+
+        private bool hasConstraintsEditorPanel = false;
+        private bool isConstraintsEditorPanelActive = false;
 
         private bool hasDisplayMaintenancePanel = false;
         private bool isDisplayMaintenancePanelActive = false;
@@ -217,6 +226,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
         private DigitalTwinModelState digitalTwinModelState = null;
         private DigitalTwinPropertiesHandler digitalTwinPropsHandler = null;
+        private DigitalTwinConstraintsHandler digitalTwinConstraintsHandler = null;
         private DigitalTwinDisplayMaintenanceHandler digitalTwinDisplayMaintenanceHandler = null;
 
         private ResourceNameContainer telemetryResource = null;
@@ -239,6 +249,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.CloseStatusPanel();
                     this.CloseModelPanel();
                     this.ClosePropsEditorPanel();
+                    this.CloseConstraintsEditorPanel();
                     this.CloseDisplayMaintenancePanel();
                     break;
 
@@ -278,6 +289,17 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             if (this.hasPropsEditorPanel)
             {
                 this.propsEditorPanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void CloseConstraintsEditorPanel()
+        {
+            if (this.hasConstraintsEditorPanel)
+            {
+                this.constraintsEditorPanel.SetActive(false);
             }
         }
 
@@ -396,6 +418,32 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     if (this.hasDisplayMaintenancePanel) {
                         this.displayMaintenancePanel.SetActive(false);
                     }
+
+                    if (this.hasConstraintsEditorPanel) {
+                        this.constraintsEditorPanel.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UpdateConstraintsEditorPanelVisibility()
+        {
+            if (this.hasConstraintsEditorPanel)
+            {
+                this.isConstraintsEditorPanelActive = !this.isConstraintsEditorPanelActive;
+                this.constraintsEditorPanel.SetActive(this.isConstraintsEditorPanelActive);
+
+                if (this.constraintsEditorPanel.activeInHierarchy) {
+                    if (this.hasDisplayMaintenancePanel) {
+                        this.displayMaintenancePanel.SetActive(false);
+                    }
+
+                    if (this.hasPropsEditorPanel) {
+                        this.propsEditorPanel.SetActive(false);
+                    }
                 }
             }
         }
@@ -413,6 +461,11 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 if (this.displayMaintenancePanel.activeInHierarchy) {
                     if (this.hasPropsEditorPanel) {
                         this.propsEditorPanel.SetActive(false);
+                    }
+
+                    if (this.hasConstraintsEditorPanel)
+                    {
+                        this.constraintsEditorPanel.SetActive(false);
                     }
                 }
             }
@@ -527,6 +580,20 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
                 this.hasPropsEditorPanel = true;
                 this.propsEditorPanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void InitConstraintsEditorPanelControls()
+        {
+            if (this.constraintsEditorPanel != null)
+            {
+                this.digitalTwinConstraintsHandler = this.constraintsEditorPanel.GetComponent<DigitalTwinConstraintsHandler>();
+
+                this.hasConstraintsEditorPanel = true;
+                this.constraintsEditorPanel.SetActive(false);
             }
         }
 
@@ -690,6 +757,16 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 }
             }
 
+            if (this.constraintsPanelShowButtonObject != null)
+            {
+                this.showConstraintsPanelButton = this.constraintsPanelShowButtonObject.GetComponent<Button>();
+
+                if (this.showConstraintsPanelButton != null)
+                {
+                    this.showConstraintsPanelButton.onClick.AddListener(() => this.UpdateConstraintsEditorPanelVisibility());
+                }
+            }
+
             if (this.displayMaintenanceButtonObject != null)
             {
                 this.displayMaintenanceButton = this.displayMaintenanceButtonObject.GetComponent<Button>();
@@ -820,6 +897,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 // Step 4: Init remaining panels and their event controllers
                 this.InitModelPanelControls();
                 this.InitPropsEditorPanelControls();
+                this.InitConstraintsEditorPanelControls();
                 this.InitDisplayMaintenancePanelControls();
 
                 // =====
@@ -1002,8 +1080,12 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     sb.Append($"\nSensor Value: {data.GetValue()}");
                     sb.Append("\n==========");
                     sb.Append($"\nIncoming Key: {ModelNameUtil.GenerateDataSyncKey(data)}");
-                    sb.Append($"\nData Sync Key: {this.digitalTwinModelState.GetDataSyncKey()}");
-                    sb.Append($"\nModel Sync Key: {this.digitalTwinModelState.GetModelSyncKey()}");
+
+                    if (this.digitalTwinModelState != null)
+                    {
+                        sb.Append($"\nData Sync Key: {this.digitalTwinModelState.GetDataSyncKey()}");
+                        sb.Append($"\nModel Sync Key: {this.digitalTwinModelState.GetModelSyncKey()}");
+                    }
 
                     this.statusContentText.text = sb.ToString();
                 }
@@ -1141,6 +1223,9 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             DigitalTwinModelManager dtModelManager =
                 EventProcessor.GetInstance().GetDigitalTwinModelManager();
 
+            SystemModelManager sysModelManager =
+                EventProcessor.GetInstance().GetSystemModelManager();
+
             if (dtModelManager != null)
             {
                 IotDataContext dataContext = null;
@@ -1180,6 +1265,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
                 if (this.digitalTwinModelState == null)
                 {
+                    /*
                     if (isCustom)
                     {
                         this.digitalTwinModelState =
@@ -1202,6 +1288,23 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                                 this.controllerID,
                                 (IDataContextEventListener)this);
                     }
+                    */
+
+                    if (isCustom)
+                    {
+                        this.digitalTwinModelState =
+                            sysModelManager.CreateDigitalTwinModelState(
+                                dataContext, this.customName, this.useGuidInInstanceKey, (IDataContextEventListener) this);
+                    } else {
+                        this.digitalTwinModelState =
+                            sysModelManager.CreateDigitalTwinModelState(
+                                dataContext, this.controllerID, this.useGuidInInstanceKey, (IDataContextEventListener) this);
+                    }
+
+                    if (this.digitalTwinModelState == null)
+                    {
+                        Debug.LogError($"Failed to create digital twin model state: {this.controllerID}");
+                    }
                 }
                 else
                 {
@@ -1215,6 +1318,11 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 if (this.digitalTwinPropsHandler != null)
                 {
                     this.digitalTwinPropsHandler.SetDigitalTwinModelState(this.digitalTwinModelState);
+                }
+
+                if (this.digitalTwinConstraintsHandler != null)
+                {
+                    this.digitalTwinConstraintsHandler.SetDigitalTwinModelState(this.digitalTwinModelState);
                 }
 
                 if (this.digitalTwinDisplayMaintenanceHandler != null)
@@ -1292,6 +1400,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
             // make sure all the hidden panels get updated
             this.digitalTwinPropsHandler?.UpdateDigitalTwinLabels(this.dtmiName, this.dtmiUri);
+            this.digitalTwinConstraintsHandler?.UpdateDigitalTwinLabels(this.dtmiName, this.dtmiUri);
             this.digitalTwinDisplayMaintenanceHandler?.UpdateDigitalTwinLabels(this.dtmiName, this.dtmiUri);
         }
 

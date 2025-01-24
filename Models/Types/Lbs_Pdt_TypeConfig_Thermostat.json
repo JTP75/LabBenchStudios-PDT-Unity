@@ -2,7 +2,7 @@
   "typeName": "thermostat",
   "version": "2024-11-18",
   "description": "Thermostat category configuration.",
-  "displayName": "Thermostat System",
+  "displayName": "Heating System Category",
   "modelName": "dtmi:LabBenchStudios:PDT:thermostat;1",
   "id": 1000,
   "minId": 1001,
@@ -17,8 +17,16 @@
       "dataContainerType": "LabBenchStudios.Pdt.Data.ActuatorData",
       "id": 1004,
       "modelConstraints": {
-        "enableConstraints": false,
-        "enableDutyCycle": false
+        "enableConstraints": true,
+        "enableDutyCycle": false,
+        "unit": "C",
+        "targetValue": "24.0",
+        "nominalValueDelta": "0.0",
+        "maxValueDelta": "0.0",
+        "rangeNominalFloor": "18.0",
+        "rangeNominalCeiling": "27.0",
+        "rangeMaxFloor": "15.0",
+        "rangeMaxCeiling": "30.0"
       }
     },
     "targetHumidity": {
@@ -32,9 +40,14 @@
       "modelConstraints": {
         "enableConstraints": true,
         "enableDutyCycle": false,
-        "minReading": "0.0",
-        "maxReading": "0.0",
-        "optimalReading": "0.0"
+        "unit": "C",
+        "targetValue": "24.0",
+        "nominalValueDelta": "0.0",
+        "maxValueDelta": "0.0",
+        "rangeNominalFloor": "18.0",
+        "rangeNominalCeiling": "27.0",
+        "rangeMaxFloor": "15.0",
+        "rangeMaxCeiling": "30.0"
       }
     }
   }
