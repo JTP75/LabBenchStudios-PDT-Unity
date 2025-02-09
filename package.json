@@ -1,6 +1,6 @@
 {
   "name": "com.labbenchstudios.pdt.unity",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "displayName": "LabBenchStudios PDT Package for Unity",
   "description": "This experimental research project provides the necessary components and samples needed when working through the Programming Digital Twins curriculum in a Unity 6 environment.",
   "unity": "6000.0",

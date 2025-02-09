@@ -464,8 +464,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7.000061, y: -966}
-  m_SizeDelta: {x: 3819.066, y: 1509.109}
+  m_AnchoredPosition: {x: -7.000061, y: -782.46}
+  m_SizeDelta: {x: 3819.066, y: 2071.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &525049428385028429
 GameObject:
@@ -2078,8 +2078,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7.000061, y: -1909.1656}
-  m_SizeDelta: {x: 3819.066, y: 517.949}
+  m_AnchoredPosition: {x: -7.000061, y: -2159.1199}
+  m_SizeDelta: {x: 3819.066, y: 681.68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1839437059214266257
 GameObject:
@@ -2405,8 +2405,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00012207031, y: -0.0031319}
-  m_SizeDelta: {x: 1726, y: -1963.6}
+  m_AnchoredPosition: {x: 0.10551, y: 0.0099792}
+  m_SizeDelta: {x: 1725.8, y: -2257.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6681291816103001888
 CanvasRenderer:
@@ -4530,8 +4530,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7, y: 1161.7349}
-  m_SizeDelta: {x: 3819.066, y: 2055.08}
+  m_AnchoredPosition: {x: -7, y: 1554.7555}
+  m_SizeDelta: {x: 3819.066, y: 1923.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5059771813609952519
 GameObject:
@@ -4569,7 +4569,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -994}
+  m_AnchoredPosition: {x: 0, y: -707}
   m_SizeDelta: {x: 0, y: -1491.145}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2567414181785505465
@@ -5482,6 +5482,7 @@ MonoBehaviour:
   enableConnectionStateDataProcessing: 0
   enableSensorDataProcessing: 0
   enableSystemPerformanceDataProcessing: 0
+  enablePredictionProcessing: 1
   enableTimeAndDateUpdates: 0
   timeDisplay: {fileID: 0}
   dateDisplay: {fileID: 0}
@@ -6198,7 +6199,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6911940388687047921}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -6208,8 +6209,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 1784.2495, y: -982.2292}
-  m_SizeDelta: {x: 1725.578, y: 1963.6001}
+  m_AnchoredPosition: {x: 1784.2495, y: -858.5293}
+  m_SizeDelta: {x: 1725.578, y: 2236.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2918866550369676423
 CanvasRenderer:

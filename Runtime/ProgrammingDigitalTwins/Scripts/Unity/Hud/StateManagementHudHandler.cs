@@ -208,31 +208,6 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             EventProcessor.GetInstance().LogDebugMessage(message);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void LoadModelDataPrev()
-        {
-            try {
-                string message = $"NORMAL: Attempting to init and (re)load DTDL model data: {this.dtdlModelPath}";
-
-                EventProcessor.GetInstance().LogDebugMessage(message);
-
-                this.modelDataLoadStatusText.text = "(Re)loading model data...";
-
-                if (EventProcessor.GetInstance().LoadDigitalTwinModels(this.dtdlModelPath)) {
-                    Debug.Log($"NORMAL: Successfully (re)loaded DTDL model data: {this.dtdlModelPath}");
-                    this.modelDataLoadStatusText.text = "Loaded model data.";
-                } else {
-                    Debug.LogError($"Failed to (re)load DTDL model data: {this.dtdlModelPath}");
-                    this.modelDataLoadStatusText.text = "Failed to load model data!";
-                }
-            } catch (Exception e) {
-                this.modelDataLoadStatusText.text = "Failed to load model data.";
-                Debug.LogError($"Failed to load DTDL files from {this.dtdlModelPath}");
-            }
-        }
-
         // public callback methods
         
         /// <summary>
@@ -244,28 +219,14 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
             switch (eventType)
             {
                 case UserEventState.EventType.CloseOpenDialogs:
-                    if (this.historianCacheCapturePanel != null)
-                    {
-                        this.historianCacheCapturePanel.SetActive(false);
-                    }
-
-                    if (this.historianCachePlaybackPanel != null)
-                    {
-                        this.historianCachePlaybackPanel.SetActive(false);
-                    }
+                    // for close, also close historian dialogs
+                    this.CloseHistorianDialogs();
 
                     break;
 
                 case UserEventState.EventType.RestoreOpenDialogs:
-                    if (this.historianCacheCapturePanel != null)
-                    {
-                        this.historianCacheCapturePanel.SetActive(true);
-                    }
-
-                    if (this.historianCachePlaybackPanel != null)
-                    {
-                        this.historianCachePlaybackPanel.SetActive(false);
-                    }
+                    // for restore, also close historian dialogs
+                    this.CloseHistorianDialogs();
 
                     break;
 
@@ -390,7 +351,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.launchHistorianCachePlaybackButton = this.launchHistorianCachePlaybackButtonObject.GetComponent<Button>();
 
                     if (this.launchHistorianCachePlaybackButton != null) {
-                        this.launchHistorianCachePlaybackButton.onClick.AddListener(() => this.LaunchHistorianPlaybackInterface());
+                        this.launchHistorianCachePlaybackButton.onClick.AddListener(() => this.LaunchHistorianManagementInterface());
                     }
                 }
 
@@ -432,6 +393,10 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                 if (this.loadModelsAutomatically) {
                     this.LoadModelData();
                 }
+
+                // start with historian dialogs closed - whether open by default or not
+                this.CloseHistorianDialogs();
+
             } catch (Exception ex) {
                 Debug.LogException(ex);
             }
@@ -448,13 +413,13 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
         /// <summary>
         /// 
         /// </summary>
-        protected void LaunchHistorianPlaybackInterface()
+        protected void LaunchHistorianManagementInterface()
         {
             if (this.historianCachePlaybackPanel != null)
             {
                 if (this.historianCachePlaybackPanel.activeInHierarchy)
                 {
-                    this.historianCachePlaybackPanel.SetActive(false);
+                    this.CloseHistorianDialogs();
 
                     EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.RestoreOpenDialogs);
                     EventProcessor.GetInstance().OnUserEventStateReceived(UserEventState.EventType.EnableLiveDataProcessing);
@@ -469,7 +434,7 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     this.startDataFeedButton.interactable = false;
                     this.stopDataFeedButton.interactable = false;
 
-                    this.historianCachePlaybackPanel.SetActive(true);
+                    this.OpenHistorianDialogs();
                 }
             }
         }
@@ -595,6 +560,38 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
 
 
         // private methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CloseHistorianDialogs()
+        {
+            if (this.historianCacheCapturePanel != null)
+            {
+                this.historianCacheCapturePanel.SetActive(false);
+            }
+
+            if (this.historianCachePlaybackPanel != null)
+            {
+                this.historianCachePlaybackPanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void OpenHistorianDialogs()
+        {
+            if (this.historianCacheCapturePanel != null)
+            {
+                this.historianCacheCapturePanel.SetActive(true);
+            }
+
+            if (this.historianCachePlaybackPanel != null)
+            {
+                this.historianCachePlaybackPanel.SetActive(true);
+            }
+        }
 
         /// <summary>
         /// 
