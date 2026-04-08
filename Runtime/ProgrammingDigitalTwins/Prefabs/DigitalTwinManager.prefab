@@ -59,10 +59,10 @@ MonoBehaviour:
   connectToMqttAsap: 0
   messagingClientID: PDT_UnityClient_001
   messagingTopicPrefixName: PDT
-  messagingHostName: localhost
+  messagingHostName: 127.0.0.1
   messagingHostPort: 1883
   dtdlModelPathList: []
-  tsdbHostName: localhost
+  tsdbHostName: 127.0.0.1
   tsdbHostPort: 8086
   clientToken: Not-Set
   organizationID: Not-Set
