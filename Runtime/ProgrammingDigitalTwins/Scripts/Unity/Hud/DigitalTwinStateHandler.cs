@@ -1078,6 +1078,8 @@ namespace LabBenchStudios.Pdt.Unity.Dashboard
                     sb.Append("\n==========");
                     sb.Append($"\nSensor Name: {data.GetName()}");
                     sb.Append($"\nSensor Value: {data.GetValue()}");
+                    if (!string.IsNullOrEmpty(data.GetStateData()))
+                        sb.Append($"\nState Data: {data.GetStateData()}");
                     sb.Append("\n==========");
                     sb.Append($"\nIncoming Key: {ModelNameUtil.GenerateDataSyncKey(data)}");
 
